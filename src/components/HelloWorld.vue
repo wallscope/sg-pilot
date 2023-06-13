@@ -3,13 +3,13 @@
     <v-responsive class="d-flex align-center text-left fill-height">
 
 
-      <h1 class="text-h4 font-weight-bold">Scottish Government Knowledge Graph Pilot</h1>
-      <v-img
-  :width="300"
-  aspect-ratio="16/9"
-  cover
-  src="../assets/scotgov-logo.jpg"
-></v-img>
+      <h1 class="text-h4 font-weight-bold">Graph Pilot</h1>
+        <v-img
+          :width="300"
+          aspect-ratio="16/9"
+          cover
+          src="/scotgov-logo.jpg"
+        ></v-img>
       <div class="py-14" />
 
       <v-row class="d-flex align-left justify-center">

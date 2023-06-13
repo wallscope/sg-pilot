@@ -3,7 +3,7 @@ import { VerticalNavLayout } from '@layouts';
 import DrawerContent from './UserDrawerContent.vue';
 
 // Components
-import UserProfile from '@/layouts/components/UserProfile.vue';
+// import UserProfile from '@/layouts/components/UserProfile.vue';
 </script>
 
 <template>
@@ -11,9 +11,9 @@ import UserProfile from '@/layouts/components/UserProfile.vue';
     <!-- 👉 navbar -->
     <template #navbar>  
       <VSpacer />
-    <Suspense>
+    <!-- <Suspense>
       <UserProfile />
-    </Suspense>
+    </Suspense> -->
     </template>
     <!-- 👉 Drawer content -->
     <template #navigation-drawer-content>

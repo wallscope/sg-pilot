@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { VerticalNavLayout } from '@layouts';
-import DrawerContent from './DrawerContent.vue';
+import DrawerContent from './UserDrawerContent.vue';
 
 // Components
 import UserProfile from '@/layouts/components/UserProfile.vue';
@@ -37,4 +37,3 @@ import UserProfile from '@/layouts/components/UserProfile.vue';
   }
 
 </style>
-

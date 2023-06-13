@@ -38,7 +38,7 @@ type ChartOptions = ECBasicOption & { xAxis: any; yAxis: any };
         <template v-if="!hide">
           <!-- <Suspense> -->
             <!-- <chart class="chart" :option="tempChart" :autoresize="true"></chart> -->
-            detailed chart
+            graph chart
           <!-- </Suspense> -->
         </template>
         <template v-else>

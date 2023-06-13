@@ -10,19 +10,19 @@ const vuetifyTheme = useTheme()
   <!-- 👉 Nav header -->
   <div class="nav-header">
     <RouterLink
-      to="leftToRightTreeChart"
+      to="/"
       class="app-logo d-flex align-center gap-x-3 app-title-wrapper"
     >
        <Transition name="vertical-nav-app-title">
         <h1 class="font-weight-semibold leading-normal text-xl text-uppercase">
-          Scottish Government Knowledge Graph Pilot
+          Graph Pilot
         </h1>
       </Transition>
     </RouterLink>
   </div>
   <ul>
   <!-- 👉 Nav items -->
-    <VerticalNavSectionTitle :item="{ heading: 'Overviews' }" />
+    <VerticalNavSectionTitle :item="{ heading: 'Charts' }" />
     <VerticalNavLink
       :item="{
         title: 'Detailed Chart',
@@ -32,8 +32,8 @@ const vuetifyTheme = useTheme()
     />
     <VerticalNavLink
       :item="{
-        title: 'Chart',
-        to: 'leftToRightTreeChart',
+        title: 'Graph Chart',
+        to: 'graphChart',
         icon: { icon: 'mdi-chart-line' }
       }"
     />    

@@ -36,7 +36,14 @@ const vuetifyTheme = useTheme()
         to: 'graphChart',
         icon: { icon: 'mdi-chart-line' }
       }"
-    />    
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'Sankey Chart',
+        to: 'sankeyChart',
+        icon: { icon: 'mdi-chart-areaspline' }
+      }"
+    />
   </ul>
 </template>
 

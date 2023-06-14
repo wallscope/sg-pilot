@@ -1,45 +1,95 @@
 <script setup lang="ts">
-// import { Measurement, MeasurementType, useMeasurementStore } from '@/stores/measurements';
-// import { useMetadataStore } from '@/stores/metadata';
-// import { useSummaryStore } from '@/stores/summary';
-import { BarChart } from "echarts/charts";
-import {
-GridComponent, LegendComponent, TitleComponent,
-TooltipComponent
-} from "echarts/components";
+import { ref, onMounted, Ref } from "vue";
+import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import { use } from "echarts/core";
+import { GraphChart } from 'echarts/charts';
 import { CanvasRenderer } from "echarts/renderers";
-import type { ECBasicOption } from "echarts/types/dist/shared";
-import { ref, type Ref } from "vue";
 import Chart from "vue-echarts";
+import type { ECBasicOption } from "echarts/types/dist/shared";
 
-use([
-  CanvasRenderer,
-  BarChart,
-  GridComponent,
-  TitleComponent,
-  TooltipComponent,
-  LegendComponent,
-]);
+use([GridComponent, LegendComponent, TitleComponent, TooltipComponent, GraphChart, CanvasRenderer]);
 
-// let hide = true;
+interface GraphNode {
+  symbolSize: number;
+  label?: {
+    show?: boolean;
+  };
+}
+
 let hide = false;
+var ROOT_PATH = "";
 
-// Chart
-type ChartOptions = ECBasicOption & { xAxis: any; yAxis: any };
+const chartOptions: Ref<ECBasicOption | null> = ref(null);
 
+onMounted(async () => {
+  try {
+    const response = await fetch(ROOT_PATH + "/graph_example.json");
+    const graph = await response.json();
+
+    graph.nodes.forEach(function (node: GraphNode) {
+      node.label = {
+        show: node.symbolSize > 30
+      };
+    });
+
+    chartOptions.value = {
+      title: {
+        text: 'Les Miserables',
+        subtext: 'Default layout',
+        top: 'bottom',
+        left: 'right'
+      },
+      tooltip: {},
+      legend: [
+        {
+          // selectedMode: 'single',
+          data: graph.categories.map(function (a: { name: string }) {
+            return a.name;
+          })
+        }
+      ],
+      animationDuration: 200,
+      animationEasingUpdate: 'quinticInOut',
+      series: [
+        {
+          name: 'Les Miserables',
+          type: 'graph',
+          layout: 'none',
+          data: graph.nodes,
+          links: graph.links,
+          categories: graph.categories,
+          roam: true,
+          label: {
+            position: 'right',
+            formatter: '{b}'
+          },
+          lineStyle: {
+            color: 'source',
+            curveness: 0.3
+          },
+          emphasis: {
+            focus: 'adjacency',
+            lineStyle: {
+              width: 10
+            }
+          }
+        }
+      ]
+    };
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
+
 <template>
   <VRow>
-    <VCol
-      cols="12"
-    >
+    <VCol cols="12">
       <v-table>
         <template v-if="!hide">
-          <!-- <Suspense> -->
-            <!-- <chart class="chart" :option="tempChart" :autoresize="true"></chart> -->
-            graph chart
-          <!-- </Suspense> -->
+          <Suspense>
+            <Chart class="chart" :option="chartOptions" :autoresize="true"></Chart>
+          </Suspense>
         </template>
         <template v-else>
           <p>No activity to show</p>
@@ -47,12 +97,12 @@ type ChartOptions = ECBasicOption & { xAxis: any; yAxis: any };
       </v-table>
     </VCol>
   </VRow>
-  <p> 
+  <p>
     <hr>
   </p>
 </template>
 <style lang="scss" scoped>
 .chart {
-  height: 300px;
+  height: 600px;
 }
 </style>

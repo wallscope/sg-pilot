@@ -28,6 +28,11 @@ const router = createRouter({
           name: "graphChart",
           component: () => import('@/views/pages/charts/graphChart.vue'),
         },
+        {
+          path: "sankeyChart",
+          name: "sankeyChart",
+          component: () => import('@/views/pages/charts/sankeyChart.vue'),
+        },
       ],
     },
   ],

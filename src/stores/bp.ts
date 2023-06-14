@@ -26,6 +26,7 @@ export interface FrontPage {
   contactEmail: string[];
   links: Link[];
   divisionsPortfolios: DivisionPortfolio[];
+  directorateBudget: DirectorateBudget;
 }
 
 export interface Link {
@@ -36,6 +37,15 @@ export interface Link {
 export interface DivisionPortfolio {
   name: string;
   lead: string;
+}
+
+export interface DirectorateBudget {
+  resProgramme: string;
+  resTotalOperatingCosts: string;
+  resCorporateRunningCosts: string;
+  resTotal: string;
+  capital: string;
+  financialTransactions: string;
 }
 
 export const DEF_BP_DATA: BpData = {
@@ -53,7 +63,14 @@ export const DEF_BP_DATA: BpData = {
       name: '',
       lead: '',
     }],
-    
+    directorateBudget: {
+      resProgramme: '',
+      resTotalOperatingCosts: '',
+      resCorporateRunningCosts: '',
+      resTotal: '',
+      capital: '',
+      financialTransactions: '',
+    },
   },
   connections: [''],
 };

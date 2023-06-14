@@ -1,9 +1,11 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
+import { LabeledURI } from './model';
 
-export interface Pfg {
+// Programme For Government Store
+export interface PfgDoc {
   id: string;
-  values: PfgData
+  data: PfgData
 }
 
 // Data
@@ -17,10 +19,11 @@ export interface PfgData {
   portfolioFbpClearance: string[];
   portfolioCoordinator: string[];
   dateOfCompletion: string;
+  connections: string[];
 }
 
 // Template objects
-export const DEF_PFG_DATA = {
+export const DEF_PFG_DATA: PfgData = {
   ministerialPortfolio: [''],
   dg: [''],
   directorate: [''],
@@ -30,11 +33,15 @@ export const DEF_PFG_DATA = {
   portfolioFbpClearance: [''],
   portfolioCoordinator: [''],
   dateOfCompletion: getCurrentDateFormatted(),
+  connections: [''],
 }
 
-export const usePfgStore = defineStore('summary', {
+export const usePfgStore = defineStore('pfg', {
   state: () => ({
-    pfg: {} as Pfg,
+    pfg: {
+      id: '', 
+      data: DEF_PFG_DATA,
+    } as PfgDoc,
   }),
   actions:{
     getDateFormatted(date: Date): string {

@@ -23,59 +23,39 @@ const chartOptions: Ref<ECBasicOption | null> = ref(null);
 
 onMounted(async () => {
   try {
-    const response = await fetch(ROOT_PATH + "/graph_example.json");
-    const graph = await response.json();
-
-    graph.nodes.forEach(function (node: GraphNode) {
-      node.label = {
-        show: node.symbolSize > 30
-      };
-    });
-
+    const response = await fetch(ROOT_PATH + "/dep_example.json");
+    const webkitDep = await response.json();
+    
+    // Dep
     chartOptions.value = {
-      title: {
-        text: 'Les Miserables',
-        subtext: 'Default layout',
-        top: 'bottom',
-        left: 'right'
+      legend: {
+        data: ['HTMLElement', 'WebGL', 'SVG', 'CSS', 'Other']
       },
-      tooltip: {},
-      legend: [
-        {
-          // selectedMode: 'single',
-          data: graph.categories.map(function (a: { name: string }) {
-            return a.name;
-          })
-        }
-      ],
-      animationDuration: 200,
-      animationEasingUpdate: 'quinticInOut',
       series: [
         {
-          name: 'Les Miserables',
           type: 'graph',
-          layout: 'none',
-          data: graph.nodes,
-          links: graph.links,
-          categories: graph.categories,
-          roam: true,
+          layout: 'force',
+          animation: false,
           label: {
             position: 'right',
             formatter: '{b}'
           },
-          lineStyle: {
-            color: 'source',
-            curveness: 0.3
+          draggable: true,
+          data: webkitDep.nodes.map(function (node: any, idx: any) {
+            node.id = idx;
+            return node;
+          }),
+          categories: webkitDep.categories,
+          force: {
+            edgeLength: 5,
+            repulsion: 20,
+            gravity: 0.2
           },
-          emphasis: {
-            focus: 'adjacency',
-            lineStyle: {
-              width: 10
-            }
-          }
+          edges: webkitDep.links
         }
       ]
     };
+
   } catch (error) {
     console.error(error);
   }

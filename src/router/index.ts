@@ -24,9 +24,29 @@ const router = createRouter({
           component: () => import('@/views/pages/charts/leftToRightTreeChart.vue'),
         },
         {
-          path: "graphChart",
-          name: "graphChart",
-          component: () => import('@/views/pages/charts/graphChart.vue'),
+          path: "graphChartXY",
+          name: "graphChartXY",
+          component: () => import('@/views/pages/charts/graphChartXY.vue'),
+        },
+        {
+          path: "graphChartCirc",
+          name: "graphChartCirc",
+          component: () => import('@/views/pages/charts/graphChartCirc.vue'),
+        },
+        {
+          path: "graphChartForce",
+          name: "graphChartForce",
+          component: () => import('@/views/pages/charts/graphChartForce.vue'),
+        },
+        {
+          path: "graphChartDep",
+          name: "graphChartDep",
+          component: () => import('@/views/pages/charts/graphChartDep.vue'),
+        },
+        {
+          path: "treemapDrillChart",
+          name: "treemapDrillChart",
+          component: () => import('@/views/pages/charts/treemapDrillChart.vue'),
         },
         {
           path: "sankeyChart",

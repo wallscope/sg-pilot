@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+#  gateway:
+#    image: nginx:latest
+#    ports:
+#      - "8080:80"
+#    volumes:
+#      - ${PWD}/html:/html
+#      - ${PWD}/nginx.conf:/etc/nginx/conf.d/default.conf
+#    networks:
+#      - sg-net
+#
+#  sg-api:
+#    image: wallscope/sg:0.0.1
+#    environment:
+#      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+#      - TRIPLESTORE=http://sg-triplestore:3030/ds
+#      - KC_ENABLED=true
+#      - KEYCLOAK_SERVER_URL=http://keycloak:8080
+#      - KEYCLOAK_CLIENT_SECRET=
+#    ports:
+#      - "8000:8000"
+#    networks:
+#      - sg-net
+
+  sg-triplestore:
+    image: secoresearch/fuseki:4.6.1
+    user: "9008:0"
+    ports:
+      - "8030:3030"
+    environment:
+      - ADMIN_PASSWORD=admin
+    volumes:
+      - ${PWD}/data/triplestore/data:/fuseki-base/databases
+      - ${PWD}/data/triplestore:/fuseki-base/configuration
+    restart: on-failure
+    networks:
+      - sg-net
+
+networks:
+  sg-net:

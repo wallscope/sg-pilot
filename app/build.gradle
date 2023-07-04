@@ -1,0 +1,126 @@
+buildscript {
+	ext.kotlin_version = '1.6.21'
+	ext.spring_boot_version = '2.6.7'
+	ext.jena_version = '4.6.1'
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
+	}
+}
+
+plugins {
+	id 'java'
+	id 'org.jetbrains.kotlin.jvm' version "${kotlin_version}"
+	id 'application'
+	id "org.jetbrains.kotlin.kapt" version "${kotlin_version}"
+	id "org.jetbrains.kotlin.plugin.noarg" version "${kotlin_version}"
+	id "org.jetbrains.kotlin.plugin.spring" version "${kotlin_version}"
+	id 'org.springframework.boot' version "${spring_boot_version}"
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "com.github.node-gradle.node" version "2.2.4"
+}
+
+group = 'com.wallscope.sg'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 11
+targetCompatibility = 11
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Kotlin stdlib
+	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+	implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
+	// Logging
+	implementation 'ch.qos.logback:logback-core:1.2.3'
+	implementation 'ch.qos.logback:logback-classic:1.2.3'
+	implementation 'org.slf4j:slf4j-api:1.7.30'
+
+	// Spring Boot
+	//implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.7'
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.6.7'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.7'
+	implementation 'org.springframework.boot:spring-boot-starter-web-services:2.6.7'
+	// Spring validation dep
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.7'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools:2.6.7'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	// Jackson
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-hppc"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+	implementation "com.fasterxml.jackson.module:jackson-module-jaxb-annotations"
+	implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5"
+	implementation "com.fasterxml.jackson.core:jackson-annotations"
+	implementation "com.fasterxml.jackson.core:jackson-databind"
+
+	// Keycloak
+	implementation 'org.keycloak:keycloak-spring-boot-starter:18.0.0'
+	implementation 'org.keycloak.bom:keycloak-adapter-bom:18.0.0'
+	// For Keycloak admin API calls
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// Jena
+	// https://mvnrepository.com/artifact/org.apache.jena/jena-core
+	implementation(group: "org.apache.jena", name: "jena-core", version: "${jena_version}")
+	// https://mvnrepository.com/artifact/org.apache.jena/jena-rdfconnection
+	implementation(group: "org.apache.jena", name: "jena-rdfconnection", version: "${jena_version}")
+	// https://mvnrepository.com/artifact/org.apache.jena/jena-arq
+	implementation(group: "org.apache.jena", name: "jena-arq", version: "${jena_version}")
+
+	// Test deps
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.7'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation "org.testcontainers:junit-jupiter:1.15.0-rc2"
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.mockito:mockito-core:3.6.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:3.6.0'
+
+}
+
+[compileKotlin, compileTestKotlin]*.with {
+	kotlinOptions {
+		jvmTarget = "11"
+		javaParameters = true
+		freeCompilerArgs = ["-Xjvm-default=all"]
+	}
+}
+
+bootBuildImage {
+	imageName = "wallscope-sg"
+}
+
+node {
+	download = false
+	nodeModulesDir = file("${project.projectDir}/src/main/webapp")
+}
+
+task buildFrontend(type: NpxTask) {
+	dependsOn(npmInstall)
+	command = 'npm'
+	args = ['run', 'build']
+}
+
+processResources {
+	from('src/main/webapp/dist') {
+		into('static/.')
+	}
+}
+
+test {
+	useJUnitPlatform()
+}

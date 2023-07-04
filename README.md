@@ -1,57 +1,20 @@
-# essentials
+# sg
 
-## Project setup
+## A guide to start the SG project.
 
-```
-# yarn
-yarn
+1. Starting triplestore (inside sg-pilot/deployment):
 
-# npm
-npm install
+`docker-compose up`
 
-# pnpm
-pnpm install
-```
+2. Starting the backend (inside sg-pilot/app):
 
-### Compiles and hot-reloads for development
+`./gradlew bootRun`
 
-```
-# yarn
-yarn dev
+3. Building the frontend (inside sg-pilot/app/src/main/webapp):
 
-# npm
-npm run dev
+`yarn install`
 
-# pnpm
-pnpm dev
-```
+4. Starting the frontend (inside sg-pilot/app/src/main/webapp):
 
-### Compiles and minifies for production
+`yarn run dev`
 
-```
-# yarn
-yarn build
-
-# npm
-npm run build
-
-# pnpm
-pnpm build
-```
-
-### Lints and fixes files
-
-```
-# yarn
-yarn lint
-
-# npm
-npm run lint
-
-# pnpm
-pnpm lint
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://vitejs.dev/config/).

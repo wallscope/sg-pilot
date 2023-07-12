@@ -94,6 +94,40 @@ object RDF {
         val councilArea = uri + "councilArea"
         val headquarters = uri + "headquarter"
         val dateLastUpdated = uri + "dateLastUpdated"
+        val completionDate = uri + "completionDate"
+        val portfolio = uri + "portfolio"
+        val projectCoordinator = uri + "projectCoordinator"
+    }
+
+    object ORG {
+        val uri = URI("http://www.w3.org/ns/org#")
+        val Organization = uri + "Organization"
+        val OrganizationalUnit = uri + "OrganizationalUnit"
+        val hasSubOrganization = uri + "hasSubOrganization"
+        val hasMember = uri + "hasMember"
+        val hasUnit = uri + "hasUnit"
+        val headOf = uri + "headOf"
+    }
+
+    object DCTERMS {
+        val uri = URI("http://purl.org/dc/terms/")
+        val issued = uri + "issued"
+        val title = uri + "title"
+    }
+
+    object DCAT {
+        val uri = URI("http://www.w3.org/ns/dcat#")
+        val Resource = uri + "Resource"
+        val title = uri + "title"
+    }
+    object FRAPO {
+        val uri = URI("http://purl.org/cerif/frapo#")
+        val BudgetedAmount = uri + "BudgetedAmount"
+        val Expenditure = uri + "Expenditure"
+        val ExpenditureToDate = uri + "ExpenditureToDate"
+        val Funding = uri + "Funding"
+        val FundingProgramme = uri + "FundingProgramme"
+        val ProjectBudget = uri + "ProjectBudget"
     }
 
     object SKOS {
@@ -104,6 +138,7 @@ object RDF {
         val broader = uri + "broader"
         val narrower = uri + "narrower"
         val related = uri + "related"
+        val subject = uri + "subject"
         val memberList = uri + "memberList"
     }
 
@@ -120,33 +155,22 @@ object RDF {
         val id = WALLS.resource + "SG/"
         val graph = WALLS.graph + "/SG"
 
+        val keywords = SG.uri + "keywords"
+
         object Organisation {
             val type = SG.uri + "Organisation"
             val uri = SG.uri + "Organisation."
             val id = SG.id + "Organisation/"
 
             val orgType = uri + "orgType"
-            val hasWorkgroup = uri + "hasWorkgroup"
         }
+        object PFGDoc {
+            val type = SG.uri + "PFGDoc"
+            val uri = SG.uri + "PFGDoc."
+            val id = SG.id + "PFGDoc/"
 
-        object Workgroup {
-            val type = SG.uri + "Workgroup"
-            val uri = SG.uri + "Workgroup."
-            val id = SG.id + "Workgroup/"
-
-            val moderators = uri + "moderators"
-            val participants = uri + "participants"
-        }
-
-        object Answer {
-            val type = SG.uri + "Answer"
-            val uri = SG.uri + "Answer."
-            val id = SG.id + "Answer/"
-
-            val answerText = uri + "answerText"
-            val lastUpdatedBy = uri + "lastUpdatedBy"
-            val dataset = uri + "dataset"
-            val workgroup = uri + "workgroup"
+            val fbpClearance = uri + "fbpClearance"
+            val scsClearance = uri + "scsClearance"
         }
     }
 }

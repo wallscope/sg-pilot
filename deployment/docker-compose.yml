@@ -17,10 +17,10 @@ services:
 #      - _JAVA_OPTIONS=-Xmx512m -Xms256m
 #      - TRIPLESTORE=http://sg-triplestore:3030/ds
 #      - KC_ENABLED=true
-#      - KEYCLOAK_SERVER_URL=http://keycloak:8080
+#      - KEYCLOAK_SERVER_URL=http://keycloak:3003
 #      - KEYCLOAK_CLIENT_SECRET=
 #    ports:
-#      - "8000:8000"
+#      - "3000:3000"
 #    networks:
 #      - sg-net
 
@@ -28,7 +28,7 @@ services:
     image: secoresearch/fuseki:4.6.1
     user: "9008:0"
     ports:
-      - "8030:3030"
+      - "2030:3030"
     environment:
       - ADMIN_PASSWORD=admin
     volumes:

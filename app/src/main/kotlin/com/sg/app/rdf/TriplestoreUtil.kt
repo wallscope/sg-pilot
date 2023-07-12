@@ -10,8 +10,7 @@ import org.apache.jena.riot.RDFFormat
 import org.apache.jena.update.UpdateRequest
 import org.slf4j.LoggerFactory
 
-private val endpoint = System.getenv("TRIPLESTORE") ?: "http://localhost:8030/ds"
-//private val endpoint = System.getenv("TRIPLESTORE") ?: "http://dev.verinote.net:8030/ds"
+private val endpoint = System.getenv("TRIPLESTORE") ?: "http://localhost:2030/ds"
 private val defaultGraph = System.getenv("GRAPH") ?: RDF.SG.graph.value
 private val conn: RDFConnectionRemoteBuilder = RDFConnectionRemote.create()
     .destination(endpoint)

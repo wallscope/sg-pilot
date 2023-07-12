@@ -38,3 +38,4 @@ out/
 
 ### Runtime directories ###
 files/
+src/main/webapp/public/*.json

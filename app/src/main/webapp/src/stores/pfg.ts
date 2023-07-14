@@ -69,6 +69,13 @@ export const usePfgStore = defineStore('pfg', {
       );
       return response.data;
     },
+    async fetchBpDocDetailedGraph() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific pfgdoc
+        `/api/bpdoc/graph-detailed/1`
+      );
+      return response.data;
+    },
     getDateFormatted(date: Date): string {
       const day = date.getDate();
       const month = date.getMonth() + 1; // Months are zero-based

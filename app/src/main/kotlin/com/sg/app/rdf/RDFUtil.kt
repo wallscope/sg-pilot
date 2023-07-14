@@ -172,6 +172,12 @@ object RDF {
             val fbpClearance = uri + "fbpClearance"
             val scsClearance = uri + "scsClearance"
         }
+        object BPDoc {
+            val type = SG.uri + "BPDoc"
+            val uri = SG.uri + "BPDoc."
+            val id = SG.id + "BPDoc/"
+
+        }
     }
 }
 

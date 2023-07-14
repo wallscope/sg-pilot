@@ -17,7 +17,10 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
 onMounted(async () => {
   try {
-    const jsonData = await pfgStore.fetchPfgDocDetailedGraph()
+    // PFG Doc test
+    // const jsonData = await pfgStore.fetchPfgDocDetailedGraph()
+    // BP Doc test
+    const jsonData = await pfgStore.fetchBpDocDetailedGraph()
 
     // Extract the content of the children array to hide the uri from the graph
     // const graphData = {

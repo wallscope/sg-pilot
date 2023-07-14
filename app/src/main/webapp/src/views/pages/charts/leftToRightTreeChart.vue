@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { usePfgStore } from '@/stores/pfg';
 import { ref, onMounted, Ref } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import { use } from "echarts/core";
@@ -9,62 +10,84 @@ import type { ECBasicOption } from "echarts/types/dist/shared";
 
 use([GridComponent, LegendComponent, TitleComponent, TooltipComponent, TreeChart, CanvasRenderer]);
 
+const pfgStore = usePfgStore()
 let hide = false;
-var ROOT_PATH = "";
-const data = ref(null);
-
-const chartOptions: Ref<ECBasicOption | null> = ref(null);
+const data: Ref<null | { name: any; children: any }> = ref(null);
+const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
 onMounted(async () => {
   try {
-    const response = await fetch(ROOT_PATH + "/detailed_example.json");
-    const jsonData = await response.json();
+    const jsonData = await pfgStore.fetchPfgDocDetailedGraph()
 
-    jsonData.children.forEach(function (
-      datum: { collapsed: boolean },
-      index: number
-    ) {
-      index % 2 === 0 && (datum.collapsed = true);
-    });
+    // Extract the content of the children array to hide the uri from the graph
+    // const graphData = {
+    //   name: jsonData.children[0].name,
+    //   children: jsonData.children[0].children
+    // };
 
-    data.value = jsonData;
+    const graphTitle = jsonData.children[0].name
+
+    const graphData = {
+      name: "",
+      children: jsonData.children[0].children
+    };
+
+    console.log("pfgdoc data shown: ", graphData)
+
+    graphData.children.forEach(function (
+        datum: { collapsed: boolean },
+        index: number
+      ) {
+        index % 2 === 0 && (datum.collapsed = true);
+      });
+
+    data.value = graphData;
 
     chartOptions.value = {
-      tooltip: {
-        trigger: "item",
-        triggerOn: "mousemove",
+  tooltip: {
+    trigger: "item",
+    triggerOn: "mousemove",
+  },
+  title: {
+    text: graphTitle,
+    left: "center",
+    top: "1%",  // Adjust the top position
+    textStyle: {
+      fontSize: 18,
+      fontWeight: "bold",
+    },
+  },
+  series: [
+    {
+      type: "tree",
+      data: [data.value],
+      top: "10%",  // Adjust the top position to provide space for the title
+      left: "7%",
+      bottom: "1%",
+      right: "20%",
+      symbolSize: 7,
+      label: {
+        position: "left",
+        verticalAlign: "middle",
+        align: "right",
+        fontSize: 16,
       },
-      series: [
-        {
-          type: "tree",
-          data: [data.value],
-          top: "1%",
-          left: "7%",
-          bottom: "1%",
-          right: "20%",
-          symbolSize: 7,
-          label: {
-            position: "left",
-            verticalAlign: "middle",
-            align: "right",
-            fontSize: 16,
-          },
-          leaves: {
-            label: {
-              position: "right",
-              verticalAlign: "middle",
-              align: "left",
-            },
-          },
-          emphasis: {
-            focus: "descendant",
-          },
-          expandAndCollapse: true,
-          animationDuration: 550,
-          animationDurationUpdate: 750,
+      leaves: {
+        label: {
+          position: "right",
+          verticalAlign: "middle",
+          align: "left",
         },
-      ],
-    };
+      },
+      emphasis: {
+        focus: "descendant",
+      },
+      expandAndCollapse: true,
+      animationDuration: 550,
+      animationDurationUpdate: 750,
+    },
+  ],
+};
   } catch (error) {
     console.error(error);
   }

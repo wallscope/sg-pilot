@@ -19,9 +19,9 @@ const router = createRouter({
           component: () => import(/* webpackChunkName: "home" */ '@/pages/home.vue'),
         },
         {
-          path: "leftToRightTreeChart",
-          name: "leftToRightTreeChart",
-          component: () => import('@/views/pages/charts/leftToRightTreeChart.vue'),
+          path: "detailedChart",
+          name: "detailedChart",
+          component: () => import('@/pages/detailedchart.vue'),
         },
         {
           path: "graphChartXY",

@@ -65,5 +65,18 @@ export default defineConfig({
   },
   server: {
     port: 3001,
-  }
+    proxy: {
+      "/api": {
+        target: process.env.API || "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+      },
+      // "/keycloak": {
+      //   target: process.env.KEYCLOAK || "http://localhost:3003",
+      //   changeOrigin: true,
+      //   secure: false,
+      //   rewrite: (path: string) => path.replace(/^\/keycloak/, ""),
+      // },
+    },
+  },
 })

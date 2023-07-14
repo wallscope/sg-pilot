@@ -1,6 +1,9 @@
 package com.sg.app.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.sg.app.rdf.*
 import org.apache.jena.datatypes.xsd.XSDDatatype
 import org.apache.jena.rdf.model.Model
@@ -8,6 +11,9 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+
+// Define a data class for the JSON
+data class Node(val name: String, val children: List<Node>? = null)
 
 data class PFGDoc(
     @JsonProperty("uri") override var uri: URI,
@@ -74,6 +80,50 @@ data class PFGDoc(
             val keywords = model.getAllObjectsOrFail(uri, RDF.SG.keywords).map { it.asLiteral().string }
 
             return PFGDoc(uri, filename, ministerialPortfolio, directorate, dG, unitBranch, leadOfficial, scsClearance, fbpClearance, primaryOutcomes, secondaryOutcomes, portfolioCoordinator, policyTitle, completionDate, keywords)
+        }
+
+        // Create an instance of the ObjectMapper with the Kotlin module
+        val mapper: ObjectMapper = ObjectMapper().registerModule(
+            KotlinModule.Builder()
+                .withReflectionCacheSize(512)
+                .configure(KotlinFeature.NullToEmptyCollection, false)
+                .configure(KotlinFeature.NullToEmptyMap, false)
+                .configure(KotlinFeature.NullIsSameAsDefault, false)
+                .configure(KotlinFeature.SingletonSupport, false)
+                .configure(KotlinFeature.StrictNullChecks, false)
+                .build()
+        )
+
+        // Define a function to convert a list of strings to a list of nodes
+        private fun listToNodes(list: List<String>): List<Node> {
+            return list.map { Node(it) }
+        }
+
+        // Define a function to convert the object to the JSON
+        fun toDetailedGraphJSON(pfgDoc: PFGDoc): Node {
+            return Node(
+                name = pfgDoc.uri.value,
+                children = listOf(
+                    Node(
+                        name = pfgDoc.filename,
+                        children = listOf(
+                            Node(name = "ministerialPortfolio", children = listToNodes(pfgDoc.ministerialPortfolio)),
+                            Node(name = "directorate", children = listToNodes(pfgDoc.directorate)),
+                            Node(name = "dG", children = listToNodes(pfgDoc.dG)),
+                            Node(name = "unitBranch", children = listToNodes(pfgDoc.unitBranch)),
+                            Node(name = "leadOfficial", children = listToNodes(pfgDoc.leadOfficial)),
+                            Node(name = "scsClearance", children = listToNodes(pfgDoc.scsClearance)),
+                            Node(name = "fbpClearance", children = listToNodes(pfgDoc.fbpClearance)),
+                            Node(name = "primaryOutcomes", children = listToNodes(pfgDoc.primaryOutcomes)),
+                            Node(name = "secondaryOutcomes", children = listToNodes(pfgDoc.secondaryOutcomes)),
+                            Node(name = "portfolioCoordinator", children = listToNodes(pfgDoc.portfolioCoordinator)),
+                            Node(name = "policyTitle", children = listToNodes(pfgDoc.policyTitle)),
+                            Node(name = "completionDate", children = listOf(Node(pfgDoc.completionDate!!.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))),
+                            Node(name = "keywords", children = listToNodes(pfgDoc.keywords))
+                        )
+                    )
+                )
+            )
         }
     }
 }

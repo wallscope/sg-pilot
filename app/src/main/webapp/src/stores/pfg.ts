@@ -1,6 +1,5 @@
-import axios from 'axios';
 import { defineStore } from 'pinia';
-import { LabeledURI } from './model';
+import api from "@/utils/api";
 
 // Programme For Government Store
 export interface PfgDoc {
@@ -10,40 +9,66 @@ export interface PfgDoc {
 
 // Data
 export interface PfgData {
+  filename: string;
   ministerialPortfolio: string[];
-  dg: string[];
   directorate: string[];
+  dG: string[];
   unitBranch: string[];
   leadOfficial: string[];
   scsClearance: string[];
-  portfolioFbpClearance: string[];
+  fbpClearance: string[];
+  primaryOutcomes: string[];
+  secondaryOutcomes: string[];
   portfolioCoordinator: string[];
-  dateOfCompletion: string;
-  connections: string[];
+  policyTitle: string[];
+  completionDate: string;
+  keywords: string[];
 }
 
 // Template objects
 export const DEF_PFG_DATA: PfgData = {
+  filename: '',
   ministerialPortfolio: [''],
-  dg: [''],
   directorate: [''],
+  dG: [''],
   unitBranch: [''],
   leadOfficial: [''],
   scsClearance: [''],
-  portfolioFbpClearance: [''],
+  fbpClearance: [''],
+  primaryOutcomes: [''],
+  secondaryOutcomes: [''],
   portfolioCoordinator: [''],
-  dateOfCompletion: getCurrentDateFormatted(),
-  connections: [''],
+  policyTitle: [''],
+  completionDate: getCurrentDateFormatted(),
+  keywords: [''],
 }
 
 export const usePfgStore = defineStore('pfg', {
   state: () => ({
-    pfg: {
+    pfgDocDetailedGraphData: {} as any,
+    pfgDoc: {
       id: '', 
       data: DEF_PFG_DATA,
     } as PfgDoc,
+    pfgDocs: [{
+      id: '', 
+      data: DEF_PFG_DATA,
+    }] as PfgDoc[],
   }),
   actions:{
+    async fetchPfgDocs() {
+      const response = await api.get<PfgDoc[]>(
+        `/api/pfgdoc/list`
+      );
+      this.pfgDocs = response.data;
+    },
+    async fetchPfgDocDetailedGraph() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific pfgdoc
+        `/api/pfgdoc/graph-detailed/1`
+      );
+      return response.data;
+    },
     getDateFormatted(date: Date): string {
       const day = date.getDate();
       const month = date.getMonth() + 1; // Months are zero-based

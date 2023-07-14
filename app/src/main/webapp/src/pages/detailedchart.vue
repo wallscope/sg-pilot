@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { usePfgStore } from '@/stores/pfg';
+// import { usePfgStore } from '@/stores/pfg';
 import detailedChart from '@/views/pages/charts/leftToRightTreeChart.vue';
-const pfgStore = usePfgStore()
+// const pfgStore = usePfgStore()
 
-onMounted(async () => {
-  // await pfgStore.getDateFormatted
-})
+// console.log("trying to get the doc")
+
+// onMounted(async () => {
+//   // console.log("trying to get the doc")
+//   await pfgStore.fetchPfgDocDetailedGraph()
+// })
 
 </script>
 

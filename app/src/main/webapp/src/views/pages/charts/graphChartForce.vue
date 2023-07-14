@@ -19,7 +19,7 @@ interface GraphNode {
 let hide = false;
 var ROOT_PATH = "";
 
-const chartOptions: Ref<ECBasicOption | null> = ref(null);
+const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
 onMounted(async () => {
   try {

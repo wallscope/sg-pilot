@@ -26,7 +26,7 @@ const vuetifyTheme = useTheme()
     <VerticalNavLink
       :item="{
         title: 'Detailed Chart',
-        to: 'leftToRightTreeChart',
+        to: 'detailedChart',
         icon: { icon: 'mdi-chart-bar' }
       }"
     />

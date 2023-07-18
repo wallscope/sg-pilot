@@ -1,88 +1,66 @@
-import axios from 'axios';
 import { defineStore } from 'pinia';
-import { LabeledURI } from './model';
+import api from "@/utils/api";
 
 // Business Planning Store
 export interface BpDoc {
-  id: string;
-  pages: BpData;
-}
-
-// Data
-export interface BpData {
-  frontPage: FrontPage;
-  // divisional: Divisional;
-  // directorate: Directorate;
-  // peoplePlan: PeoplePlan;
-  // itsosImprovement: ItsosImprovement;
-  connections: string[];
-}
-
-export interface FrontPage {
+  uri: string;
+  filename: string;
   dg: string[];
   directorate: string[];
   director: string[];
   keyContact: string[];
   contactEmail: string[];
-  links: Link[];
-  divisionsPortfolios: DivisionPortfolio[];
-  directorateBudget: DirectorateBudget;
-}
-
-export interface Link {
-  name: string;
-  url: string;
-}
-
-export interface DivisionPortfolio {
-  name: string;
-  lead: string;
-}
-
-export interface DirectorateBudget {
+  divisions: string[];
+  divisionLeads: string[];
   resProgramme: string;
   resTotalOperatingCosts: string;
   resCorporateRunningCosts: string;
   resTotal: string;
-  capital: string;
-  financialTransactions: string;
+  resCapital: string;
+  resFinancialTransactions: string;
+  keywords: string[];
 }
 
-export const DEF_BP_DATA: BpData = {
-  frontPage: {
-    dg: [''],
-    directorate: [''],
-    director: [''],
-    keyContact: [''],
-    contactEmail: [''],
-    links: [{
-      name: '',
-      url: '',
-    }],
-    divisionsPortfolios: [{
-      name: '',
-      lead: '',
-    }],
-    directorateBudget: {
-      resProgramme: '',
-      resTotalOperatingCosts: '',
-      resCorporateRunningCosts: '',
-      resTotal: '',
-      capital: '',
-      financialTransactions: '',
-    },
-  },
-  connections: [''],
+// Initialized BPDoc
+export const DEF_BP_DATA: BpDoc = {
+  uri: '',
+  filename: '',
+  dg: [''],
+  directorate: [''],
+  director: [''],
+  keyContact: [''],
+  contactEmail: [''],
+  divisions: [''],
+  divisionLeads: [''],
+  resProgramme: '',
+  resTotalOperatingCosts: '',
+  resCorporateRunningCosts: '',
+  resTotal: '',
+  resCapital: '',
+  resFinancialTransactions: '',
+  keywords: [''],
 };
 
 export const useBpStore = defineStore('bp', {
   state: () => ({
-    bp: {
-      id: '',
-      pages: DEF_BP_DATA,
-    } as BpDoc,
+    pfgDocDetailedGraphData: {} as any,
+    bpDoc: DEF_BP_DATA,
+    bpDocs: [DEF_BP_DATA] as BpDoc[],
   }),
   actions:{
+    async fetchBPDocs() {
+      const response = await api.get<BpDoc[]>(
+        `/api/bpdoc/list`
+      );
+      this.bpDocs = response.data;
+    },
+    async fetchBpDocDetailedGraph() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific pfgdoc
+        `/api/bpdoc/graph-detailed/1`
+      );
+      return response.data;
+    },
     getDateFormatted(date: Date): string {
       const day = date.getDate();
       const month = date.getMonth() + 1; // Months are zero-based

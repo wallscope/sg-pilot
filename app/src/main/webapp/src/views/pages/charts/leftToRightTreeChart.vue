@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { usePfgStore } from '@/stores/pfg';
+import { useBpStore } from '@/stores/bp';
 import { ref, onMounted, Ref } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import { use } from "echarts/core";
@@ -11,6 +12,7 @@ import type { ECBasicOption } from "echarts/types/dist/shared";
 use([GridComponent, LegendComponent, TitleComponent, TooltipComponent, TreeChart, CanvasRenderer]);
 
 const pfgStore = usePfgStore()
+const bpStore = useBpStore()
 let hide = false;
 const data: Ref<null | { name: any; children: any }> = ref(null);
 const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
@@ -20,7 +22,7 @@ onMounted(async () => {
     // PFG Doc test
     // const jsonData = await pfgStore.fetchPfgDocDetailedGraph()
     // BP Doc test
-    const jsonData = await pfgStore.fetchBpDocDetailedGraph()
+    const jsonData = await bpStore.fetchBpDocDetailedGraph()
 
     // Extract the content of the children array to hide the uri from the graph
     // const graphData = {

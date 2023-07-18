@@ -79,25 +79,16 @@ data class BPDoc(
             return BPDoc(uri, filename, dG, directorate, director, keyContact, contactEmail, divisions, divisionLeads, resProgramme, resTotalOperatingCosts, resCorporateRunningCosts, resTotal, resCapital, resFinancialTransactions, keywords)
         }
 
-        // Create an instance of the ObjectMapper with the Kotlin module
-        val mapper: ObjectMapper = ObjectMapper().registerModule(
-            KotlinModule.Builder()
-                .withReflectionCacheSize(512)
-                .configure(KotlinFeature.NullToEmptyCollection, false)
-                .configure(KotlinFeature.NullToEmptyMap, false)
-                .configure(KotlinFeature.NullIsSameAsDefault, false)
-                .configure(KotlinFeature.SingletonSupport, false)
-                .configure(KotlinFeature.StrictNullChecks, false)
-                .build()
-        )
-
-        // Define a function to convert a list of strings to a list of nodes
-        private fun listToNodes(list: List<String>): List<Node> {
-            return list.map { Node(it) }
-        }
-
-        // Define a function to convert the object to the JSON
+        // To detailed graph JSON
         fun toDetailedGraphJSON(bpDoc: BPDoc): Node {
+            val divisionLeads = bpDoc.divisionLeads.sorted().groupBy { it.substringBefore('|') }
+            val divisionsWithLeads = bpDoc.divisions.sorted().map { division ->
+                Node(
+                    name = division.substringAfter('|'),
+                    children = divisionLeads[division.substringBefore('|')]?.map { it.substringAfter('|') }?.let { listToNodes(it) }
+                )
+            }
+
             return Node(
                 name = bpDoc.uri.value,
                 children = listOf(
@@ -109,8 +100,7 @@ data class BPDoc(
                             Node(name = "director", children = listToNodes(bpDoc.director)),
                             Node(name = "keyContact", children = listToNodes(bpDoc.keyContact)),
                             Node(name = "contactEmail", children = listToNodes(bpDoc.contactEmail)),
-                            Node(name = "divisions", children = listToNodes(bpDoc.divisions)),
-                            Node(name = "divisionLeads", children = listToNodes(bpDoc.divisionLeads)),
+                            Node(name = "divisions", children = divisionsWithLeads),
                             Node(name = "resProgramme", children = listToNodes(listOf(bpDoc.resProgramme))),
                             Node(name = "resTotalOperatingCosts", children = listToNodes(listOf(bpDoc.resTotalOperatingCosts))),
                             Node(name = "resCorporateRunningCosts", children = listToNodes(listOf(bpDoc.resCorporateRunningCosts))),

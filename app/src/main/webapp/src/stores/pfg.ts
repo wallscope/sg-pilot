@@ -3,12 +3,7 @@ import api from "@/utils/api";
 
 // Programme For Government Store
 export interface PfgDoc {
-  id: string;
-  data: PfgData
-}
-
-// Data
-export interface PfgData {
+  uri: string;
   filename: string;
   ministerialPortfolio: string[];
   directorate: string[];
@@ -26,7 +21,8 @@ export interface PfgData {
 }
 
 // Template objects
-export const DEF_PFG_DATA: PfgData = {
+export const DEF_PFG_DATA: PfgDoc = {
+  uri: '',
   filename: '',
   ministerialPortfolio: [''],
   directorate: [''],
@@ -46,14 +42,8 @@ export const DEF_PFG_DATA: PfgData = {
 export const usePfgStore = defineStore('pfg', {
   state: () => ({
     pfgDocDetailedGraphData: {} as any,
-    pfgDoc: {
-      id: '', 
-      data: DEF_PFG_DATA,
-    } as PfgDoc,
-    pfgDocs: [{
-      id: '', 
-      data: DEF_PFG_DATA,
-    }] as PfgDoc[],
+    pfgDoc: DEF_PFG_DATA,
+    pfgDocs: [DEF_PFG_DATA] as PfgDoc[],
   }),
   actions:{
     async fetchPfgDocs() {
@@ -63,16 +53,9 @@ export const usePfgStore = defineStore('pfg', {
       this.pfgDocs = response.data;
     },
     async fetchPfgDocDetailedGraph() {
-      const response = await api.get<any>(
+      const response = await api.get<PfgDoc>(
         // Temporarily hardcoded to fetch a specific pfgdoc
         `/api/pfgdoc/graph-detailed/1`
-      );
-      return response.data;
-    },
-    async fetchBpDocDetailedGraph() {
-      const response = await api.get<any>(
-        // Temporarily hardcoded to fetch a specific pfgdoc
-        `/api/bpdoc/graph-detailed/1`
       );
       return response.data;
     },

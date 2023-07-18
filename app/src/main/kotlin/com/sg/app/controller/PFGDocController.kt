@@ -4,8 +4,8 @@ import com.sg.app.dao.PFGDocDAO
 import com.sg.app.rdf.RDF
 import com.sg.app.rdf.TriplestoreUtil
 import com.sg.app.model.PFGDoc
-import com.sg.app.model.PFGDoc.Companion.mapper
 import com.sg.app.model.PFGDoc.Companion.toDetailedGraphJSON
+import com.sg.app.model.mapper
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

@@ -22,7 +22,9 @@ onMounted(async () => {
     // PFG Doc test
     // const jsonData = await pfgStore.fetchPfgDocDetailedGraph()
     // BP Doc test
-    const jsonData = await bpStore.fetchBpDocDetailedGraph()
+    // const jsonData = await bpStore.fetchBpDocDetailedGraph()
+    // const jsonData = await pfgStore.fetchPfgDocDetailedGraph()
+    const jsonData = await pfgStore.fetchPfgAuxDetailedGraph()
 
     // Extract the content of the children array to hide the uri from the graph
     // const graphData = {

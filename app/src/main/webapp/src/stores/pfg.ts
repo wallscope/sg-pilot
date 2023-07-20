@@ -53,9 +53,16 @@ export const usePfgStore = defineStore('pfg', {
       this.pfgDocs = response.data;
     },
     async fetchPfgDocDetailedGraph() {
-      const response = await api.get<PfgDoc>(
+      const response = await api.get<any>(
         // Temporarily hardcoded to fetch a specific pfgdoc
         `/api/pfgdoc/graph-detailed/1`
+      );
+      return response.data;
+    },
+    async fetchPfgAuxDetailedGraph() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific pfgdoc
+        `/api/pfgaux/graph-detailed/2019-2020_CLG.001`
       );
       return response.data;
     },

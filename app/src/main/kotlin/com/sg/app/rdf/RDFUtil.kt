@@ -113,12 +113,23 @@ object RDF {
         val uri = URI("http://purl.org/dc/terms/")
         val issued = uri + "issued"
         val title = uri + "title"
+        val Period = uri + "Period"
+        val Standard = uri + "Standard"
     }
 
     object DCAT {
         val uri = URI("http://www.w3.org/ns/dcat#")
         val Resource = uri + "Resource"
         val title = uri + "title"
+
+        val accessURL = uri + "accessURL"
+        val identifier = uri + "identifier"
+        val theme = uri + "theme"
+        val keyword = uri + "keyword"
+
+        object Catalog {
+            val type = uri + "Catalog"
+        }
     }
     object FRAPO {
         val uri = URI("http://purl.org/cerif/frapo#")
@@ -172,6 +183,12 @@ object RDF {
             val fbpClearance = uri + "fbpClearance"
             val scsClearance = uri + "scsClearance"
         }
+        object PFGAux {
+            val type = SG.uri + "PFGAux"
+            val uri = SG.uri + "PFGAux."
+            val id = SG.id + "PFGAux/"
+        }
+
         object BPDoc {
             val type = SG.uri + "BPDoc"
             val uri = SG.uri + "BPDoc."

@@ -131,6 +131,7 @@ object RDF {
             val type = uri + "Catalog"
         }
     }
+
     object FRAPO {
         val uri = URI("http://purl.org/cerif/frapo#")
         val BudgetedAmount = uri + "BudgetedAmount"
@@ -139,6 +140,13 @@ object RDF {
         val Funding = uri + "Funding"
         val FundingProgramme = uri + "FundingProgramme"
         val ProjectBudget = uri + "ProjectBudget"
+    }
+
+    object ITSMO {
+        val uri = URI("http://ontology.it/itsmo/v1#")
+        val Priority = uri + "Priority"
+        val Project = uri + "Project"
+        val hasProjectOwner = uri + "hasProjectOwner"
     }
 
     object SKOS {
@@ -193,6 +201,12 @@ object RDF {
             val type = SG.uri + "BPDoc"
             val uri = SG.uri + "BPDoc."
             val id = SG.id + "BPDoc/"
+
+        }
+        object BPCom {
+            val type = SG.uri + "BPCom"
+            val uri = SG.uri + "BPCom."
+            val id = SG.id + "BPCom/"
 
         }
     }

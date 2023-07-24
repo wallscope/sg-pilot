@@ -5,11 +5,13 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 // Define a data class for the JSON
-data class Node(val name: String, val children: List<Node>? = null)
+data class Node(val name: String? = "", val children: List<Node>? = null)
 
 fun stringToNode(str: String): List<Node> = listToNodes(listOf(str))
-fun listToNodes(list: List<String>): List<Node> {
+fun listToNodes(list: List<String?>): List<Node> {
     return list.map { Node(it) }
+}fun bpComListToNodes(list: List<BPCom>): List<Node> {
+    return list.map { Node(it.commitment) }
 }
 
 val mapper: ObjectMapper = ObjectMapper().registerModule(

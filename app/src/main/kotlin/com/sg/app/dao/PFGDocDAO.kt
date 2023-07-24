@@ -9,7 +9,7 @@ object PFGDocDAO {
     private val log = LoggerFactory.getLogger(javaClass)
     private val PFGDOC_SUB_QUERY = """
         ?pfgdoc a <${Doc.type}> ;
-          <${RDF.DCAT.Resource}> ?filename ;
+          <${RDF.DCAT.resource}> ?filename ;
         .
 
         OPTIONAL { ?pfgdoc <${RDF.DBPEDIA.portfolio}> ?pfgdocMinisterialPortfolio . }#END OPTIONAL
@@ -22,11 +22,11 @@ object PFGDocDAO {
         OPTIONAL { ?pfgdoc <${RDF.SKOS.subject}> ?pfgdocPrimaryOutcomes . }#END OPTIONAL
         OPTIONAL { ?pfgdoc <${RDF.SKOS.related}> ?pfgdocSecondaryOutcomes . }#END OPTIONAL
         OPTIONAL { ?pfgdoc <${RDF.DBPEDIA.projectCoordinator}> ?pfgdocPortfolioCoordinator . }#END OPTIONAL
-        OPTIONAL { ?pfgdoc <${RDF.DCTERMS.title}> ?pfgdocPolicyTitle . }#END OPTIONAL
+        OPTIONAL { ?pfgdoc <${RDF.DCAT.title}> ?pfgdocPolicyTitle . }#END OPTIONAL
         OPTIONAL { ?pfgdoc <${RDF.DBPEDIA.completionDate}> ?pfgdocCompletionDate . }#END OPTIONAL
                 
         # Expand PFGDoc related keywords
-        OPTIONAL { ?pfgdoc <${RDF.SG.keywords}> ?pfgdocKeywords . }#END OPTIONAL
+        OPTIONAL { ?pfgdoc <${RDF.DCAT.keyword}> ?pfgdocKeywords . }#END OPTIONAL
     """.trimIndent()
 
     private val PFGDOC_QUERY = PREFIXES + """

@@ -48,6 +48,7 @@ export const useBpStore = defineStore('bp', {
     bpDocs: [DEF_BP_DATA] as BpDoc[],
   }),
   actions:{
+    // BP Documents
     async fetchBPDocs() {
       const response = await api.get<BpDoc[]>(
         `/api/bpdoc/list`
@@ -56,8 +57,16 @@ export const useBpStore = defineStore('bp', {
     },
     async fetchBpDocDetailedGraph() {
       const response = await api.get<any>(
-        // Temporarily hardcoded to fetch a specific pfgdoc
+        // Temporarily hardcoded to fetch a specific bpdoc
         `/api/bpdoc/graph-detailed/1`
+      );
+      return response.data;
+    },
+    // BP Commitments
+    async fetchBpComDetailedGraph() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific bpdoc
+        `/api/bpcom/graph-detailed/75`
       );
       return response.data;
     },

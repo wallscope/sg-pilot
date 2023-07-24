@@ -1,9 +1,6 @@
 package com.sg.app.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.sg.app.rdf.*
 import org.apache.jena.datatypes.xsd.XSDDatatype
 import org.apache.jena.rdf.model.Model
@@ -26,7 +23,8 @@ data class PFGDoc(
     var secondaryOutcomes: List<String>,
     var portfolioCoordinator: List<String>,
     var policyTitle: List<String>,
-    var completionDate: LocalDateTime?,
+//    var completionDate: LocalDateTime?,
+    var completionDate: String,
     var keywords: List<String>,
 ) : RDFWritable {
     fun withURI(uri: URI): PFGDoc = PFGDoc(uri, this.filename, this.ministerialPortfolio, this.directorate, this.dG, this.unitBranch, this.leadOfficial, this.scsClearance, this.fbpClearance, this.primaryOutcomes, this.secondaryOutcomes, this.portfolioCoordinator, this.policyTitle, this.completionDate,/* this.npfList,*/ this.keywords)
@@ -34,7 +32,8 @@ data class PFGDoc(
     override fun toRDF() = jenaModel {
         add(uri.res, RDF.type.prop, RDF.SG.PFGDoc.type.res)
 
-        add(uri.res, RDF.DCAT.Resource.prop, filename.toRDFLiteral())
+        add(uri.res, RDF.DCAT.resource.prop, filename.toRDFLiteral())
+
         ministerialPortfolio.forEach { add(uri, RDF.DBPEDIA.portfolio, it.toRDFLiteral()) }
         directorate.forEach { add(uri, RDF.ORG.OrganizationalUnit, it.toRDFLiteral()) }
         dG.forEach { add(uri, RDF.ORG.Organization, it.toRDFLiteral()) }
@@ -45,10 +44,11 @@ data class PFGDoc(
         primaryOutcomes.forEach { add(uri, RDF.SKOS.subject, it.toRDFLiteral()) }
         secondaryOutcomes.forEach { add(uri, RDF.SKOS.related, it.toRDFLiteral()) }
         portfolioCoordinator.forEach { add(uri, RDF.DBPEDIA.projectCoordinator, it.toRDFLiteral()) }
-        policyTitle.forEach { add(uri, RDF.DCTERMS.title, it.toRDFLiteral()) }
-        add(uri.res, RDF.DBPEDIA.completionDate.prop, DateTimeFormatter.ISO_DATE_TIME.format(completionDate).toRDFLiteral(
-            XSDDatatype.XSDdateTime))
-        keywords.forEach { add(uri, RDF.SG.keywords, it.toRDFLiteral()) }
+        policyTitle.forEach { add(uri, RDF.DCAT.title, it.toRDFLiteral()) }
+//        add(uri.res, RDF.DBPEDIA.completionDate.prop, DateTimeFormatter.ISO_DATE_TIME.format(completionDate).toRDFLiteral(
+//            XSDDatatype.XSDdateTime))
+        add(uri, RDF.DBPEDIA.completionDate, completionDate.toRDFLiteral())
+        keywords.forEach { add(uri, RDF.DCAT.keyword, it.toRDFLiteral()) }
     }
 
     companion object : RDFDeserializer<PFGDoc> {
@@ -56,7 +56,7 @@ data class PFGDoc(
         override val RDFType = RDF.SG.PFGDoc.type
 
         override fun fromModel(uri: URI, model: Model): PFGDoc {
-            val filename = model.getOneObjectOrFail(uri.res, RDF.DCAT.Resource.prop).asLiteral().string
+            val filename = model.getOneObjectOrFail(uri.res, RDF.DCAT.resource.prop).asLiteral().string
             val ministerialPortfolio = model.getAllObjectsOrFail(uri, RDF.DBPEDIA.portfolio).map { it.asLiteral().string }
             val directorate = model.getAllObjectsOrFail(uri, RDF.ORG.OrganizationalUnit).map { it.asLiteral().string }
             val dG = model.getAllObjectsOrFail(uri, RDF.ORG.Organization).map { it.asLiteral().string }
@@ -67,14 +67,15 @@ data class PFGDoc(
             val primaryOutcomes = model.getAllObjectsOrFail(uri, RDF.SKOS.subject).map { it.asLiteral().string }
             val secondaryOutcomes = model.getAllObjectsOrFail(uri, RDF.SKOS.related).map { it.asLiteral().string }
             val portfolioCoordinator = model.getAllObjectsOrFail(uri, RDF.DBPEDIA.projectCoordinator).map { it.asLiteral().string }
-            val policyTitle = model.getAllObjectsOrFail(uri, RDF.DCTERMS.title).map { it.asLiteral().string }
-            val completionDate = try {
-                model.getOneObjectOrFail(uri, RDF.DBPEDIA.completionDate)
-                    .asLiteral().string.let { LocalDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
-            } catch (e: Exception) {
-                null
-            }
-            val keywords = model.getAllObjectsOrFail(uri, RDF.SG.keywords).map { it.asLiteral().string }
+            val policyTitle = model.getAllObjectsOrFail(uri, RDF.DCAT.title).map { it.asLiteral().string }
+//            val completionDate = try {
+//                model.getOneObjectOrFail(uri, RDF.DBPEDIA.completionDate)
+//                    .asLiteral().string.let { LocalDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
+//            } catch (e: Exception) {
+//                null
+//            }
+            val completionDate = model.getOneObjectOrFail(uri, RDF.DBPEDIA.completionDate).asLiteral().string
+            val keywords = model.getAllObjectsOrFail(uri, RDF.DCAT.keyword).map { it.asLiteral().string }
 
             return PFGDoc(uri, filename, ministerialPortfolio, directorate, dG, unitBranch, leadOfficial, scsClearance, fbpClearance, primaryOutcomes, secondaryOutcomes, portfolioCoordinator, policyTitle, completionDate, keywords)
         }
@@ -98,6 +99,7 @@ data class PFGDoc(
                             Node(name = "secondaryOutcomes", children = listToNodes(pfgDoc.secondaryOutcomes)),
                             Node(name = "portfolioCoordinator", children = listToNodes(pfgDoc.portfolioCoordinator)),
                             Node(name = "policyTitle", children = listToNodes(pfgDoc.policyTitle)),
+//                            Node(name = "completionDate", children = listOf(Node(pfgDoc.completionDate!!.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))),
                             Node(name = "completionDate", children = listOf(Node(pfgDoc.completionDate!!.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))),
                             Node(name = "keywords", children = listToNodes(pfgDoc.keywords))
                         )
@@ -124,7 +126,7 @@ data class PFGAux(
     fun withURI(uri: URI): PFGAux = PFGAux(uri, this.id, this.period, this.accessURL, this.ministerialPortfolio, this.directorate, this.dG, this.leadOfficial, this.primaryOutcomes, this.secondaryOutcomes, this.policyTitle, this.keywords)
 
     override fun toRDF() = jenaModel {
-        add(uri, RDF.type, RDF.DCAT.Catalog.type.res)
+        add(uri, RDF.type, RDF.SG.PFGAux.type.res)
 
         add(uri, RDF.DCAT.identifier, id.toRDFLiteral())
         add(uri, RDF.DCTERMS.Period, period.toRDFLiteral())
@@ -135,13 +137,13 @@ data class PFGAux(
         leadOfficial.forEach { add(uri, RDF.ORG.headOf, it.toRDFLiteral()) }
         primaryOutcomes.forEach { add(uri, RDF.SKOS.subject, it.toRDFLiteral()) }
         secondaryOutcomes.forEach { add(uri, RDF.SKOS.related, it.toRDFLiteral()) }
-        policyTitle.forEach { add(uri, RDF.DCTERMS.title, it.toRDFLiteral()) }
-        keywords.forEach { add(uri, RDF.SG.keywords, it.toRDFLiteral()) }
+        policyTitle.forEach { add(uri, RDF.DCAT.title, it.toRDFLiteral()) }
+        keywords.forEach { add(uri, RDF.DCAT.keyword, it.toRDFLiteral()) }
     }
 
     companion object : RDFDeserializer<PFGAux> {
         private val log = LoggerFactory.getLogger(PFGAux::class.java)
-        override val RDFType = RDF.DCAT.Catalog.type
+        override val RDFType = RDF.SG.PFGAux.type
 
         override fun fromModel(uri: URI, model: Model): PFGAux {
             val id = model.getOneObjectOrFail(uri, RDF.DCAT.identifier).asLiteral().string
@@ -153,8 +155,8 @@ data class PFGAux(
             val leadOfficial = model.getAllObjectsOrFail(uri, RDF.ORG.headOf).map { it.asLiteral().string }
             val primaryOutcomes = model.getAllObjectsOrFail(uri, RDF.SKOS.subject).map { it.asLiteral().string }
             val secondaryOutcomes = model.getAllObjectsOrFail(uri, RDF.SKOS.related).map { it.asLiteral().string }
-            val policyTitle = model.getAllObjectsOrFail(uri, RDF.DCTERMS.title).map { it.asLiteral().string }
-            val keywords = model.getAllObjectsOrFail(uri, RDF.SG.keywords).map { it.asLiteral().string }
+            val policyTitle = model.getAllObjectsOrFail(uri, RDF.DCAT.title).map { it.asLiteral().string }
+            val keywords = model.getAllObjectsOrFail(uri, RDF.DCAT.keyword).map { it.asLiteral().string }
 
             return PFGAux(uri, id, period, accessURL, ministerialPortfolio, directorate, dG, leadOfficial, primaryOutcomes, secondaryOutcomes, policyTitle, keywords)
         }

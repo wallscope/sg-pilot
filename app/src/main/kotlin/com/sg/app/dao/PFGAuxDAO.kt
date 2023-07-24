@@ -3,7 +3,7 @@ package com.sg.app.dao
 import com.sg.app.model.PFGAux
 import com.sg.app.rdf.*
 import org.slf4j.LoggerFactory
-import com.sg.app.rdf.RDF.DCAT.Catalog as Doc
+import com.sg.app.rdf.RDF.SG.PFGAux as Doc
 
 object PFGAuxDAO {
     private val log = LoggerFactory.getLogger(javaClass)
@@ -20,10 +20,10 @@ object PFGAuxDAO {
         OPTIONAL { ?pfgaux <${RDF.ORG.headOf}> ?pfgauxLeadOfficial . }#END OPTIONAL
         OPTIONAL { ?pfgaux <${RDF.SKOS.subject}> ?pfgauxPrimaryOutcomes . }#END OPTIONAL
         OPTIONAL { ?pfgaux <${RDF.SKOS.related}> ?pfgauxSecondaryOutcomes . }#END OPTIONAL
-        OPTIONAL { ?pfgaux <${RDF.DCTERMS.title}> ?pfgauxPolicyTitle . }#END OPTIONAL
+        OPTIONAL { ?pfgaux <${RDF.DCAT.title}> ?pfgauxPolicyTitle . }#END OPTIONAL
                 
         # Expand PFGAux related keywords
-        OPTIONAL { ?pfgaux <${RDF.SG.keywords}> ?pfgauxKeywords . }#END OPTIONAL
+        OPTIONAL { ?pfgaux <${RDF.DCAT.keyword}> ?pfgauxKeywords . }#END OPTIONAL
     """.trimIndent()
 
     private val PFGAUX_QUERY = PREFIXES + """

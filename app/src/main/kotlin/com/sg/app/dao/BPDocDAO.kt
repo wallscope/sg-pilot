@@ -9,7 +9,8 @@ object BPDocDAO {
     private val log = LoggerFactory.getLogger(javaClass)
     private val BPDOC_SUB_QUERY = """
         ?bpdoc a <${Doc.type}> ;
-          <${RDF.DCAT.Resource}> ?filename ;
+          <${RDF.DCAT.resource}> ?bpdocFilename ;
+          <${Doc.hasCommitment}> ?bpdocCom ;
         .
 
         OPTIONAL { ?bpdoc <${RDF.ORG.Organization}> ?bpdocDG . }#END OPTIONAL
@@ -27,7 +28,9 @@ object BPDocDAO {
         OPTIONAL { ?bpdoc <${RDF.FRAPO.ExpenditureToDate}> ?bpdocResFinancialTransactions . }#END OPTIONAL
                 
         # Expand BPDoc related keywords
-        OPTIONAL { ?bpdoc <${RDF.SG.keywords}> ?bpdocKeywords . }#END OPTIONAL
+        OPTIONAL { ?bpdoc <${RDF.DCAT.keyword}> ?bpdocKeyword . }#END OPTIONAL
+        
+        ${BPComDAO.BPCOM_SUB_QUERY}
     """.trimIndent()
 
     private val BPDOC_QUERY = PREFIXES + """

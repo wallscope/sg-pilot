@@ -119,7 +119,8 @@ object RDF {
 
     object DCAT {
         val uri = URI("http://www.w3.org/ns/dcat#")
-        val Resource = uri + "Resource"
+//        val Resource = uri + "Resource"
+        val resource = uri + "resource"
         val title = uri + "title"
 
         val accessURL = uri + "accessURL"
@@ -174,7 +175,7 @@ object RDF {
         val id = WALLS.resource + "SG/"
         val graph = WALLS.graph + "/SG"
 
-        val keywords = SG.uri + "keywords"
+//        val keywords = SG.uri + "keywords"
 
         object Organisation {
             val type = SG.uri + "Organisation"
@@ -202,6 +203,7 @@ object RDF {
             val uri = SG.uri + "BPDoc."
             val id = SG.id + "BPDoc/"
 
+            val hasCommitment = uri + "hasCommitment"
         }
         object BPCom {
             val type = SG.uri + "BPCom"

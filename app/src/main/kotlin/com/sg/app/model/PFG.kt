@@ -107,6 +107,42 @@ data class PFGDoc(
                 )
             )
         }
+        // To sankey graph JSON
+        fun toSankeyGraphJSON(pfgDoc: PFGDoc): SankeyGraph {
+
+            // Nodes
+            val primaryOutcomesNodes = pfgDoc.primaryOutcomes.map { primaryOutcome ->
+                SankeyNode(name = primaryOutcome)
+            }
+            val secondaryOutcomesNodes = pfgDoc.secondaryOutcomes.map { secondaryOutcome ->
+                SankeyNode(name = secondaryOutcome)
+            }
+
+            // Links
+            val primaryOutcomesLinks = pfgDoc.primaryOutcomes.flatMap { primaryOutcome ->
+                listOf(
+                    SankeyLink(source = "Total", target = primaryOutcome , value = 0, label = primaryOutcome),
+                    SankeyLink(source = primaryOutcome, target = pfgDoc.filename , value = 1, label = "Primary")
+                )
+            }
+            log.debug("primaryOutcomesLinks: $primaryOutcomesLinks")
+
+            val secondaryOutcomesLinks = pfgDoc.secondaryOutcomes.flatMap { secondaryOutcome ->
+                listOf(
+                    SankeyLink(source = "Total", target = secondaryOutcome , value = 0, label = secondaryOutcome),
+                    SankeyLink(source = secondaryOutcome, target = pfgDoc.filename , value = 1, label = "Secondary")
+                )
+            }
+            log.debug("secondaryOutcomesLinks: $secondaryOutcomesLinks")
+
+            return SankeyGraph(
+                nodes = listOf(
+                    SankeyNode(name = "Total"),
+                    SankeyNode(name = pfgDoc.filename),
+                ) + primaryOutcomesNodes + secondaryOutcomesNodes,
+                links = primaryOutcomesLinks + secondaryOutcomesLinks
+            )
+        }
     }
 }
 data class PFGAux(

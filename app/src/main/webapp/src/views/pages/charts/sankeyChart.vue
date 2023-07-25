@@ -25,7 +25,24 @@ onMounted(async () => {
       },
       tooltip: {
         trigger: 'item',
-        triggerOn: 'mousemove'
+        triggerOn: 'mousemove',
+        formatter: (params: any) => {
+          const linkData = params.data;
+          if (linkData.source && linkData.target) {
+            // Link data (between two nodes)
+            let tooltipText = "";
+            if (linkData.label) {
+              tooltipText += linkData.label + "<br>";
+            }
+            if (typeof linkData.value !== "undefined") {
+              tooltipText += "Count: " + linkData.value;
+            }
+            return tooltipText;
+          } else {
+            // Node data (single node)
+            return linkData.value;
+          }
+        },
       },
       series: [
         {

@@ -5,6 +5,7 @@ import com.sg.app.rdf.RDF
 import com.sg.app.rdf.TriplestoreUtil
 import com.sg.app.model.PFGDoc
 import com.sg.app.model.PFGDoc.Companion.toDetailedGraphJSON
+import com.sg.app.model.PFGDoc.Companion.toSankeyGraphJSON
 import com.sg.app.model.mapper
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -34,6 +35,26 @@ class PFGDocController {
         }
 
         return PFGDocDAO.getOne(uri)
+    }
+
+    // Sankey chart
+    // PFGDocs - sankey chart, all docs
+    @GetMapping("/api/pfgdoc/sankey/list")
+    @ResponseBody
+    fun getPFGDocsSankeyList(): List<PFGDoc> {
+        return PFGDocDAO.getAll()
+    }
+    // PFGDocs - sankey chart, one doc
+    @GetMapping("/api/pfgdoc/sankey/{id}")
+    @ResponseBody
+    fun getPFGDocSankeyGraphData(@PathVariable id: String): String {
+        val uri = RDF.SG.PFGDoc.id + id
+        if (!TriplestoreUtil.checkIfExists(uri)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "no PFGDoc with id: $id")
+        }
+
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(PFGDocDAO.getOne(uri)
+            ?.let { toSankeyGraphJSON(it) })
     }
 
     // Get a PFGDoc processed detailed graph data

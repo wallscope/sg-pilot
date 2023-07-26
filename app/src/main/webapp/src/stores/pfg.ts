@@ -53,10 +53,19 @@ export const usePfgStore = defineStore('pfg', {
       );
       this.pfgDocs = response.data;
     },
+    // Detailed graph
     async fetchPfgDocDetailedGraph() {
       const response = await api.get<any>(
         // Temporarily hardcoded to fetch a specific pfgdoc
         `/api/pfgdoc/graph-detailed/1`
+      );
+      return response.data;
+    },
+    // Sankey - all docs
+    async fetchPfgDocSankeyGraphAll() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific pfgdoc
+        `/api/pfgdoc/sankey/list`
       );
       return response.data;
     },

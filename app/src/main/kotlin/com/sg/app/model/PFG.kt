@@ -24,7 +24,7 @@ data class PFGDoc(
     var portfolioCoordinator: List<String>,
     var policyTitle: List<String>,
 //    var completionDate: LocalDateTime?,
-    var completionDate: String,
+    var completionDate: String?,
     var keywords: List<String>,
 ) : RDFWritable {
     fun withURI(uri: URI): PFGDoc = PFGDoc(uri, this.filename, this.ministerialPortfolio, this.directorate, this.dG, this.unitBranch, this.leadOfficial, this.scsClearance, this.fbpClearance, this.primaryOutcomes, this.secondaryOutcomes, this.portfolioCoordinator, this.policyTitle, this.completionDate,/* this.npfList,*/ this.keywords)
@@ -47,7 +47,7 @@ data class PFGDoc(
         policyTitle.forEach { add(uri, RDF.DCAT.title, it.toRDFLiteral()) }
 //        add(uri.res, RDF.DBPEDIA.completionDate.prop, DateTimeFormatter.ISO_DATE_TIME.format(completionDate).toRDFLiteral(
 //            XSDDatatype.XSDdateTime))
-        add(uri, RDF.DBPEDIA.completionDate, completionDate.toRDFLiteral())
+        add(uri, RDF.DBPEDIA.completionDate, completionDate?.toRDFLiteral())
         keywords.forEach { add(uri, RDF.DCAT.keyword, it.toRDFLiteral()) }
     }
 
@@ -74,7 +74,7 @@ data class PFGDoc(
 //            } catch (e: Exception) {
 //                null
 //            }
-            val completionDate = model.getOneObjectOrFail(uri, RDF.DBPEDIA.completionDate).asLiteral().string
+            val completionDate = model.getOneObjectOrNull(uri, RDF.DBPEDIA.completionDate)?.asLiteral()?.string
             val keywords = model.getAllObjectsOrFail(uri, RDF.DCAT.keyword).map { it.asLiteral().string }
 
             return PFGDoc(uri, filename, ministerialPortfolio, directorate, dG, unitBranch, leadOfficial, scsClearance, fbpClearance, primaryOutcomes, secondaryOutcomes, portfolioCoordinator, policyTitle, completionDate, keywords)
@@ -100,13 +100,25 @@ data class PFGDoc(
                             Node(name = "portfolioCoordinator", children = listToNodes(pfgDoc.portfolioCoordinator)),
                             Node(name = "policyTitle", children = listToNodes(pfgDoc.policyTitle)),
 //                            Node(name = "completionDate", children = listOf(Node(pfgDoc.completionDate!!.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))),
-                            Node(name = "completionDate", children = listOf(Node(pfgDoc.completionDate!!.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))),
+                            Node(name = "completionDate", children = stringToNode(pfgDoc.completionDate ?: "")),
                             Node(name = "keywords", children = listToNodes(pfgDoc.keywords))
                         )
                     )
                 )
             )
         }
+
+        // All pfg docs To sankey graph JSON
+        fun toSankeyGraphJSONAll(pfgDocs: List<PFGDoc>, limit: Int? = null): SankeyGraph {
+            val docs = limit?.let { pfgDocs.take(it) } ?: pfgDocs
+            val allGraphs = docs.map { toSankeyGraphJSON(it) }
+
+            return SankeyGraph(
+                nodes = allGraphs.flatMap { it.nodes!! }.distinct(),
+                links = allGraphs.flatMap { it.links!! }
+            )
+        }
+
         // To sankey graph JSON
         fun toSankeyGraphJSON(pfgDoc: PFGDoc): SankeyGraph {
 
@@ -121,7 +133,7 @@ data class PFGDoc(
             // Links
             val primaryOutcomesLinks = pfgDoc.primaryOutcomes.flatMap { primaryOutcome ->
                 listOf(
-                    SankeyLink(source = "Total", target = primaryOutcome , value = 0, label = primaryOutcome),
+//                    SankeyLink(source = "Total", target = primaryOutcome , value = 0, label = primaryOutcome),
                     SankeyLink(source = primaryOutcome, target = pfgDoc.filename , value = 1, label = "Primary")
                 )
             }
@@ -129,7 +141,7 @@ data class PFGDoc(
 
             val secondaryOutcomesLinks = pfgDoc.secondaryOutcomes.flatMap { secondaryOutcome ->
                 listOf(
-                    SankeyLink(source = "Total", target = secondaryOutcome , value = 0, label = secondaryOutcome),
+//                    SankeyLink(source = "Total", target = secondaryOutcome , value = 0, label = secondaryOutcome),
                     SankeyLink(source = secondaryOutcome, target = pfgDoc.filename , value = 1, label = "Secondary")
                 )
             }
@@ -137,7 +149,7 @@ data class PFGDoc(
 
             return SankeyGraph(
                 nodes = listOf(
-                    SankeyNode(name = "Total"),
+//                    SankeyNode(name = "Total"),
                     SankeyNode(name = pfgDoc.filename),
                 ) + primaryOutcomesNodes + secondaryOutcomesNodes,
                 links = primaryOutcomesLinks + secondaryOutcomesLinks

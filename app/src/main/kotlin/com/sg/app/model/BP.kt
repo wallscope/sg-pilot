@@ -38,11 +38,11 @@ data class BPDoc(
         contactEmail.forEach { add(uri, RDF.SCHEMA.email, it.toRDFLiteral()) }
         divisions.forEach { add(uri, RDF.ORG.hasSubOrganization, it.toRDFLiteral()) }
         divisionLeads.forEach { add(uri, RDF.ORG.hasMember, it.toRDFLiteral()) }
-        add(uri.res, RDF.FRAPO.FundingProgramme.prop, resProgramme!!.toRDFLiteral())
-        add(uri.res, RDF.FRAPO.Expenditure.prop, resTotalOperatingCosts!!.toRDFLiteral())
-        add(uri.res, RDF.FRAPO.ProjectBudget.prop, resCorporateRunningCosts!!.toRDFLiteral())
-        add(uri.res, RDF.FRAPO.BudgetedAmount.prop, resTotal!!.toRDFLiteral())
-        add(uri.res, RDF.FRAPO.Funding.prop, resCapital!!.toRDFLiteral())
+        add(uri.res, RDF.FRAPO.FundingProgramme.prop, resProgramme?.toRDFLiteral())
+        add(uri.res, RDF.FRAPO.Expenditure.prop, resTotalOperatingCosts?.toRDFLiteral())
+        add(uri.res, RDF.FRAPO.ProjectBudget.prop, resCorporateRunningCosts?.toRDFLiteral())
+        add(uri.res, RDF.FRAPO.BudgetedAmount.prop, resTotal?.toRDFLiteral())
+        add(uri.res, RDF.FRAPO.Funding.prop, resCapital?.toRDFLiteral())
         add(uri.res, RDF.FRAPO.ExpenditureToDate.prop, resFinancialTransactions!!.toRDFLiteral())
         commitments.forEach {
             add(uri, RDF.SG.BPDoc.hasCommitment, it.uri.res )

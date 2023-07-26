@@ -6,6 +6,7 @@ import com.sg.app.rdf.TriplestoreUtil
 import com.sg.app.model.PFGDoc
 import com.sg.app.model.PFGDoc.Companion.toDetailedGraphJSON
 import com.sg.app.model.PFGDoc.Companion.toSankeyGraphJSON
+import com.sg.app.model.PFGDoc.Companion.toSankeyGraphJSONAll
 import com.sg.app.model.mapper
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -41,9 +42,10 @@ class PFGDocController {
     // PFGDocs - sankey chart, all docs
     @GetMapping("/api/pfgdoc/sankey/list")
     @ResponseBody
-    fun getPFGDocsSankeyList(): List<PFGDoc> {
-        return PFGDocDAO.getAll()
+    fun getPFGDocsSankeyList(): String {
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(toSankeyGraphJSONAll(PFGDocDAO.getAll(), 10))
     }
+
     // PFGDocs - sankey chart, one doc
     @GetMapping("/api/pfgdoc/sankey/{id}")
     @ResponseBody

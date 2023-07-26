@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { usePfgStore } from '@/stores/pfg';
 import { ref, onMounted, Ref } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import { use } from "echarts/core";
@@ -9,15 +10,15 @@ import type { ECBasicOption } from "echarts/types/dist/shared";
 
 use([GridComponent, LegendComponent, TitleComponent, TooltipComponent, SankeyChart, CanvasRenderer]);
 
+const pfgStore = usePfgStore()
+
 let hide = false;
-var ROOT_PATH = "";
 
 const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
 onMounted(async () => {
   try {
-    const response = await fetch(ROOT_PATH + "/sankey_example.json");
-    const data = await response.json();
+    const data = await pfgStore.fetchPfgDocSankeyGraphAll()
 
     chartOptions.value = {
       title: {
@@ -52,6 +53,10 @@ onMounted(async () => {
           emphasis: {
             focus: 'adjacency'
           },
+          nodeWidth: 20, // Adjust node width to reduce space between nodes
+          nodeLength: 1, // Adjust node width to reduce space between nodes
+          nodeGap: 10, // Adjust node gap to reduce space between nodes
+          layoutIterations: 32, // Increase the number of iterations for better layout
           levels: [
             {
               depth: 0,
@@ -95,6 +100,7 @@ onMounted(async () => {
             }
           ],
           lineStyle: {
+            width: 1,
             curveness: 0.5
           }
         }
@@ -112,7 +118,9 @@ onMounted(async () => {
       <v-table>
         <template v-if="!hide">
           <Suspense>
-            <Chart class="chart" :option="chartOptions" :autoresize="true"></Chart>
+            <div class="chart-container">
+              <Chart class="chart" :option="chartOptions" :autoresize="true"></Chart>
+            </div>
           </Suspense>
         </template>
         <template v-else>
@@ -125,7 +133,13 @@ onMounted(async () => {
     <hr>
   </p>
 </template>
+
 <style lang="scss" scoped>
+.chart-container {
+  width: 1000px; /* Set the container width larger than the visible area */
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
 .chart {
   height: 600px;
 }

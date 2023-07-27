@@ -13,11 +13,14 @@ use([GridComponent, LegendComponent, TitleComponent, TooltipComponent, SankeyCha
 const pfgStore = usePfgStore()
 
 let hide = false;
+//var ROOT_PATH = "";
 
 const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
 onMounted(async () => {
   try {
+    // const response = await fetch(ROOT_PATH + "/sankey_example.json");
+    // const data = await response.json();
     const data = await pfgStore.fetchPfgDocSankeyGraphAll()
 
     chartOptions.value = {
@@ -33,16 +36,18 @@ onMounted(async () => {
             // Link data (between two nodes)
             let tooltipText = "";
             if (linkData.label) {
-              tooltipText += linkData.label + "<br>";
+              tooltipText += linkData.label // + "<br>";
             }
-            if (typeof linkData.value !== "undefined") {
-              tooltipText += "Count: " + linkData.value;
-            }
+            // if (typeof linkData.value !== "undefined") {
+            //   tooltipText += "Count: " + linkData.value;
+            // }
             return tooltipText;
-          } else {
-            // Node data (single node)
-            return linkData.value;
-          }
+          } 
+          // else {
+          //   // Node data (single node)
+          //   // return linkData.name;
+          //   return linkData.label;
+          // }
         },
       },
       series: [
@@ -53,8 +58,7 @@ onMounted(async () => {
           emphasis: {
             focus: 'adjacency'
           },
-          nodeWidth: 20, // Adjust node width to reduce space between nodes
-          nodeLength: 1, // Adjust node width to reduce space between nodes
+          nodeWidth: 10, // Adjust node width to reduce space between nodes
           nodeGap: 10, // Adjust node gap to reduce space between nodes
           layoutIterations: 32, // Increase the number of iterations for better layout
           levels: [
@@ -136,11 +140,11 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .chart-container {
-  width: 1000px; /* Set the container width larger than the visible area */
-  overflow-x: auto; /* Enable horizontal scrolling */
+  width: 1200px; /* Set the container width larger than the visible area */
+  // overflow-x: auto; /* Enable horizontal scrolling */
 }
 
 .chart {
-  height: 600px;
+  height: 700px;
 }
 </style>

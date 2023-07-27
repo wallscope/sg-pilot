@@ -108,7 +108,6 @@ data class PFGDoc(
             )
         }
 
-        // All pfg docs To sankey graph JSON
         fun toSankeyGraphJSONAll(pfgDocs: List<PFGDoc>, limit: Int? = null): SankeyGraph {
             val docs = limit?.let { pfgDocs.take(it) } ?: pfgDocs
             val allGraphs = docs.map { toSankeyGraphJSON(it) }
@@ -118,7 +117,6 @@ data class PFGDoc(
                 links = allGraphs.flatMap { it.links!! }
             )
         }
-
         // To sankey graph JSON
         fun toSankeyGraphJSON(pfgDoc: PFGDoc): SankeyGraph {
 
@@ -126,6 +124,8 @@ data class PFGDoc(
             val primaryOutcomesNodes = pfgDoc.primaryOutcomes.map { primaryOutcome ->
                 SankeyNode(name = primaryOutcome)
             }
+            val directorateNode = SankeyNode(name = pfgDoc.directorate[0])
+            val policyTitleNode = SankeyNode(name = pfgDoc.policyTitle[0])
             val secondaryOutcomesNodes = pfgDoc.secondaryOutcomes.map { secondaryOutcome ->
                 SankeyNode(name = secondaryOutcome)
             }
@@ -133,26 +133,23 @@ data class PFGDoc(
             // Links
             val primaryOutcomesLinks = pfgDoc.primaryOutcomes.flatMap { primaryOutcome ->
                 listOf(
-//                    SankeyLink(source = "Total", target = primaryOutcome , value = 0, label = primaryOutcome),
-                    SankeyLink(source = primaryOutcome, target = pfgDoc.filename , value = 1, label = "Primary")
+                    SankeyLink(source = pfgDoc.policyTitle[0], target = primaryOutcome, value = 1, label = "Primary")
                 )
             }
-            log.debug("primaryOutcomesLinks: $primaryOutcomesLinks")
 
             val secondaryOutcomesLinks = pfgDoc.secondaryOutcomes.flatMap { secondaryOutcome ->
                 listOf(
-//                    SankeyLink(source = "Total", target = secondaryOutcome , value = 0, label = secondaryOutcome),
-                    SankeyLink(source = secondaryOutcome, target = pfgDoc.filename , value = 1, label = "Secondary")
+                    SankeyLink(source = pfgDoc.policyTitle[0], target = secondaryOutcome, value = 1, label = "Secondary")
                 )
             }
-            log.debug("secondaryOutcomesLinks: $secondaryOutcomesLinks")
+
+            val dir2policyLink = listOf(
+                SankeyLink(source = pfgDoc.directorate[0], target = pfgDoc.policyTitle[0], value = primaryOutcomesLinks.size + secondaryOutcomesLinks.size, label = pfgDoc.filename)
+            )
 
             return SankeyGraph(
-                nodes = listOf(
-//                    SankeyNode(name = "Total"),
-                    SankeyNode(name = pfgDoc.filename),
-                ) + primaryOutcomesNodes + secondaryOutcomesNodes,
-                links = primaryOutcomesLinks + secondaryOutcomesLinks
+                nodes = primaryOutcomesNodes + secondaryOutcomesNodes + directorateNode + policyTitleNode,
+                links = primaryOutcomesLinks + secondaryOutcomesLinks + dir2policyLink
             )
         }
     }

@@ -21,7 +21,7 @@ var ROOT_PATH = "";
 
 const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
-onMounted(async () => {
+  onMounted(async () => {
   try {
     const response = await fetch(ROOT_PATH + "/graph_example.json");
     const graph = await response.json();
@@ -34,8 +34,9 @@ onMounted(async () => {
 
     // Force
     chartOptions.value = {
+      animation: false,
       title: {
-        text: 'Les Miserables',
+        text: 'Big graph',
         subtext: 'Default layout',
         top: 'bottom',
         left: 'right'
@@ -49,16 +50,14 @@ onMounted(async () => {
           })
         }
       ],
-      animationDuration: 200,
-      animationEasingUpdate: 'quinticInOut',
       series: [
         {
-          name: "Les Miserables",
+          name: "",
           type: "graph",
           layout: "force",
           force: {
             repulsion: 200,
-            edgeLength: 400,
+            edgeLength: 200,
           },
           data: graph.nodes,
           links: graph.links,
@@ -86,6 +85,7 @@ onMounted(async () => {
     console.error(error);
   }
 });
+
 </script>
 
 <template>

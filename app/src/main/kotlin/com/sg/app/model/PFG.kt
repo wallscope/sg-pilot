@@ -152,6 +152,165 @@ data class PFGDoc(
                 links = primaryOutcomesLinks + secondaryOutcomesLinks + dir2policyLink
             )
         }
+
+        // Forced graph
+        var count = 0
+        fun toForcedGraphJSONAll(pfgDocs: List<PFGDoc>, limit: Int? = null): ForcedGraph {
+            val docs = limit?.let { pfgDocs.take(it) } ?: pfgDocs
+            val allGraphs = docs.map { toForcedGraphJSON(it) }
+            count = 0
+            return ForcedGraph(
+                nodes = allGraphs.flatMap { it.nodes!! }.distinct(),
+                links = allGraphs.flatMap { it.links!! },
+                categories = allGraphs.flatMap { it.categories!! }.distinct()
+            )
+        }
+        fun toForcedGraphJSON(pfgDoc: PFGDoc): ForcedGraph {
+            count++
+
+            // Nodes
+            val docId = "PFGDoc|$count"
+            val doc = ForcedNode(id = docId, name = "PFG Doc", symbolSize = 40, value = pfgDoc.filename)
+            val ministerialPortfolio = ForcedNode(
+                id = "${PFGDoc::ministerialPortfolio.name}|${pfgDoc.ministerialPortfolio}",
+                name = pfgDoc.ministerialPortfolio[0],
+                symbolSize = 20,
+                value = PFGDoc::ministerialPortfolio.name,
+                category = 0
+            )
+            val directorate = ForcedNode(
+                id = "${PFGDoc::directorate.name}|${pfgDoc.directorate}",
+                name = pfgDoc.directorate[0],
+                symbolSize = 35,
+                value = PFGDoc::directorate.name,
+                category = 3
+            )
+            val leadOfficial = ForcedNode(
+                id = "${PFGDoc::leadOfficial.name}|${pfgDoc.leadOfficial}",
+                name = pfgDoc.leadOfficial[0],
+                symbolSize = 20,
+                value = PFGDoc::leadOfficial.name,
+                category = 0
+            )
+            val unitBranch = ForcedNode(
+                id = "${PFGDoc::unitBranch.name}|${pfgDoc.unitBranch}",
+                name = pfgDoc.unitBranch[0],
+                symbolSize = 20,
+                value = PFGDoc::unitBranch.name,
+                category = 0
+            )
+            val policyTitle = ForcedNode(
+                id = "${PFGDoc::policyTitle.name}|${pfgDoc.policyTitle}",
+                name = pfgDoc.policyTitle[0],
+                symbolSize = 20,
+                value = PFGDoc::policyTitle.name,
+                category = 0
+            )
+            val scsClearance = ForcedNode(
+                id = "${PFGDoc::scsClearance.name}|${pfgDoc.scsClearance}",
+                name = pfgDoc.scsClearance[0],
+                symbolSize = 20,
+                value = PFGDoc::scsClearance.name,
+                category = 0
+            )
+            val fbpClearance = ForcedNode(
+                id = "${PFGDoc::fbpClearance.name}|${pfgDoc.fbpClearance}",
+                name = pfgDoc.fbpClearance[0],
+                symbolSize = 20,
+                value = PFGDoc::fbpClearance.name,
+                category = 0
+            )
+            val dG = ForcedNode(
+                id = "${PFGDoc::dG.name}|${pfgDoc.dG}",
+                name = pfgDoc.dG[0],
+                symbolSize = 20,
+                value = PFGDoc::dG.name,
+                category = 0
+            )
+            val portfolioCoordinator = ForcedNode(
+                id = "${PFGDoc::portfolioCoordinator.name}|${pfgDoc.portfolioCoordinator}",
+                name = pfgDoc.portfolioCoordinator[0],
+                symbolSize = 20,
+                value = PFGDoc::portfolioCoordinator.name,
+                category = 0
+            )
+            val completionDate = ForcedNode(
+                id = "${PFGDoc::completionDate.name}|${pfgDoc.completionDate}",
+                name = pfgDoc.completionDate,
+                symbolSize = 20,
+                value = PFGDoc::completionDate.name,
+                category = 0
+            )
+
+            val primaryOutcomesNodes = pfgDoc.primaryOutcomes.map { primaryOutcome ->
+                ForcedNode(
+                    id = "${PFGDoc::primaryOutcomes.name}|${primaryOutcome}",
+//                    id = "npfOutcome|${primaryOutcome}",
+                    name = primaryOutcome,
+                    symbolSize = 31,
+                    value = "Primary Outcome",
+                    category = 1
+                )
+            }
+            val secondaryOutcomesNodes = pfgDoc.secondaryOutcomes.map { secondaryOutcome ->
+                ForcedNode(
+                    id = "${PFGDoc::secondaryOutcomes.name}|${secondaryOutcome}",
+//                    id = "npfOutcome|${secondaryOutcome}",
+                    name = secondaryOutcome,
+                    symbolSize = 31,
+                    value = "Secondary Outcome",
+                    category = 2
+                )
+            }
+
+            // Links
+            val doc2propertyLinks = listOf(
+                ForcedLink(source = docId, target = ministerialPortfolio.id),
+                ForcedLink(source = docId, target = directorate.id),
+                ForcedLink(source = docId, target = leadOfficial.id),
+                ForcedLink(source = docId, target = unitBranch.id),
+                ForcedLink(source = docId, target = policyTitle.id),
+                ForcedLink(source = docId, target = scsClearance.id),
+                ForcedLink(source = docId, target = fbpClearance.id),
+                ForcedLink(source = docId, target = dG.id),
+                ForcedLink(source = docId, target = portfolioCoordinator.id),
+                ForcedLink(source = docId, target = completionDate.id),
+            )
+            val primaryOutcomesLinks = pfgDoc.primaryOutcomes.flatMap { primaryOutcome ->
+                listOf(
+                    ForcedLink(source = docId, target = "${PFGDoc::primaryOutcomes.name}|${primaryOutcome}")
+                )
+            }
+
+            val secondaryOutcomesLinks = pfgDoc.secondaryOutcomes.flatMap { secondaryOutcome ->
+                listOf(
+                    ForcedLink(source = docId, target = "${PFGDoc::secondaryOutcomes.name}|${secondaryOutcome}")
+                )
+            }
+
+            return ForcedGraph(
+                nodes = listOf(
+                    doc,
+                    ministerialPortfolio,
+                    directorate,
+                    leadOfficial,
+                    unitBranch,
+                    policyTitle,
+                    scsClearance,
+                    fbpClearance,
+                    dG,
+                    portfolioCoordinator,
+                    completionDate
+                ) + primaryOutcomesNodes + secondaryOutcomesNodes,
+                links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks,
+                categories = listOf(
+                    ForcedCategory(name = "Other"),
+                    ForcedCategory(name = "Primary outcomes"),
+                    ForcedCategory(name = "Secondary outcomes"),
+                    ForcedCategory(name = "Directorate"),
+                )
+            )
+        }
     }
 }
 data class PFGAux(

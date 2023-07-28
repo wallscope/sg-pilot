@@ -5,6 +5,8 @@ import com.sg.app.rdf.RDF
 import com.sg.app.rdf.TriplestoreUtil
 import com.sg.app.model.PFGDoc
 import com.sg.app.model.PFGDoc.Companion.toDetailedGraphJSON
+import com.sg.app.model.PFGDoc.Companion.toForcedGraphJSON
+import com.sg.app.model.PFGDoc.Companion.toForcedGraphJSONAll
 import com.sg.app.model.PFGDoc.Companion.toSankeyGraphJSON
 import com.sg.app.model.PFGDoc.Companion.toSankeyGraphJSONAll
 import com.sg.app.model.mapper
@@ -57,6 +59,27 @@ class PFGDocController {
 
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(PFGDocDAO.getOne(uri)
             ?.let { toSankeyGraphJSON(it) })
+    }
+
+    // Forced graph
+    // PFGDocs - forced graph, all docs
+    @GetMapping("/api/pfgdoc/forcedgraph/list")
+    @ResponseBody
+    fun getPFGDocsForcedList(): String {
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(toForcedGraphJSONAll(PFGDocDAO.getAll(), 15))
+    }
+
+    // PFGDocs - forced graph, one doc
+    @GetMapping("/api/pfgdoc/forcedgraph/{id}")
+    @ResponseBody
+    fun getPFGDocForcedGraphData(@PathVariable id: String): String {
+        val uri = RDF.SG.PFGDoc.id + id
+        if (!TriplestoreUtil.checkIfExists(uri)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "no PFGDoc with id: $id")
+        }
+
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(PFGDocDAO.getOne(uri)
+            ?.let { toForcedGraphJSON(it) })
     }
 
     // Get a PFGDoc processed detailed graph data

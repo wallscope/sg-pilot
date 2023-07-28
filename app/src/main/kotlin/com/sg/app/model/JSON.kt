@@ -21,6 +21,13 @@ data class SankeyGraph(val nodes: List<SankeyNode>? = listOf(SankeyNode(name = "
 data class SankeyNode(val name: String? = "")
 data class SankeyLink(val source: String? = "", val target: String? = "", val value: Int? = 1, val label: String? = "")
 
+// ForcedGraph
+data class ForcedGraph(val nodes: List<ForcedNode>? = listOf(ForcedNode(name = "")), val links: List<ForcedLink>? = null, val categories: List<ForcedCategory>? = null)
+data class ForcedNode(val id: String? = "", val name: String? = "", val symbolSize: Int? = null, val value: String? = "", val category: Int? = null )
+data class ForcedLink(val source: String? = "", val target: String? = "")
+data class ForcedCategory(val name: String? = "")
+
+// Mapper setup
 val mapper: ObjectMapper = ObjectMapper().registerModule(
     KotlinModule.Builder()
         .withReflectionCacheSize(512)

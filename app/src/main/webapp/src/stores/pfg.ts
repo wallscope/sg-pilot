@@ -61,6 +61,20 @@ export const usePfgStore = defineStore('pfg', {
       );
       return response.data;
     },
+    // Forced graph
+    async fetchPfgDocForcedGraph() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific pfgdoc
+        `/api/pfgdoc/forcedgraph/1`
+      );
+      return response.data;
+    },
+    async fetchPfgDocForcedGraphAll() {
+      const response = await api.get<any>(
+        `/api/pfgdoc/forcedgraph/list`
+      );
+      return response.data;
+    },
     // Sankey - all docs
     async fetchPfgDocSankeyGraphAll() {
       const response = await api.get<any>(

@@ -173,63 +173,63 @@ data class PFGDoc(
             val doc = ForcedNode(id = docId, name = "PFG Doc", symbolSize = 40, value = pfgDoc.filename)
             val ministerialPortfolio = ForcedNode(
                 id = "${PFGDoc::ministerialPortfolio.name}|${pfgDoc.ministerialPortfolio}",
-                name = pfgDoc.ministerialPortfolio[0],
+                name = pfgDoc.ministerialPortfolio.firstOrNull(),
                 symbolSize = 20,
                 value = PFGDoc::ministerialPortfolio.name,
                 category = 0
             )
             val directorate = ForcedNode(
                 id = "${PFGDoc::directorate.name}|${pfgDoc.directorate}",
-                name = pfgDoc.directorate[0],
+                name = pfgDoc.directorate.firstOrNull(),
                 symbolSize = 35,
                 value = PFGDoc::directorate.name,
                 category = 3
             )
             val leadOfficial = ForcedNode(
                 id = "${PFGDoc::leadOfficial.name}|${pfgDoc.leadOfficial}",
-                name = pfgDoc.leadOfficial[0],
+                name = pfgDoc.leadOfficial.firstOrNull(),
                 symbolSize = 20,
                 value = PFGDoc::leadOfficial.name,
                 category = 0
             )
             val unitBranch = ForcedNode(
                 id = "${PFGDoc::unitBranch.name}|${pfgDoc.unitBranch}",
-                name = pfgDoc.unitBranch[0],
+                name = pfgDoc.unitBranch.firstOrNull(),
                 symbolSize = 20,
                 value = PFGDoc::unitBranch.name,
                 category = 0
             )
             val policyTitle = ForcedNode(
                 id = "${PFGDoc::policyTitle.name}|${pfgDoc.policyTitle}",
-                name = pfgDoc.policyTitle[0],
+                name = pfgDoc.policyTitle.firstOrNull(),
                 symbolSize = 20,
                 value = PFGDoc::policyTitle.name,
                 category = 0
             )
             val scsClearance = ForcedNode(
                 id = "${PFGDoc::scsClearance.name}|${pfgDoc.scsClearance}",
-                name = pfgDoc.scsClearance[0],
+                name = pfgDoc.scsClearance.firstOrNull(),
                 symbolSize = 20,
                 value = PFGDoc::scsClearance.name,
                 category = 0
             )
             val fbpClearance = ForcedNode(
                 id = "${PFGDoc::fbpClearance.name}|${pfgDoc.fbpClearance}",
-                name = pfgDoc.fbpClearance[0],
+                name = pfgDoc.fbpClearance.firstOrNull(),
                 symbolSize = 20,
                 value = PFGDoc::fbpClearance.name,
                 category = 0
             )
             val dG = ForcedNode(
                 id = "${PFGDoc::dG.name}|${pfgDoc.dG}",
-                name = pfgDoc.dG[0],
+                name = pfgDoc.dG.firstOrNull(),
                 symbolSize = 20,
                 value = PFGDoc::dG.name,
                 category = 0
             )
             val portfolioCoordinator = ForcedNode(
                 id = "${PFGDoc::portfolioCoordinator.name}|${pfgDoc.portfolioCoordinator}",
-                name = pfgDoc.portfolioCoordinator[0],
+                name = pfgDoc.portfolioCoordinator.firstOrNull(),
                 symbolSize = 20,
                 value = PFGDoc::portfolioCoordinator.name,
                 category = 0

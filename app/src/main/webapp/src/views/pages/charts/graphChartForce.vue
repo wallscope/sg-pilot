@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { usePfgStore } from '@/stores/pfg';
 import { ref, onMounted, Ref } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import { use } from "echarts/core";
@@ -16,6 +17,7 @@ interface GraphNode {
   };
 }
 
+const pfgStore = usePfgStore()
 let hide = false;
 var ROOT_PATH = "";
 
@@ -23,8 +25,11 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
   onMounted(async () => {
   try {
-    const response = await fetch(ROOT_PATH + "/graph_example.json");
-    const graph = await response.json();
+    // const response = await fetch(ROOT_PATH + "/graph_example.json");
+    // const graph = await response.json();
+
+    // const graph = await pfgStore.fetchPfgDocForcedGraph()
+    const graph = await pfgStore.fetchPfgDocForcedGraphAll()
 
     graph.nodes.forEach(function (node: GraphNode) {
       node.label = {
@@ -56,8 +61,8 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
           type: "graph",
           layout: "force",
           force: {
-            repulsion: 200,
-            edgeLength: 200,
+            repulsion: 800,
+            edgeLength: 300,
           },
           data: graph.nodes,
           links: graph.links,
@@ -85,7 +90,6 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
     console.error(error);
   }
 });
-
 </script>
 
 <template>

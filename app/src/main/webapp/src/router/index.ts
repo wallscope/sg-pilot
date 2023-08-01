@@ -53,6 +53,16 @@ const router = createRouter({
           name: "sankeyChart",
           component: () => import('@/views/pages/charts/sankeyChart.vue'),
         },
+        {
+          path: "overview",
+          name: "overview",
+          component: () => import('@/views/pages/overviewTable.vue'),
+        },
+        {
+          path: "about",
+          name: "about",
+          component: () => import('@/views/pages/aboutPilot.vue'),
+        },
       ],
     },
   ],

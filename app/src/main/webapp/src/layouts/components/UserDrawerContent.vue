@@ -25,6 +25,13 @@ const vuetifyTheme = useTheme()
     <VerticalNavSectionTitle :item="{ heading: 'Charts' }" />
     <VerticalNavLink
       :item="{
+        title: 'Overview',
+        to: 'overview',
+        icon: { icon: 'mdi-file-chart' }
+      }"
+    />
+    <VerticalNavLink
+      :item="{
         title: 'Detailed Chart',
         to: 'detailedChart',
         icon: { icon: 'mdi-chart-bar' }
@@ -70,6 +77,13 @@ const vuetifyTheme = useTheme()
         title: 'Sankey Chart',
         to: 'sankeyChart',
         icon: { icon: 'mdi-chart-areaspline' }
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'About the Pilot',
+        to: 'about',
+        icon: { icon: 'mdi-information-outline' }
       }"
     />
   </ul>

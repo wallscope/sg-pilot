@@ -12,10 +12,12 @@ object BPComDAO {
           <${RDF.DCAT.resource}> ?bpdocComFilename ;
         .
 
-        OPTIONAL { ?bpdocCom <${RDF.RDFS.comment}> ?bpdocComComment . }#END OPTIONAL
+        OPTIONAL { ?bpdocCom <${RDF.FRAPO.ProjectBudget}> ?bpdocProjectBudget . }#END OPTIONAL
+        OPTIONAL { ?bpdocCom <${RDF.SG.BudgetSufficient}> ?bpdocBudgetSufficient . }#END OPTIONAL
         OPTIONAL { ?bpdocCom <${RDF.ITSMO.Project}> ?bpdocComCommitment . }#END OPTIONAL
         OPTIONAL { ?bpdocCom <${RDF.ITSMO.Priority}> ?bpdocComPriority . }#END OPTIONAL
         OPTIONAL { ?bpdocCom <${RDF.ITSMO.hasProjectOwner}> ?bpdocComCommitmentLead . }#END OPTIONAL
+        OPTIONAL { ?bpdocCom <${RDF.SG.DeliveryPartner}> ?bpdocComDeliveryPartner . }#END OPTIONAL
         OPTIONAL { ?bpdocCom <${RDF.SKOS.subject}> ?bpdocComPrimaryOutcomes . }#END OPTIONAL
         OPTIONAL { ?bpdocCom <${RDF.SKOS.related}> ?bpdocComSecondaryOutcomes . }#END OPTIONAL
                 

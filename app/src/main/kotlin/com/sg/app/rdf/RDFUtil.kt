@@ -177,6 +177,8 @@ object RDF {
         val graph = WALLS.graph + "/SG"
 
 //        val keywords = SG.uri + "keywords"
+        val BudgetSufficient = SG.uri + "BudgetSufficient"
+        val DeliveryPartner = SG.uri + "DeliveryPartner"
 
         object Organisation {
             val type = SG.uri + "Organisation"

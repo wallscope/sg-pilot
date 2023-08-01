@@ -14,6 +14,10 @@ object PFGAuxDAO {
         .
 
         OPTIONAL { ?pfgaux <${RDF.DCAT.accessURL}> ?pfgauxAccessURL . }#END OPTIONAL
+        OPTIONAL { ?pfgaux <${RDF.ITSMO.Priority}> ?pfgauxStrategicPriority . }#END OPTIONAL
+        OPTIONAL { ?pfgaux <${RDF.DCTERMS.Standard}> ?pfgauxLegislativeProposal . }#END OPTIONAL
+        OPTIONAL { ?pfgaux <${RDF.DCTERMS.policy}> ?pfgauxButeHouseAgreementLink . }#END OPTIONAL
+        OPTIONAL { ?pfgaux <${RDF.DBPEDIA.completionDate}> ?pfgauxCompletionDate . }#END OPTIONAL
         OPTIONAL { ?pfgaux <${RDF.DBPEDIA.portfolio}> ?pfgauxMinisterialPortfolio . }#END OPTIONAL
         OPTIONAL { ?pfgaux <${RDF.ORG.OrganizationalUnit}> ?pfgauxDirectorate . }#END OPTIONAL
         OPTIONAL { ?pfgaux <${RDF.ORG.Organization}> ?pfgauxDG . }#END OPTIONAL

@@ -120,25 +120,31 @@ data class BPDoc(
     }
 }data class BPCom(
     @JsonProperty("uri") override var uri: URI,
-    var filename: String,
-    var comment: String, // rdfs:comment
-    var commitment: String, // itsmo:Project
-    var priority: String, // itsmo:Priority
-    var commitmentLead: String, // itsmo:hasProjectOwner
-    var primaryOutcomes: List<String>,
-    var secondaryOutcomes: List<String>,
-    var keywords: List<String>,
+    var filename: String?,
+//    var comment: String, // rdfs:comment
+    var commitment: String?, // itsmo:Project
+    var priority: String?, // itsmo:Priority
+    var commitmentLead: String?, // itsmo:hasProjectOwner
+    var projectBudget: String?, // frapo:ProjectBudget
+    var budgetSufficient: String?, // sg:BudgetSufficient
+    var deliveryPartners: List<String>, // sg:DeliveryPartner
+    var primaryOutcomes: List<String>, // skos:subject
+    var secondaryOutcomes: List<String>, // skos:related
+    var keywords: List<String>, // dcat:keyword
 ) : RDFWritable {
-    fun withURI(uri: URI): BPCom = BPCom(uri, this.filename, this.comment, this.commitment, this.priority, this.commitmentLead, this.primaryOutcomes, this.secondaryOutcomes, this.keywords)
+    fun withURI(uri: URI): BPCom = BPCom(uri, this.filename, /*this.comment,*/ this.commitment, this.priority, this.commitmentLead, this.projectBudget, this.budgetSufficient, this.deliveryPartners, this.primaryOutcomes, this.secondaryOutcomes, this.keywords)
 
     override fun toRDF() = jenaModel {
         add(uri, RDF.type, RDF.SG.BPCom.type.res)
 
-        add(uri, RDF.DCAT.resource, filename.toRDFLiteral())
-        add(uri, RDF.RDFS.comment, comment.toRDFLiteral())
-        add(uri, RDF.ITSMO.Project, commitment.toRDFLiteral())
-        add(uri, RDF.ITSMO.Priority, priority.toRDFLiteral())
-        add(uri, RDF.ITSMO.hasProjectOwner, commitmentLead.toRDFLiteral())
+        add(uri, RDF.DCAT.resource, filename?.toRDFLiteral())
+//        add(uri, RDF.RDFS.comment, comment.toRDFLiteral())
+        add(uri, RDF.ITSMO.Project, commitment?.toRDFLiteral())
+        add(uri, RDF.ITSMO.Priority, priority?.toRDFLiteral())
+        add(uri, RDF.ITSMO.hasProjectOwner, commitmentLead?.toRDFLiteral())
+        add(uri, RDF.FRAPO.ProjectBudget, projectBudget?.toRDFLiteral())
+        add(uri, RDF.SG.BudgetSufficient, budgetSufficient?.toRDFLiteral())
+        deliveryPartners.forEach { add(uri, RDF.SG.DeliveryPartner, it.toRDFLiteral()) }
         primaryOutcomes.forEach { add(uri, RDF.SKOS.subject, it.toRDFLiteral()) }
         secondaryOutcomes.forEach { add(uri, RDF.SKOS.related, it.toRDFLiteral()) }
         keywords.forEach { add(uri, RDF.DCAT.keyword, it.toRDFLiteral()) }
@@ -149,17 +155,19 @@ data class BPDoc(
         override val RDFType = RDF.SG.BPCom.type
 
         override fun fromModel(uri: URI, model: Model): BPCom {
-            val filename = model.getOneObjectOrFail(uri, RDF.DCAT.resource).asLiteral().string
-            val comment = model.getOneObjectOrFail(uri, RDF.RDFS.comment).asLiteral().string
-            val commitment = model.getOneObjectOrFail(uri, RDF.ITSMO.Project).asLiteral().string
-            val priority = model.getOneObjectOrFail(uri, RDF.ITSMO.Priority).asLiteral().string
-            val commitmentLead = model.getOneObjectOrFail(uri, RDF.ITSMO.hasProjectOwner).asLiteral().string
-
+            val filename = model.getOneObjectOrNull(uri, RDF.DCAT.resource)?.asLiteral()?.string
+//            val comment = model.getOneObjectOrFail(uri, RDF.RDFS.comment).asLiteral().string
+            val commitment = model.getOneObjectOrNull(uri, RDF.ITSMO.Project)?.asLiteral()?.string
+            val projectBudget = model.getOneObjectOrNull(uri, RDF.FRAPO.ProjectBudget)?.asLiteral()?.string
+            val budgetSufficient = model.getOneObjectOrNull(uri, RDF.SG.BudgetSufficient)?.asLiteral()?.string
+            val priority = model.getOneObjectOrNull(uri, RDF.ITSMO.Priority)?.asLiteral()?.string
+            val commitmentLead = model.getOneObjectOrNull(uri, RDF.ITSMO.hasProjectOwner)?.asLiteral()?.string
+            val deliveryPartners = model.getAllObjectsOrFail(uri, RDF.SG.DeliveryPartner).map { it.asLiteral().string }
             val primaryOutcomes = model.getAllObjectsOrFail(uri, RDF.SKOS.subject).map { it.asLiteral().string }
             val secondaryOutcomes = model.getAllObjectsOrFail(uri, RDF.SKOS.related).map { it.asLiteral().string }
             val keywords = model.getAllObjectsOrFail(uri, RDF.DCAT.keyword).map { it.asLiteral().string }
 
-            return BPCom(uri, filename, comment, commitment, priority, commitmentLead, primaryOutcomes, secondaryOutcomes, keywords)
+            return BPCom(uri, filename, /*comment,*/ commitment, priority, commitmentLead, projectBudget, budgetSufficient, deliveryPartners, primaryOutcomes, secondaryOutcomes, keywords)
         }
 
         // To detailed graph JSON
@@ -171,10 +179,13 @@ data class BPDoc(
                     Node(
                         name = bpCom.filename,
                         children = listOf(
-                            Node(name = "comment", children = stringToNode(bpCom.comment)),
+//                            Node(name = "comment", children = stringToNode(bpCom.comment)),
                             Node(name = "commitment", children = stringToNode(bpCom.commitment)),
                             Node(name = "priority", children = stringToNode(bpCom.priority)),
                             Node(name = "commitmentLead", children = stringToNode(bpCom.commitmentLead)),
+                            Node(name = "projectBudget", children = stringToNode(bpCom.projectBudget)),
+                            Node(name = "budgetSufficient", children = stringToNode(bpCom.budgetSufficient)),
+                            Node(name = "deliveryPartners", children = listToNodes(bpCom.deliveryPartners)),
                             Node(name = "primaryOutcomes", children = listToNodes(bpCom.primaryOutcomes)),
                             Node(name = "secondaryOutcomes", children = listToNodes(bpCom.secondaryOutcomes)),
                             Node(name = "keywords", children = listToNodes(bpCom.keywords)),

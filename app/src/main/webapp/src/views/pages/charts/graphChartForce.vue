@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { usePfgStore } from '@/stores/pfg';
+import { useAllDocsStore } from '@/stores/alldocs';
 import { ref, onMounted, Ref } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import { use } from "echarts/core";
@@ -18,6 +19,7 @@ interface GraphNode {
 }
 
 const pfgStore = usePfgStore()
+const allDocsStore = useAllDocsStore()
 let hide = false;
 var ROOT_PATH = "";
 
@@ -29,7 +31,10 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
     // const graph = await response.json();
 
     // const graph = await pfgStore.fetchPfgDocForcedGraph()
-    const graph = await pfgStore.fetchPfgDocForcedGraphAll()
+    // const graph = await pfgStore.fetchPfgDocForcedGraphAll()
+    // const graph = await pfgStore.fetchPfgAuxForcedGraph()
+    // const graph = await pfgStore.fetchPfgAuxForcedGraphAll()
+    const graph = await allDocsStore.fetchAllDocsForcedGraph()
 
     graph.nodes.forEach(function (node: GraphNode) {
       node.label = {
@@ -61,8 +66,8 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
           type: "graph",
           layout: "force",
           force: {
-            repulsion: 800,
-            edgeLength: 300,
+            repulsion: 700,
+            edgeLength: 200,
           },
           data: graph.nodes,
           links: graph.links,

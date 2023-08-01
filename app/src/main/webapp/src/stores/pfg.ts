@@ -91,6 +91,20 @@ export const usePfgStore = defineStore('pfg', {
       );
       return response.data;
     },
+     // Forced graph
+     async fetchPfgAuxForcedGraph() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific pfgdoc
+        `/api/pfgaux/forcedgraph/HSC.044_2022-2023`
+      );
+      return response.data;
+    },
+    async fetchPfgAuxForcedGraphAll() {
+      const response = await api.get<any>(
+        `/api/pfgaux/forcedgraph/list`
+      );
+      return response.data;
+    },
     getDateFormatted(date: Date): string {
       const day = date.getDate();
       const month = date.getMonth() + 1; // Months are zero-based

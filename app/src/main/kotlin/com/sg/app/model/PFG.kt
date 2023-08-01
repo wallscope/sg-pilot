@@ -2,11 +2,8 @@ package com.sg.app.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.sg.app.rdf.*
-import org.apache.jena.datatypes.xsd.XSDDatatype
 import org.apache.jena.rdf.model.Model
 import org.slf4j.LoggerFactory
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 data class PFGDoc(
@@ -170,7 +167,7 @@ data class PFGDoc(
 
             // Nodes
             val docId = "PFGDoc|$count"
-            val doc = ForcedNode(id = docId, name = "PFG Doc", symbolSize = 40, value = pfgDoc.filename)
+            val doc = ForcedNode(id = docId, name = "PFG Doc", symbolSize = 55, value = pfgDoc.filename)
             val ministerialPortfolio = ForcedNode(
                 id = "${PFGDoc::ministerialPortfolio.name}|${pfgDoc.ministerialPortfolio}",
                 name = pfgDoc.ministerialPortfolio.firstOrNull(),
@@ -181,7 +178,7 @@ data class PFGDoc(
             val directorate = ForcedNode(
                 id = "${PFGDoc::directorate.name}|${pfgDoc.directorate}",
                 name = pfgDoc.directorate.firstOrNull(),
-                symbolSize = 35,
+                symbolSize = 40,
                 value = PFGDoc::directorate.name,
                 category = 3
             )
@@ -247,7 +244,7 @@ data class PFGDoc(
                     id = "${PFGDoc::primaryOutcomes.name}|${primaryOutcome}",
 //                    id = "npfOutcome|${primaryOutcome}",
                     name = primaryOutcome,
-                    symbolSize = 31,
+                    symbolSize = 36,
                     value = "Primary Outcome",
                     category = 1
                 )
@@ -257,9 +254,18 @@ data class PFGDoc(
                     id = "${PFGDoc::secondaryOutcomes.name}|${secondaryOutcome}",
 //                    id = "npfOutcome|${secondaryOutcome}",
                     name = secondaryOutcome,
-                    symbolSize = 31,
+                    symbolSize = 36,
                     value = "Secondary Outcome",
                     category = 2
+                )
+            }
+            val keywordsNodes = pfgDoc.keywords.map { keyword ->
+                ForcedNode(
+                    id = "${PFGDoc::keywords.name}|${keyword}",
+                    name = keyword,
+                    symbolSize = 31,
+                    value = "keyword",
+                    category = 4
                 )
             }
 
@@ -287,6 +293,11 @@ data class PFGDoc(
                     ForcedLink(source = docId, target = "${PFGDoc::secondaryOutcomes.name}|${secondaryOutcome}")
                 )
             }
+            val keywordsLinks = pfgDoc.keywords.flatMap { keyword ->
+                listOf(
+                    ForcedLink(source = docId, target = "${PFGDoc::keywords.name}|${keyword}")
+                )
+            }
 
             return ForcedGraph(
                 nodes = listOf(
@@ -301,13 +312,14 @@ data class PFGDoc(
                     dG,
                     portfolioCoordinator,
                     completionDate
-                ) + primaryOutcomesNodes + secondaryOutcomesNodes,
-                links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks,
+                ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes,
+                links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks,
                 categories = listOf(
                     ForcedCategory(name = "Other"),
                     ForcedCategory(name = "Primary outcomes"),
                     ForcedCategory(name = "Secondary outcomes"),
                     ForcedCategory(name = "Directorate"),
+                    ForcedCategory(name = "Keywords"),
                 )
             )
         }
@@ -315,9 +327,13 @@ data class PFGDoc(
 }
 data class PFGAux(
     @JsonProperty("uri") override var uri: URI,
-    var id: String,
-    var period: String,
-    var accessURL: String,
+    var id: String?,
+    var period: String?,
+    var accessURL: String?,
+    var strategicPriority: String?,
+    var legislativeProposal: String?,
+    var buteHouseAgreementLink: String?,
+    var completionDate: String?,
     var ministerialPortfolio: List<String>,
     var directorate: List<String>,
     var dG: List<String>,
@@ -327,14 +343,18 @@ data class PFGAux(
     var policyTitle: List<String>,
     var keywords: List<String>,
 ) : RDFWritable {
-    fun withURI(uri: URI): PFGAux = PFGAux(uri, this.id, this.period, this.accessURL, this.ministerialPortfolio, this.directorate, this.dG, this.leadOfficial, this.primaryOutcomes, this.secondaryOutcomes, this.policyTitle, this.keywords)
+    fun withURI(uri: URI): PFGAux = PFGAux(uri, this.id, this.period, this.accessURL, this.strategicPriority, this.legislativeProposal, this.buteHouseAgreementLink, this.completionDate, this.ministerialPortfolio, this.directorate, this.dG, this.leadOfficial, this.primaryOutcomes, this.secondaryOutcomes, this.policyTitle, this.keywords)
 
     override fun toRDF() = jenaModel {
         add(uri, RDF.type, RDF.SG.PFGAux.type.res)
 
-        add(uri, RDF.DCAT.identifier, id.toRDFLiteral())
-        add(uri, RDF.DCTERMS.Period, period.toRDFLiteral())
-        add(uri, RDF.DCAT.accessURL, accessURL.toRDFLiteral())
+        add(uri, RDF.DCAT.identifier, id?.toRDFLiteral())
+        add(uri, RDF.DCTERMS.Period, period?.toRDFLiteral())
+        add(uri, RDF.DCAT.accessURL, accessURL?.toRDFLiteral())
+        add(uri, RDF.ITSMO.Priority, strategicPriority?.toRDFLiteral())
+        add(uri, RDF.DCTERMS.Standard, legislativeProposal?.toRDFLiteral())
+        add(uri, RDF.DCTERMS.policy, buteHouseAgreementLink?.toRDFLiteral())
+        add(uri, RDF.DBPEDIA.completionDate, completionDate?.toRDFLiteral())
         ministerialPortfolio.forEach { add(uri, RDF.DBPEDIA.portfolio, it.toRDFLiteral()) }
         directorate.forEach { add(uri, RDF.ORG.OrganizationalUnit, it.toRDFLiteral()) }
         dG.forEach { add(uri, RDF.ORG.Organization, it.toRDFLiteral()) }
@@ -350,9 +370,13 @@ data class PFGAux(
         override val RDFType = RDF.SG.PFGAux.type
 
         override fun fromModel(uri: URI, model: Model): PFGAux {
-            val id = model.getOneObjectOrFail(uri, RDF.DCAT.identifier).asLiteral().string
-            val period = model.getOneObjectOrFail(uri, RDF.DCTERMS.Period).asLiteral().string
-            val accessURL = model.getOneObjectOrFail(uri, RDF.DCAT.accessURL).asLiteral().string
+            val id = model.getOneObjectOrNull(uri, RDF.DCAT.identifier)?.asLiteral()?.string
+            val period = model.getOneObjectOrNull(uri, RDF.DCTERMS.Period)?.asLiteral()?.string
+            val accessURL = model.getOneObjectOrNull(uri, RDF.DCAT.accessURL)?.asLiteral()?.string
+            val strategicPriority = model.getOneObjectOrNull(uri, RDF.ITSMO.Priority)?.asLiteral()?.string
+            val legislativeProposal = model.getOneObjectOrNull(uri, RDF.DCTERMS.Standard)?.asLiteral()?.string
+            val buteHouseAgreementLink = model.getOneObjectOrNull(uri, RDF.DCTERMS.policy)?.asLiteral()?.string
+            val completionDate = model.getOneObjectOrNull(uri, RDF.DBPEDIA.completionDate)?.asLiteral()?.string
             val ministerialPortfolio = model.getAllObjectsOrFail(uri, RDF.DBPEDIA.portfolio).map { it.asLiteral().string }
             val directorate = model.getAllObjectsOrFail(uri, RDF.ORG.OrganizationalUnit).map { it.asLiteral().string }
             val dG = model.getAllObjectsOrFail(uri, RDF.ORG.Organization).map { it.asLiteral().string }
@@ -362,7 +386,7 @@ data class PFGAux(
             val policyTitle = model.getAllObjectsOrFail(uri, RDF.DCAT.title).map { it.asLiteral().string }
             val keywords = model.getAllObjectsOrFail(uri, RDF.DCAT.keyword).map { it.asLiteral().string }
 
-            return PFGAux(uri, id, period, accessURL, ministerialPortfolio, directorate, dG, leadOfficial, primaryOutcomes, secondaryOutcomes, policyTitle, keywords)
+            return PFGAux(uri, id, period, accessURL, completionDate, strategicPriority, legislativeProposal, buteHouseAgreementLink, ministerialPortfolio, directorate, dG, leadOfficial, primaryOutcomes, secondaryOutcomes, policyTitle, keywords)
         }
 
         // To detailed graph JSON
@@ -376,6 +400,10 @@ data class PFGAux(
                             Node(name = "id", children = stringToNode(pfgAux.id)),
                             Node(name = "period", children = stringToNode(pfgAux.period)),
                             Node(name = "accessURL", children = stringToNode(pfgAux.accessURL)),
+                            Node(name = "strategicPriority", children = stringToNode(pfgAux.strategicPriority)),
+                            Node(name = "legislativeProposal", children = stringToNode(pfgAux.legislativeProposal)),
+                            Node(name = "buteHouseAgreementLink", children = stringToNode(pfgAux.buteHouseAgreementLink)),
+                            Node(name = "completionDate", children = stringToNode(pfgAux.completionDate)),
                             Node(name = "ministerialPortfolio", children = listToNodes(pfgAux.ministerialPortfolio)),
                             Node(name = "directorate", children = listToNodes(pfgAux.directorate)),
                             Node(name = "dG", children = listToNodes(pfgAux.dG)),
@@ -386,6 +414,180 @@ data class PFGAux(
                             Node(name = "keywords", children = listToNodes(pfgAux.keywords))
                         )
                     )
+                )
+            )
+        }
+
+        // Forced graph
+        var count = 0
+        fun toForcedGraphJSONAll(pfgAuxs: List<PFGAux>, limit: Int? = null): ForcedGraph {
+            val docs = limit?.let { pfgAuxs.take(it) } ?: pfgAuxs
+            val allGraphs = docs.map { toForcedGraphJSON(it) }
+            count = 0
+            return ForcedGraph(
+                nodes = allGraphs.flatMap { it.nodes!! }.distinct(),
+                links = allGraphs.flatMap { it.links!! },
+                categories = allGraphs.flatMap { it.categories!! }.distinct()
+            )
+        }
+        fun toForcedGraphJSON(pfgAux: PFGAux): ForcedGraph {
+            count++
+
+            // Nodes
+            val docId = "PFGAux|$count"
+            val doc = ForcedNode(id = docId, name = "PFG Aux", symbolSize = 55, value = pfgAux.accessURL)
+            val ministerialPortfolio = ForcedNode(
+                id = "${PFGAux::ministerialPortfolio.name}|${pfgAux.ministerialPortfolio}",
+                name = pfgAux.ministerialPortfolio.firstOrNull(),
+                symbolSize = 20,
+                value = PFGAux::ministerialPortfolio.name,
+                category = 0
+            )
+            val directorate = ForcedNode(
+                id = "${PFGAux::directorate.name}|${pfgAux.directorate}",
+                name = pfgAux.directorate.firstOrNull(),
+                symbolSize = 40,
+                value = PFGAux::directorate.name,
+                category = 3
+            )
+            val leadOfficial = ForcedNode(
+                id = "${PFGAux::leadOfficial.name}|${pfgAux.leadOfficial}",
+                name = pfgAux.leadOfficial.firstOrNull(),
+                symbolSize = 20,
+                value = PFGAux::leadOfficial.name,
+                category = 0
+            )
+            val period = ForcedNode(
+                id = "${PFGAux::period.name}|${pfgAux.period}",
+                name = pfgAux.period,
+                symbolSize = 20,
+                value = PFGAux::period.name,
+                category = 0
+            )
+            val policyTitle = ForcedNode(
+                id = "${PFGAux::policyTitle.name}|${pfgAux.policyTitle}",
+                name = pfgAux.policyTitle.firstOrNull(),
+                symbolSize = 20,
+                value = PFGAux::policyTitle.name,
+                category = 0
+            )
+            val strategicPriority = ForcedNode(
+                id = "${PFGAux::strategicPriority.name}|${pfgAux.strategicPriority}",
+                name = pfgAux.strategicPriority,
+                symbolSize = 20,
+                value = PFGAux::strategicPriority.name,
+                category = 0
+            )
+            val legislativeProposal = ForcedNode(
+                id = "${PFGAux::legislativeProposal.name}|${pfgAux.legislativeProposal}",
+                name = pfgAux.legislativeProposal,
+                symbolSize = 20,
+                value = PFGAux::legislativeProposal.name,
+                category = 0
+            )
+            val dG = ForcedNode(
+                id = "${PFGAux::dG.name}|${pfgAux.dG}",
+                name = pfgAux.dG.firstOrNull(),
+                symbolSize = 20,
+                value = PFGAux::dG.name,
+                category = 0
+            )
+            val buteHouseAgreementLink = ForcedNode(
+                id = "${PFGAux::buteHouseAgreementLink.name}|${pfgAux.buteHouseAgreementLink}",
+                name = pfgAux.buteHouseAgreementLink,
+                symbolSize = 20,
+                value = PFGAux::buteHouseAgreementLink.name,
+                category = 0
+            )
+            val completionDate = ForcedNode(
+                id = "${PFGAux::completionDate.name}|${pfgAux.completionDate}",
+                name = pfgAux.completionDate,
+                symbolSize = 20,
+                value = PFGAux::completionDate.name,
+                category = 0
+            )
+
+            val primaryOutcomesNodes = pfgAux.primaryOutcomes.map { primaryOutcome ->
+                ForcedNode(
+                    id = "${PFGAux::primaryOutcomes.name}|${primaryOutcome}",
+//                    id = "npfOutcome|${primaryOutcome}",
+                    name = primaryOutcome,
+                    symbolSize = 36,
+                    value = "Primary Outcome",
+                    category = 1
+                )
+            }
+            val secondaryOutcomesNodes = pfgAux.secondaryOutcomes.map { secondaryOutcome ->
+                ForcedNode(
+                    id = "${PFGAux::secondaryOutcomes.name}|${secondaryOutcome}",
+//                    id = "npfOutcome|${secondaryOutcome}",
+                    name = secondaryOutcome,
+                    symbolSize = 36,
+                    value = "Secondary Outcome",
+                    category = 2
+                )
+            }
+            val keywordsNodes = pfgAux.keywords.map { keyword ->
+                ForcedNode(
+                    id = "${PFGAux::keywords.name}|${keyword}",
+                    name = keyword,
+                    symbolSize = 31,
+                    value = "keyword",
+                    category = 4
+                )
+            }
+
+            // Links
+            val doc2propertyLinks = listOf(
+                ForcedLink(source = docId, target = ministerialPortfolio.id),
+                ForcedLink(source = docId, target = directorate.id),
+                ForcedLink(source = docId, target = leadOfficial.id),
+                ForcedLink(source = docId, target = period.id),
+                ForcedLink(source = docId, target = policyTitle.id),
+                ForcedLink(source = docId, target = strategicPriority.id),
+                ForcedLink(source = docId, target = legislativeProposal.id),
+                ForcedLink(source = docId, target = dG.id),
+                ForcedLink(source = docId, target = buteHouseAgreementLink.id),
+                ForcedLink(source = docId, target = completionDate.id),
+            )
+            val primaryOutcomesLinks = pfgAux.primaryOutcomes.flatMap { primaryOutcome ->
+                listOf(
+                    ForcedLink(source = docId, target = "${PFGAux::primaryOutcomes.name}|${primaryOutcome}")
+                )
+            }
+
+            val secondaryOutcomesLinks = pfgAux.secondaryOutcomes.flatMap { secondaryOutcome ->
+                listOf(
+                    ForcedLink(source = docId, target = "${PFGAux::secondaryOutcomes.name}|${secondaryOutcome}")
+                )
+            }
+            val keywordsLinks = pfgAux.keywords.flatMap { keyword ->
+                listOf(
+                    ForcedLink(source = docId, target = "${PFGAux::keywords.name}|${keyword}")
+                )
+            }
+
+            return ForcedGraph(
+                nodes = listOf(
+                    doc,
+                    ministerialPortfolio,
+                    directorate,
+                    leadOfficial,
+                    period,
+                    policyTitle,
+                    strategicPriority,
+                    legislativeProposal,
+                    dG,
+                    buteHouseAgreementLink,
+                    completionDate
+                ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes,
+                links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks,
+                categories = listOf(
+                    ForcedCategory(name = "Other"),
+                    ForcedCategory(name = "Primary outcomes"),
+                    ForcedCategory(name = "Secondary outcomes"),
+                    ForcedCategory(name = "Directorate"),
+                    ForcedCategory(name = "Keywords"),
                 )
             )
         }

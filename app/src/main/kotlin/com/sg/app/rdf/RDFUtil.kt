@@ -114,6 +114,7 @@ object RDF {
         val issued = uri + "issued"
         val title = uri + "title"
         val Period = uri + "Period"
+        val policy = uri + "policy"
         val Standard = uri + "Standard"
     }
 

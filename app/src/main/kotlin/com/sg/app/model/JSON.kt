@@ -9,7 +9,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 // Detailed graph
 data class Node(val name: String? = "", val children: List<Node>? = null)
 
-fun stringToNode(str: String): List<Node> = listToNodes(listOf(str))
+fun stringToNode(str: String?): List<Node> = listToNodes(listOf(str))
 fun listToNodes(list: List<String?>): List<Node> {
     return list.map { Node(it) }
 }fun bpComListToNodes(list: List<BPCom>): List<Node> {
@@ -26,6 +26,14 @@ data class ForcedGraph(val nodes: List<ForcedNode>? = listOf(ForcedNode(name = "
 data class ForcedNode(val id: String? = "", val name: String? = "", val symbolSize: Int? = null, val value: String? = "", val category: Int? = null )
 data class ForcedLink(val source: String? = "", val target: String? = "")
 data class ForcedCategory(val name: String? = "")
+
+fun mergeForcedGraphs(vararg forcedGraphs: ForcedGraph): ForcedGraph {
+    val allNodes = forcedGraphs.flatMap { it.nodes!! }.distinct()
+    val allLinks = forcedGraphs.flatMap { it.links!! }
+    val allCategories = forcedGraphs.flatMap { it.categories!! }.distinct()
+
+    return ForcedGraph(nodes = allNodes, links = allLinks, categories = allCategories)
+}
 
 // Mapper setup
 val mapper: ObjectMapper = ObjectMapper().registerModule(

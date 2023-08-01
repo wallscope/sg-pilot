@@ -48,4 +48,31 @@ class PFGAuxController {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(PFGAuxDAO.getOne(uri)
             ?.let { toDetailedGraphJSON(it) })
     }
+
+    // Forced graph
+    // PFGAuxs - forced graph, all docs
+    @GetMapping("/api/pfgaux/forcedgraph/list")
+    @ResponseBody
+    fun getPFGAuxsForcedList(): String {
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+            PFGAux.toForcedGraphJSONAll(
+                PFGAuxDAO.getAll(),
+                15
+            )
+        )
+    }
+
+    // PFGAuxs - forced graph, one doc
+    @GetMapping("/api/pfgaux/forcedgraph/{id}")
+    @ResponseBody
+    fun getPFGAuxForcedGraphData(@PathVariable id: String): String {
+        val uri = RDF.SG.PFGAux.id + id
+        if (!TriplestoreUtil.checkIfExists(uri)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "no PFGAux with id: $id")
+        }
+
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+            PFGAuxDAO.getOne(uri)
+            ?.let { PFGAux.toForcedGraphJSON(it) })
+    }
 }

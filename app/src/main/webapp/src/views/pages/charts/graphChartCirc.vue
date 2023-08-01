@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAllDocsStore } from '@/stores/alldocs';
 import { ref, onMounted, Ref } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import { use } from "echarts/core";
@@ -16,6 +17,7 @@ interface GraphNode {
   };
 }
 
+const allDocsStore = useAllDocsStore()
 let hide = false;
 var ROOT_PATH = "";
 
@@ -23,8 +25,10 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
 onMounted(async () => {
   try {
-    const response = await fetch(ROOT_PATH + "/graph_example.json");
-    const graph = await response.json();
+    // const response = await fetch(ROOT_PATH + "/graph_example.json");
+    // const graph = await response.json();
+
+    const graph = await allDocsStore.fetchAllDocsForcedGraph()
 
     graph.nodes.forEach(function (node: GraphNode) {
       node.label = {
@@ -35,7 +39,7 @@ onMounted(async () => {
     // Circular
     chartOptions.value = {
       title: {
-        text: 'Les Miserables',
+        text: 'Circular Big graph',
         subtext: 'Circular Layout',
         top: 'bottom',
         left: 'right'
@@ -52,7 +56,6 @@ onMounted(async () => {
       animationEasingUpdate: 'quinticInOut',
       series: [
         {
-          name: 'Les Miserables',
           type: 'graph',
           layout: 'circular',
           circular: {

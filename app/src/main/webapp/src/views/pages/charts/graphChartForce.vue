@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { usePfgStore } from '@/stores/pfg';
+import { useBpStore } from '@/stores/bp';
 import { useAllDocsStore } from '@/stores/alldocs';
 import { ref, onMounted, Ref } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
@@ -19,6 +20,7 @@ interface GraphNode {
 }
 
 const pfgStore = usePfgStore()
+const bpStore = useBpStore()
 const allDocsStore = useAllDocsStore()
 let hide = false;
 var ROOT_PATH = "";
@@ -34,8 +36,10 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
     // const graph = await pfgStore.fetchPfgDocForcedGraphAll()
     // const graph = await pfgStore.fetchPfgAuxForcedGraph()
     // const graph = await pfgStore.fetchPfgAuxForcedGraphAll()
-    const graph = await allDocsStore.fetchAllDocsForcedGraph()
+    // const graph = await bpStore.fetchBpDocForcedGraph()
+    // const graph = await bpStore.fetchBpDocForcedGraphAll()
 
+    const graph = await allDocsStore.fetchAllDocsForcedGraph()
     graph.nodes.forEach(function (node: GraphNode) {
       node.label = {
         show: node.symbolSize > 30

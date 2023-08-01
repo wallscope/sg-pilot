@@ -10,7 +10,7 @@ object BPDocDAO {
     private val BPDOC_SUB_QUERY = """
         ?bpdoc a <${Doc.type}> ;
           <${RDF.DCAT.resource}> ?bpdocFilename ;
-          <${Doc.hasCommitment}> ?bpdocCom ;
+         # <${Doc.hasCommitment}> ?bpdocCom ;
         .
 
         OPTIONAL { ?bpdoc <${RDF.ORG.Organization}> ?bpdocDG . }#END OPTIONAL
@@ -30,9 +30,9 @@ object BPDocDAO {
         # Expand BPDoc related keywords
         OPTIONAL { ?bpdoc <${RDF.DCAT.keyword}> ?bpdocKeyword . }#END OPTIONAL
         
-        ${BPComDAO.BPCOM_SUB_QUERY}
     """.trimIndent()
-
+    // last part of the query to fetch BPComs, kept outside to comment it out correctly because # didn't work in the string.
+    // ${BPComDAO.BPCOM_SUB_QUERY}
     private val BPDOC_QUERY = PREFIXES + """
         CONSTRUCT {
           ${BPDOC_SUB_QUERY.trimOptionals()}

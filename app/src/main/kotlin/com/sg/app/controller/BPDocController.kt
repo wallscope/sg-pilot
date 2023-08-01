@@ -48,4 +48,31 @@ class BPDocController {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(BPDocDAO.getOne(uri)
             ?.let { toDetailedGraphJSON(it) })
     }
+
+    // Forced graph
+    // BPDocs - forced graph, all docs
+    @GetMapping("/api/bpdoc/forcedgraph/list")
+    @ResponseBody
+    fun getBPDocsForcedList(): String {
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+            BPDoc.toForcedGraphJSONAll(
+                BPDocDAO.getAll(),
+                15
+            )
+        )
+    }
+
+    // BPDocs - forced graph, one doc
+    @GetMapping("/api/bpdoc/forcedgraph/{id}")
+    @ResponseBody
+    fun getBPDocForcedGraphData(@PathVariable id: String): String {
+        val uri = RDF.SG.BPDoc.id + id
+        if (!TriplestoreUtil.checkIfExists(uri)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "no BPDoc with id: $id")
+        }
+
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+            BPDocDAO.getOne(uri)
+            ?.let { BPDoc.toForcedGraphJSON(it) })
+    }
 }

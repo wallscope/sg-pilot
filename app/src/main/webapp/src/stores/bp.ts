@@ -55,10 +55,26 @@ export const useBpStore = defineStore('bp', {
       );
       this.bpDocs = response.data;
     },
+    // Detailed graph
     async fetchBpDocDetailedGraph() {
       const response = await api.get<any>(
         // Temporarily hardcoded to fetch a specific bpdoc
-        `/api/bpdoc/graph-detailed/1`
+        `/api/bpdoc/graph-detailed/BusinessPlan2023-24-DGCorporate_Propriety_EthicsDirectoratealiascopy_2_.xlsx`
+      );
+      return response.data;
+    },
+    // Forced graph
+    async fetchBpDocForcedGraph() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific bpdoc
+        `/api/bpdoc/forcedgraph/BusinessPlan2023-24-DGCommunities_UkraineSettlementDirectoratealiascopy.xlsx`
+      );
+      return response.data;
+    },
+    async fetchBpDocForcedGraphAll() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific bpdoc
+        `/api/bpdoc/forcedgraph/list`
       );
       return response.data;
     },

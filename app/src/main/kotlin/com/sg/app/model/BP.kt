@@ -117,6 +117,217 @@ data class BPDoc(
                 )
             )
         }
+
+        // Forced graph
+        var count = 0
+        fun toForcedGraphJSONAll(bpDocs: List<BPDoc>, limit: Int? = null): ForcedGraph {
+            val docs = limit?.let { bpDocs.take(it) } ?: bpDocs
+            val allGraphs = docs.map { toForcedGraphJSON(it) }
+            count = 0
+            return ForcedGraph(
+                nodes = allGraphs.flatMap { it.nodes!! }.distinct(),
+                links = allGraphs.flatMap { it.links!! },
+                categories = allGraphs.flatMap { it.categories!! }.distinct()
+            )
+        }
+        fun toForcedGraphJSON(bpDoc: BPDoc): ForcedGraph {
+            count++
+
+            // Nodes
+            val docId = "BPDoc|$count"
+            val doc = ForcedNode(id = docId, name = "BP Doc", symbolSize = 55, value = bpDoc.filename)
+            val dG = ForcedNode(
+                id = "${BPDoc::dG.name}|${bpDoc.dG}",
+                name = bpDoc.dG.firstOrNull(),
+                symbolSize = 20,
+                value = BPDoc::dG.name,
+                category = 0
+            )
+            val directorate = ForcedNode(
+                id = "${BPDoc::directorate.name}|${bpDoc.directorate}",
+                name = bpDoc.directorate.firstOrNull(),
+                symbolSize = 40,
+                value = BPDoc::directorate.name,
+                category = 3
+            )
+            val director = ForcedNode(
+                id = "${BPDoc::director.name}|${bpDoc.director}",
+                name = bpDoc.director.firstOrNull(),
+                symbolSize = 20,
+                value = BPDoc::director.name,
+                category = 0
+            )
+            val keyContact = ForcedNode(
+                id = "${BPDoc::keyContact.name}|${bpDoc.keyContact}",
+                name = bpDoc.keyContact.firstOrNull(),
+                symbolSize = 20,
+                value = BPDoc::keyContact.name,
+                category = 0
+            )
+            val contactEmail = ForcedNode(
+                id = "${BPDoc::contactEmail.name}|${bpDoc.contactEmail}",
+                name = bpDoc.contactEmail.firstOrNull(),
+                symbolSize = 20,
+                value = BPDoc::contactEmail.name,
+                category = 0
+            )
+            val resProgramme = ForcedNode(
+                id = "${BPDoc::resProgramme.name}|${bpDoc.resProgramme}",
+                name = bpDoc.resProgramme,
+                symbolSize = 20,
+                value = BPDoc::resProgramme.name,
+                category = 0
+            )
+            val resTotalOperatingCosts = ForcedNode(
+                id = "${BPDoc::resTotalOperatingCosts.name}|${bpDoc.resTotalOperatingCosts}",
+                name = bpDoc.resTotalOperatingCosts,
+                symbolSize = 20,
+                value = BPDoc::resTotalOperatingCosts.name,
+                category = 0
+            )
+            val resCorporateRunningCosts = ForcedNode(
+                id = "${BPDoc::resCorporateRunningCosts.name}|${bpDoc.resCorporateRunningCosts}",
+                name = bpDoc.resCorporateRunningCosts,
+                symbolSize = 20,
+                value = BPDoc::resCorporateRunningCosts.name,
+                category = 0
+            )
+            val resTotal = ForcedNode(
+                id = "${BPDoc::resTotal.name}|${bpDoc.resTotal}",
+                name = bpDoc.resTotal,
+                symbolSize = 20,
+                value = BPDoc::resTotal.name,
+                category = 0
+            )
+            val resCapital = ForcedNode(
+                id = "${BPDoc::resCapital.name}|${bpDoc.resCapital}",
+                name = bpDoc.resCapital,
+                symbolSize = 20,
+                value = BPDoc::resCapital.name,
+                category = 0
+            )
+            val resFinancialTransactions = ForcedNode(
+                id = "${BPDoc::resFinancialTransactions.name}|${bpDoc.resFinancialTransactions}",
+                name = bpDoc.resFinancialTransactions,
+                symbolSize = 20,
+                value = BPDoc::resFinancialTransactions.name,
+                category = 0
+            )
+
+            val divisionsNodes = bpDoc.divisions.map { division ->
+                ForcedNode(
+                    id = "${BPDoc::divisions.name}|${division.split("|")[1]}",
+//                    id = "npfOutcome|${primaryOutcome}",
+                    name = division.split("|")[1],
+                    symbolSize = 20,
+                    value = "Division",
+                    category = 0
+                )
+            }
+            val divisionLeadsNodes = bpDoc.divisionLeads.map { divisionLead ->
+                ForcedNode(
+                    id = "${BPDoc::divisionLeads.name}|${divisionLead.split("|")[1]}",
+//                    id = "npfOutcome|${primaryOutcome}",
+                    name = divisionLead.split("|")[1],
+                    symbolSize = 20,
+                    value = "Division Lead",
+                    category = 0
+                )
+            }
+            // Buggy
+//            val commitmentsNodes = bpDoc.commitments.filter { commitment -> commitment.filename != "empty" }
+//                .map { commitment ->
+//                    ForcedNode(
+//                        id = "${BPDoc::commitments.name}|${commitment}",
+//    //                    id = "npfOutcome|${primaryOutcome}",
+//                        name = commitment.commitment,
+//                        symbolSize = 20,
+//                        value = "Commitment",
+//                        category = 0
+//                    )
+//            }
+            val keywordsNodes = bpDoc.keywords.map { keyword ->
+                ForcedNode(
+                    id = "${BPDoc::keywords.name}|${keyword}",
+                    name = keyword,
+                    symbolSize = 31,
+                    value = "keyword",
+                    category = 4
+                )
+            }
+
+            // Links
+            val doc2propertyLinks = listOf(
+                ForcedLink(source = docId, target = dG.id),
+                ForcedLink(source = docId, target = directorate.id),
+                ForcedLink(source = docId, target = director.id),
+                ForcedLink(source = docId, target = keyContact.id),
+                ForcedLink(source = docId, target = contactEmail.id),
+                ForcedLink(source = docId, target = resProgramme.id),
+                ForcedLink(source = docId, target = resTotalOperatingCosts.id),
+                ForcedLink(source = docId, target = resCorporateRunningCosts.id),
+                ForcedLink(source = docId, target = resTotal.id),
+                ForcedLink(source = docId, target = resCapital.id),
+                ForcedLink(source = docId, target = resFinancialTransactions.id),
+            )
+            val divisionsLinks = bpDoc.divisions.flatMap { division ->
+                val (divisionIndex, divisionName) = division.split("|")
+                val divisionId = "${BPDoc::divisions.name}|${divisionName}"
+
+                val matchingDivisionLead = bpDoc.divisionLeads.find { it.startsWith("$divisionIndex|") }?.split("|")?.get(1)
+
+                listOf(
+                    ForcedLink(source = docId, target = divisionId),
+                    ForcedLink(source = divisionId, target = "${BPDoc::divisionLeads.name}|${matchingDivisionLead}")
+                )
+            }
+//            val divisionLeadsLinks = bpDoc.divisionLeads.flatMap { divisionLead ->
+//
+//                val (divisionLeadIndex, divisionLeadName) = divisionLead.split("|")
+//                val divisionLeadId = "${BPDoc::divisionLeads.name}|${divisionLeadName}"
+//
+//                listOf(
+//                    ForcedLink(source = docId, target = divisionLeadId),
+//                    ForcedLink(source = divisionLeadId, target = "${BPDoc::divisionLeads.name}|${divisionLead}")
+//
+//                )
+//            }
+            //Buggy
+//            val commitmentsLinks = bpDoc.commitments.flatMap { commitment ->
+//                listOf(
+//                    ForcedLink(source = docId, target = "${BPDoc::commitments.name}|${commitment.commitment}")
+//                )
+//            }
+            val keywordsLinks = bpDoc.keywords.flatMap { keyword ->
+                listOf(
+                    ForcedLink(source = docId, target = "${BPDoc::keywords.name}|${keyword}")
+                )
+            }
+
+            return ForcedGraph(
+                nodes = listOf(
+                    doc,
+                    dG,
+                    directorate,
+                    director,
+                    keyContact,
+                    contactEmail,
+                    resProgramme,
+                    resTotalOperatingCosts,
+                    resCorporateRunningCosts,
+                    resTotal,
+                    resCapital,
+                    resFinancialTransactions) + divisionsNodes + divisionLeadsNodes + /*commitmentsNode +*/ keywordsNodes,
+                links = doc2propertyLinks + divisionsLinks + /*commitmentsLinks +*/ keywordsLinks,
+                categories = listOf(
+                    ForcedCategory(name = "Other"),
+                    ForcedCategory(name = "Primary outcomes"),
+                    ForcedCategory(name = "Secondary outcomes"),
+                    ForcedCategory(name = "Directorate"),
+                    ForcedCategory(name = "Keywords"),
+                )
+            )
+        }
     }
 }data class BPCom(
     @JsonProperty("uri") override var uri: URI,

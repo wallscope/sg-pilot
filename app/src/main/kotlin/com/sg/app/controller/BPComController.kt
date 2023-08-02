@@ -48,4 +48,31 @@ class BPComController {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(BPComDAO.getOne(uri)
             ?.let { toDetailedGraphJSON(it) })
     }
+
+    // Forced graph
+    // BPComs - forced graph, all docs
+    @GetMapping("/api/bpcom/forcedgraph/list")
+    @ResponseBody
+    fun getBPComsForcedList(): String {
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+            BPCom.toForcedGraphJSONAll(
+                BPComDAO.getAll(),
+                15
+            )
+        )
+    }
+
+    // BPComs - forced graph, one doc
+    @GetMapping("/api/bpcom/forcedgraph/{id}")
+    @ResponseBody
+    fun getBPComForcedGraphData(@PathVariable id: String): String {
+        val uri = RDF.SG.BPCom.id + id
+        if (!TriplestoreUtil.checkIfExists(uri)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "no BPCom with id: $id")
+        }
+
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+            BPComDAO.getOne(uri)
+            ?.let { BPCom.toForcedGraphJSON(it) })
+    }
 }

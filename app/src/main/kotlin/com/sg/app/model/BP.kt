@@ -119,22 +119,23 @@ data class BPDoc(
         }
 
         // Forced graph
-        var count = 0
+//        var count = 0
         fun toForcedGraphJSONAll(bpDocs: List<BPDoc>, limit: Int? = null): ForcedGraph {
             val docs = limit?.let { bpDocs.take(it) } ?: bpDocs
             val allGraphs = docs.map { toForcedGraphJSON(it) }
-            count = 0
+//            count = 0
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it.nodes!! }.distinct(),
+                nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
                 links = allGraphs.flatMap { it.links!! },
                 categories = allGraphs.flatMap { it.categories!! }.distinct()
             )
         }
         fun toForcedGraphJSON(bpDoc: BPDoc): ForcedGraph {
-            count++
+//            count++
 
             // Nodes
-            val docId = "BPDoc|$count"
+//            val docId = "BPDoc|$count"
+            val docId = bpDoc.filename
             val doc = ForcedNode(id = docId, name = "BP Doc", symbolSize = 55, value = bpDoc.filename)
             val dG = ForcedNode(
                 id = "${BPDoc::dG.name}|${bpDoc.dG}",
@@ -402,6 +403,137 @@ data class BPDoc(
                             Node(name = "keywords", children = listToNodes(bpCom.keywords)),
                         )
                     )
+                )
+            )
+        }
+
+        // Forced graph
+        var count = 0
+        fun toForcedGraphJSONAll(bpComs: List<BPCom>, limit: Int? = null): ForcedGraph {
+            val docs = limit?.let { bpComs.take(it) } ?: bpComs
+            val allGraphs = docs.map { toForcedGraphJSON(it) }
+            count = 0
+            return ForcedGraph(
+                nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
+                links = allGraphs.flatMap { it.links!! },
+                categories = allGraphs.flatMap { it.categories!! }.distinct()
+            )
+        }
+        fun toForcedGraphJSON(bpCom: BPCom): ForcedGraph {
+            count++
+
+            // Nodes
+            val docId = "BPCom|$count"
+//            val docId = bpCom.filename
+            val doc = ForcedNode(id = docId, name = "BP Com", symbolSize = 55, value = bpCom.filename)
+            val commitment = ForcedNode(
+                id = "${BPCom::commitment.name}|${bpCom.commitment}",
+                name = bpCom.commitment,
+                symbolSize = 20,
+                value = BPCom::commitment.name,
+                category = 0
+            )
+            val priority = ForcedNode(
+                id = "${BPCom::priority.name}|${bpCom.priority}",
+                name = bpCom.priority,
+                symbolSize = 20,
+                value = BPCom::priority.name,
+                category = 0
+            )
+            val commitmentLead = ForcedNode(
+                id = "${BPCom::commitmentLead.name}|${bpCom.commitmentLead}",
+                name = bpCom.commitmentLead,
+                symbolSize = 20,
+                value = BPCom::commitmentLead.name,
+                category = 0
+            )
+            val projectBudget = ForcedNode(
+                id = "${BPCom::projectBudget.name}|${bpCom.projectBudget}",
+                name = bpCom.projectBudget,
+                symbolSize = 20,
+                value = BPCom::projectBudget.name,
+                category = 0
+            )
+            val budgetSufficient = ForcedNode(
+                id = "${BPCom::budgetSufficient.name}|${bpCom.budgetSufficient}",
+                name = bpCom.budgetSufficient,
+                symbolSize = 20,
+                value = BPCom::budgetSufficient.name,
+                category = 0
+            )
+
+            val primaryOutcomesNodes = bpCom.primaryOutcomes.map { primaryOutcome ->
+                ForcedNode(
+                    id = "${BPCom::primaryOutcomes.name}|${primaryOutcome}",
+                    name = primaryOutcome,
+                    symbolSize = 36,
+                    value = "Primary Outcome",
+                    category = 1
+                )
+            }
+            val secondaryOutcomesNodes = bpCom.secondaryOutcomes.map { secondaryOutcome ->
+                ForcedNode(
+                    id = "${BPCom::secondaryOutcomes.name}|${secondaryOutcome}",
+                    name = secondaryOutcome,
+                    symbolSize = 36,
+                    value = "Secondary Outcome",
+                    category = 2
+                )
+            }
+
+            val keywordsNodes = bpCom.keywords.map { keyword ->
+                ForcedNode(
+                    id = "${BPCom::keywords.name}|${keyword}",
+                    name = keyword,
+                    symbolSize = 31,
+                    value = "keyword",
+                    category = 4
+                )
+            }
+
+            // Links
+            val doc2propertyLinks = listOf(
+//                ForcedLink(source = docId, target = bpCom.filename),
+                ForcedLink(source = bpCom.filename, target = docId),
+                ForcedLink(source = docId, target = commitment.id),
+                ForcedLink(source = docId, target = priority.id),
+                ForcedLink(source = docId, target = commitmentLead.id),
+                ForcedLink(source = docId, target = projectBudget.id),
+                ForcedLink(source = docId, target = budgetSufficient.id),
+            )
+
+            val primaryOutcomesLinks = bpCom.primaryOutcomes.flatMap { primaryOutcome ->
+                listOf(
+                    ForcedLink(source = docId, target = "${BPCom::primaryOutcomes.name}|${primaryOutcome}")
+                )
+            }
+            val secondaryOutcomesLinks = bpCom.secondaryOutcomes.flatMap { secondaryOutcome ->
+                listOf(
+                    ForcedLink(source = docId, target = "${BPCom::secondaryOutcomes.name}|${secondaryOutcome}")
+                )
+            }
+            val keywordsLinks = bpCom.keywords.flatMap { keyword ->
+                listOf(
+                    ForcedLink(source = docId, target = "${BPCom::keywords.name}|${keyword}")
+                )
+            }
+
+            return ForcedGraph(
+                nodes = listOf(
+                    doc,
+                    commitment,
+                    priority,
+                    commitmentLead,
+                    projectBudget,
+                    budgetSufficient
+                ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes,
+                links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks,
+                categories = listOf(
+                    ForcedCategory(name = "Other"),
+                    ForcedCategory(name = "Primary outcomes"),
+                    ForcedCategory(name = "Secondary outcomes"),
+                    ForcedCategory(name = "Directorate"),
+                    ForcedCategory(name = "Keywords"),
                 )
             )
         }

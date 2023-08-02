@@ -157,7 +157,7 @@ data class PFGDoc(
             val allGraphs = docs.map { toForcedGraphJSON(it) }
             count = 0
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it.nodes!! }.distinct(),
+                nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
                 links = allGraphs.flatMap { it.links!! },
                 categories = allGraphs.flatMap { it.categories!! }.distinct()
             )
@@ -425,7 +425,7 @@ data class PFGAux(
             val allGraphs = docs.map { toForcedGraphJSON(it) }
             count = 0
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it.nodes!! }.distinct(),
+                nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
                 links = allGraphs.flatMap { it.links!! },
                 categories = allGraphs.flatMap { it.categories!! }.distinct()
             )

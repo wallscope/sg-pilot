@@ -38,6 +38,8 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
     // const graph = await pfgStore.fetchPfgAuxForcedGraphAll()
     // const graph = await bpStore.fetchBpDocForcedGraph()
     // const graph = await bpStore.fetchBpDocForcedGraphAll()
+    // const graph = await bpStore.fetchBpComForcedGraph()
+    // const graph = await bpStore.fetchBpComForcedGraphAll()
 
     const graph = await allDocsStore.fetchAllDocsForcedGraph()
     graph.nodes.forEach(function (node: GraphNode) {

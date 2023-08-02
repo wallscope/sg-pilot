@@ -3,11 +3,13 @@ package com.sg.app.controller
 import com.sg.app.dao.PFGAuxDAO
 import com.sg.app.dao.PFGDocDAO
 import com.sg.app.dao.BPDocDAO
+import com.sg.app.dao.BPComDAO
 import com.sg.app.model.PFGAux
 import com.sg.app.rdf.RDF
 import com.sg.app.rdf.TriplestoreUtil
 import com.sg.app.model.PFGDoc
 import com.sg.app.model.BPDoc
+import com.sg.app.model.BPCom
 import com.sg.app.model.mapper
 import com.sg.app.model.mergeForcedGraphs
 import org.slf4j.LoggerFactory
@@ -50,19 +52,22 @@ class AllGraphController {
             mergeForcedGraphs(
                 async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), 15) }.await(),
                 async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), 15) }.await(),
-                async { BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll(), 15) }.await()
+                async { BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll(), 15) }.await(),
+                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), 15) }.await()
             )
         )
     }
 
-//    // Forced graph, all docs
+    // Forced graph, all docs
 //    @GetMapping("/api/alldocs/forcedgraph/list")
 //    @ResponseBody
 //    fun getDocsForcedList(): String {
 //        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
 //            mergeForcedGraphs(
-//                PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), 15),
-//                PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), 15)
+//                PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll()),
+//                PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll()),
+//                BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll()),
+//                BPCom.toForcedGraphJSONAll(BPComDAO.getAll())
 //            )
 //        )
 //    }

@@ -86,6 +86,20 @@ export const useBpStore = defineStore('bp', {
       );
       return response.data;
     },
+    // Forced graph
+    async fetchBpComForcedGraph() {
+      const response = await api.get<any>(
+        // Temporarily hardcoded to fetch a specific bpcom
+        `/api/bpcom/forcedgraph/75`
+      );
+      return response.data;
+    },
+    async fetchBpComForcedGraphAll() {
+      const response = await api.get<any>(
+        `/api/bpcom/forcedgraph/list`
+      );
+      return response.data;
+    },
     getDateFormatted(date: Date): string {
       const day = date.getDate();
       const month = date.getMonth() + 1; // Months are zero-based

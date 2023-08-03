@@ -10,6 +10,8 @@
     "build:icons": "tsc -b src/@iconify && node src/@iconify/build-icons.js"
   },
   "dependencies": {
+    "fuse.js": "^6.6.2",
+    "vue3-simple-typeahead": "^1.0.11",
     "keycloak-js": "^18.0.0",
     "@casl/ability": "^6.2.0",
     "@casl/vue": "^2.2.0",

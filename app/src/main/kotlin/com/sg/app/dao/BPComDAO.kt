@@ -14,7 +14,7 @@ object BPComDAO {
 
         OPTIONAL { ?bpdocCom <${RDF.FRAPO.ProjectBudget}> ?bpdocProjectBudget . }#END OPTIONAL
         OPTIONAL { ?bpdocCom <${RDF.SG.BudgetSufficient}> ?bpdocBudgetSufficient . }#END OPTIONAL
-        OPTIONAL { ?bpdocCom <${RDF.ITSMO.Project}> ?bpdocComCommitment . }#END OPTIONAL
+        OPTIONAL { ?bpdocCom <${RDF.DCAT.title}> ?bpdocComCommitment . }#END OPTIONAL
         OPTIONAL { ?bpdocCom <${RDF.ITSMO.Priority}> ?bpdocComPriority . }#END OPTIONAL
         OPTIONAL { ?bpdocCom <${RDF.ITSMO.hasProjectOwner}> ?bpdocComCommitmentLead . }#END OPTIONAL
         OPTIONAL { ?bpdocCom <${RDF.SG.DeliveryPartner}> ?bpdocComDeliveryPartner . }#END OPTIONAL

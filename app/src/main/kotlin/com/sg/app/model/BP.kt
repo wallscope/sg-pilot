@@ -351,7 +351,7 @@ data class BPDoc(
 
         add(uri, RDF.DCAT.resource, filename?.toRDFLiteral())
 //        add(uri, RDF.RDFS.comment, comment.toRDFLiteral())
-        add(uri, RDF.ITSMO.Project, commitment?.toRDFLiteral())
+        add(uri, RDF.DCAT.title, commitment?.toRDFLiteral())
         add(uri, RDF.ITSMO.Priority, priority?.toRDFLiteral())
         add(uri, RDF.ITSMO.hasProjectOwner, commitmentLead?.toRDFLiteral())
         add(uri, RDF.FRAPO.ProjectBudget, projectBudget?.toRDFLiteral())
@@ -369,7 +369,7 @@ data class BPDoc(
         override fun fromModel(uri: URI, model: Model): BPCom {
             val filename = model.getOneObjectOrNull(uri, RDF.DCAT.resource)?.asLiteral()?.string
 //            val comment = model.getOneObjectOrFail(uri, RDF.RDFS.comment).asLiteral().string
-            val commitment = model.getOneObjectOrNull(uri, RDF.ITSMO.Project)?.asLiteral()?.string
+            val commitment = model.getOneObjectOrNull(uri, RDF.DCAT.title)?.asLiteral()?.string
             val projectBudget = model.getOneObjectOrNull(uri, RDF.FRAPO.ProjectBudget)?.asLiteral()?.string
             val budgetSufficient = model.getOneObjectOrNull(uri, RDF.SG.BudgetSufficient)?.asLiteral()?.string
             val priority = model.getOneObjectOrNull(uri, RDF.ITSMO.Priority)?.asLiteral()?.string

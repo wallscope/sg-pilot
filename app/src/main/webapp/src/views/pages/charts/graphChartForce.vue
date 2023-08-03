@@ -124,6 +124,6 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 </template>
 <style lang="scss" scoped>
 .chart {
-  height: 600px;
+  height: 820px;
 }
 </style>

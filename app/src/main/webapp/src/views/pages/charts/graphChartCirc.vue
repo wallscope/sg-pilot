@@ -206,6 +206,6 @@ onMounted(async () => {
 </template>
 <style lang="scss" scoped>
 .chart {
-  height: 600px;
+  height: 820px;
 }
 </style>

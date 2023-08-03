@@ -37,13 +37,13 @@ const vuetifyTheme = useTheme()
         icon: { icon: 'mdi-chart-bar' }
       }"
     />
-    <VerticalNavLink
+    <!-- <VerticalNavLink
       :item="{
         title: 'Graph Chart XY preset',
         to: 'graphChartXY',
         icon: { icon: 'mdi-chart-line' }
       }"
-    />
+    /> -->
     <VerticalNavLink
       :item="{
         title: 'Graph Chart circular',
@@ -58,7 +58,7 @@ const vuetifyTheme = useTheme()
         icon: { icon: 'mdi-chart-line' }
       }"
     />
-    <VerticalNavLink
+    <!-- <VerticalNavLink
       :item="{
         title: 'Other Graph Chart dep',
         to: 'graphChartDep',
@@ -71,7 +71,7 @@ const vuetifyTheme = useTheme()
         to: 'treemapDrillChart',
         icon: { icon: 'mdi-chart-line' }
       }"
-    />
+    /> -->
     <VerticalNavLink
       :item="{
         title: 'Sankey Chart',

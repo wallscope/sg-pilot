@@ -58,6 +58,20 @@ class AllGraphController {
         )
     }
 
+    // TODO
+//    @GetMapping("/api/alldocs/overview/list")
+//    @ResponseBody
+//    suspend fun getDocsOverviewList(): String = coroutineScope {
+//        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+//            mergeForcedGraphs(
+//                async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), 15) }.await(),
+//                async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), 15) }.await(),
+//                async { BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll(), 15) }.await(),
+//                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), 15) }.await()
+//            )
+//        )
+//    }
+
     // Forced graph, all docs
 //    @GetMapping("/api/alldocs/forcedgraph/list")
 //    @ResponseBody

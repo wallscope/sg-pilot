@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import api from "@/utils/api";
 
-// Business Planning Store
+// Business Planning Doc Store
 export interface BpDoc {
   uri: string;
   filename: string;
@@ -40,6 +40,36 @@ export const DEF_BP_DATA: BpDoc = {
   resFinancialTransactions: '',
   keywords: [''],
 };
+
+// Business Planning commitment Store
+export interface BPCom {
+  uri: string;
+  filename: string;
+  commitment: string;
+  priority: string;
+  commitmentLead: string;
+  projectBudget: string;
+  budgetSufficient: string;
+  deliveryPartners: string[];
+  primaryOutcomes: string[];
+  secondaryOutcomes: string[];
+  keywords: string[];
+}
+
+// Template objects
+export const DEF_BPCOM_DATA: BPCom = {
+  uri: '',
+  filename: '',
+  commitment: '',
+  priority: '',
+  commitmentLead: '',
+  projectBudget: '',
+  budgetSufficient: '',
+  deliveryPartners: [''],
+  primaryOutcomes: [''],
+  secondaryOutcomes: [''],
+  keywords: [''],
+}
 
 export const useBpStore = defineStore('bp', {
   state: () => ({

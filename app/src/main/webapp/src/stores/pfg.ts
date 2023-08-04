@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import api from "@/utils/api";
 
-// Programme For Government Store
+// Programme For Government Doc Store
 export interface PfgDoc {
   uri: string;
   filename: string;
@@ -21,7 +21,7 @@ export interface PfgDoc {
 }
 
 // Template objects
-export const DEF_PFG_DATA: PfgDoc = {
+export const DEF_PFGDOC_DATA: PfgDoc = {
   uri: '',
   filename: '',
   ministerialPortfolio: [''],
@@ -35,15 +35,83 @@ export const DEF_PFG_DATA: PfgDoc = {
   secondaryOutcomes: [''],
   portfolioCoordinator: [''],
   policyTitle: [''],
-  completionDate: getCurrentDateFormatted(),
+  completionDate: '',
+  keywords: [''],
+}
+
+// Programme For Government Aux Store
+export interface PfgAux {
+  uri: string;
+  id: string;
+  period: string;
+  accessURL: string;
+  strategicPriority: string;
+  legislativeProposal: string;
+  buteHouseAgreementLink: string;
+  completionDate: string;
+  ministerialPortfolio: string[];
+  directorate: string[];
+  dG: string[];
+  leadOfficial: string[];
+  primaryOutcomes: string[];
+  secondaryOutcomes: string[];
+  policyTitle: string[];
+  keywords: string[];
+}
+
+export interface PfgAuxOverview {
+  uri: string;
+  title: string;
+  docType: string;
+  dG: string;
+  directorate: string;
+  primaryOutcomes: string[];
+  secondaryOutcomes: string[];
+  keywords: string[];
+}
+
+// Template objects
+export const DEF_PFGAUX_DATA: PfgAux = {
+  uri: '',
+  id: '',
+  period: '',
+  accessURL: '',
+  strategicPriority: '',
+  legislativeProposal: '',
+  buteHouseAgreementLink: '',
+  completionDate: '',
+  ministerialPortfolio: [''],
+  directorate: [''],
+  dG: [''],
+  leadOfficial: [''],
+  primaryOutcomes: [''],
+  secondaryOutcomes: [''],
+  policyTitle: [''],
+  keywords: [''],
+}
+export const DEF_PFGAUX_OVERVIEW_DATA: PfgAuxOverview = {
+  uri: '',
+  title: '',
+  docType: '',
+  dG: '',
+  directorate: '',
+  primaryOutcomes: [''],
+  secondaryOutcomes: [''],
   keywords: [''],
 }
 
 export const usePfgStore = defineStore('pfg', {
   state: () => ({
+    // PFG Docs
     pfgDocDetailedGraphData: {} as any,
-    pfgDoc: DEF_PFG_DATA,
-    pfgDocs: [DEF_PFG_DATA] as PfgDoc[],
+    pfgDoc: DEF_PFGDOC_DATA,
+    pfgDocs: [DEF_PFGDOC_DATA] as PfgDoc[],
+    // PFG Auxs
+    pfgAuxDetailedGraphData: {} as any,
+    pfgAux: DEF_PFGAUX_DATA,
+    pfgAuxs: [DEF_PFGAUX_DATA] as PfgAux[],
+    PfgAuxOverview: DEF_PFGAUX_OVERVIEW_DATA,
+    PfgAuxOverviews: [DEF_PFGAUX_OVERVIEW_DATA] as PfgAuxOverview[],
   }),
   actions:{
     // PFG documents
@@ -84,6 +152,18 @@ export const usePfgStore = defineStore('pfg', {
       return response.data;
     },
     // PFG Auxiliary
+    async fetchPfgAuxs() {
+      const response = await api.get<PfgAux[]>(
+        `/api/pfgaux/list`
+      );
+      this.pfgAuxs = response.data;
+    },
+    async fetchPfgAuxOverviews() {
+      const response = await api.get<PfgAuxOverview[]>(
+        `/api/pfgaux/overview/list`
+      );
+      this.PfgAuxOverviews = response.data;
+    },
     async fetchPfgAuxDetailedGraph() {
       const response = await api.get<any>(
         // Temporarily hardcoded to fetch a specific pfgdoc

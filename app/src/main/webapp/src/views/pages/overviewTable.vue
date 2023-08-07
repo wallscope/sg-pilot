@@ -11,35 +11,30 @@
     <table>
       <thead>
         <tr>
-          <th>Document Info</th>
-          <th>Director Info</th>
-          <th>Outcome Info</th>
+          <th>Title</th>
+          <th>Directorate</th>
+          <th>Outcomes</th>
           <th>Keywords</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(doc, i) in paginatedDocsList" :key="doc.uri">
-          <td> <strong>
-              <p>policyTitle:</p></strong>
-            <input id="policyTitle" placeholder="policyTitle" v-model="doc.title" disabled/><strong>
-              <p>Doc type:</p></strong>
+          <td>
+            <input id="policyTitle" placeholder="Title" v-model="doc.title" disabled/>
             <input id="Doc type" placeholder="Doc type" :value="doc.docType" disabled/>
           </td>
-          <td><strong>
-              <p>dG:</p></strong>
-            <input id="dG" placeholder="dG" v-model="doc.dG" disabled/><strong>
-              <p>directorate:</p></strong>
-            <input id="directorate" placeholder="directorate" v-model="doc.directorate" disabled/>
+          <td>
+            <input id="dG" placeholder="Director General" v-model="doc.dG" disabled/>
+            <input id="directorate" placeholder="Directorate" v-model="doc.directorate" disabled/>
           </td>
           <td><strong>
-              <p>Primary Outcomes</p></strong>
+              <p>Primary </p></strong>
             <input id="Primary Outcomes" placeholder="Primary Outcomes" v-model="doc.primaryOutcomes[0]" disabled/><strong>
-              <p>Secondary Outcomes</p></strong>
+              <p>Secondary</p></strong>
             <input id="Secondary Outcomes" placeholder="Secondary Outcomes" v-model="doc.secondaryOutcomes[0]" disabled/>
           </td>
-          <td><strong>
-              <p>Keywords</p></strong>
+          <td>
             <input id="Keywords" placeholder="Keywords" v-model="doc.keywords[0]" disabled/>
           </td>
           <td>
@@ -200,8 +195,6 @@ td p, td input {
 }
 input,
 textarea {
-  border: 2px solid black;
-  border-radius: 5px;
   padding: 4.5px 5px;
   font-size: 16px;
   font-weight: normal;
@@ -262,12 +255,17 @@ input.internalDocs {
     }
   }
 }
+//.v-btn:hover {
+//  color: white;
+//  background: rgb(106, 168, 201);
+//}
 table {
   border-spacing: 0;
 }
 th {
-  background: #8bc0e7;
+  background: rgb(106, 168, 201);
   text-align: left;
+  color: white;
 }
 th,
 td {
@@ -280,11 +278,6 @@ td {
   font-size: 16px;
   transition: all 0.2s;
   color: black;
-}
-tr:hover {
-  td {
-    background: #deafcc;
-  }
 }
 
 // scroll bar

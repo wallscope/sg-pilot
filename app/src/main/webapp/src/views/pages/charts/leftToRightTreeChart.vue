@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { usePfgStore } from '@/stores/pfg';
-import { useBpStore } from '@/stores/bp';
+import { useAllDocsStore } from '@/stores/alldocs';
 import { ref, onMounted, Ref } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import { use } from "echarts/core";
@@ -8,39 +7,29 @@ import { TreeChart } from 'echarts/charts'
 import { CanvasRenderer } from "echarts/renderers";
 import Chart from "vue-echarts";
 import type { ECBasicOption } from "echarts/types/dist/shared";
+import { useRoute } from 'vue-router';
 
 use([GridComponent, LegendComponent, TitleComponent, TooltipComponent, TreeChart, CanvasRenderer]);
 
-const pfgStore = usePfgStore()
-const bpStore = useBpStore()
+const route = useRoute()
+const allDocsStore = useAllDocsStore()
+
 let hide = false;
 const data: Ref<null | { name: any; children: any }> = ref(null);
 const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
 onMounted(async () => {
   try {
-    // PFG Doc test
-     const jsonData = await pfgStore.fetchPfgDocDetailedGraph()
-    // const jsonData = await pfgStore.fetchPfgAuxDetailedGraph()
+    const uri = route.query.uri as string
+    const [docType, id] = uri.split('/')
 
-    // BP Doc test
-    // const jsonData = await bpStore.fetchBpDocDetailedGraph()
-    //const jsonData = await bpStore.fetchBpComDetailedGraph()
-
-    // Extract the content of the children array to hide the uri from the graph
-    // const graphData = {
-    //   name: jsonData.children[0].name,
-    //   children: jsonData.children[0].children
-    // };
-
+    const jsonData = await allDocsStore.fetchDetailedDocGraph(docType, id)
     const graphTitle = jsonData.children[0].name
 
     const graphData = {
       name: "",
       children: jsonData.children[0].children
     };
-
-    console.log("pfgdoc data shown: ", graphData)
 
     graphData.children.forEach(function (
         datum: { collapsed: boolean },

@@ -86,10 +86,9 @@ export const useBpStore = defineStore('bp', {
       this.bpDocs = response.data;
     },
     // Detailed graph
-    async fetchBpDocDetailedGraph() {
+    async fetchBpDocDetailedGraph(id: string) {
       const response = await api.get<any>(
-        // Temporarily hardcoded to fetch a specific bpdoc
-        `/api/bpdoc/graph-detailed/BusinessPlan2023-24-DGCorporate_Propriety_EthicsDirectoratealiascopy_2_.xlsx`
+        `/api/bpdoc/graph-detailed/${id}`
       );
       return response.data;
     },
@@ -103,16 +102,14 @@ export const useBpStore = defineStore('bp', {
     },
     async fetchBpDocForcedGraphAll() {
       const response = await api.get<any>(
-        // Temporarily hardcoded to fetch a specific bpdoc
         `/api/bpdoc/forcedgraph/list`
       );
       return response.data;
     },
     // BP Commitments
-    async fetchBpComDetailedGraph() {
+    async fetchBpComDetailedGraph(id: string) {
       const response = await api.get<any>(
-        // Temporarily hardcoded to fetch a specific bpdoc
-        `/api/bpcom/graph-detailed/75`
+        `/api/bpcom/graph-detailed/${id}`
       );
       return response.data;
     },

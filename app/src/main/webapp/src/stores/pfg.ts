@@ -122,10 +122,9 @@ export const usePfgStore = defineStore('pfg', {
       this.pfgDocs = response.data;
     },
     // Detailed graph
-    async fetchPfgDocDetailedGraph() {
+    async fetchPfgDocDetailedGraph(id: string) {
       const response = await api.get<any>(
-        // Temporarily hardcoded to fetch a specific pfgdoc
-        `/api/pfgdoc/graph-detailed/1`
+        `/api/pfgdoc/graph-detailed/${id}`
       );
       return response.data;
     },
@@ -164,10 +163,9 @@ export const usePfgStore = defineStore('pfg', {
       );
       this.PfgAuxOverviews = response.data;
     },
-    async fetchPfgAuxDetailedGraph() {
+    async fetchPfgAuxDetailedGraph(id: string) {
       const response = await api.get<any>(
-        // Temporarily hardcoded to fetch a specific pfgdoc
-        `/api/pfgaux/graph-detailed/CLG.001_2019-2020`
+        `/api/pfgaux/graph-detailed/${id}`
       );
       return response.data;
     },

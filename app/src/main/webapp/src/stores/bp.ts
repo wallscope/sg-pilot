@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import api from "@/utils/api";
+import { DocOverview, DEF_DOC_OVERVIEW_DATA } from "@/stores/alldocs";
 
 // Business Planning Doc Store
 export interface BpDoc {
@@ -73,18 +74,34 @@ export const DEF_BPCOM_DATA: BPCom = {
 
 export const useBpStore = defineStore('bp', {
   state: () => ({
-    pfgDocDetailedGraphData: {} as any,
+    // BP Docs
+    bpDocDetailedGraphData: {} as any,
     bpDoc: DEF_BP_DATA,
     bpDocs: [DEF_BP_DATA] as BpDoc[],
+    bpDocOverview: DEF_DOC_OVERVIEW_DATA,
+    bpDocOverviews: [DEF_DOC_OVERVIEW_DATA] as DocOverview[],
+    // BP Coms
+    bpComDetailedGraphData: {} as any,
+    bpCom: DEF_BPCOM_DATA,
+    bpComs: [DEF_BPCOM_DATA] as BPCom[],
+    bpComOverview: DEF_DOC_OVERVIEW_DATA,
+    bpComOverviews: [DEF_DOC_OVERVIEW_DATA] as DocOverview[],
   }),
   actions:{
     // BP Documents
-    async fetchBPDocs() {
+    async fetchBpDocs() {
       const response = await api.get<BpDoc[]>(
         `/api/bpdoc/list`
       );
       this.bpDocs = response.data;
     },
+    //Unused
+    // async fetchBpDocOverviews() {
+    //   const response = await api.get<DocOverview[]>(
+    //     `/api/bpdoc/overview/list`
+    //   );
+    //   this.bpDocOverviews = response.data;
+    // },
     // Detailed graph
     async fetchBpDocDetailedGraph(id: string) {
       const response = await api.get<any>(
@@ -107,6 +124,18 @@ export const useBpStore = defineStore('bp', {
       return response.data;
     },
     // BP Commitments
+    async fetchBpComs() {
+      const response = await api.get<BPCom[]>(
+        `/api/bpcom/list`
+      );
+      this.bpComs = response.data;
+    },
+    async fetchBpComOverviews() {
+      const response = await api.get<DocOverview[]>(
+        `/api/bpcom/overview/list`
+      );
+      this.bpComOverviews = response.data;
+    },
     async fetchBpComDetailedGraph(id: string) {
       const response = await api.get<any>(
         `/api/bpcom/graph-detailed/${id}`

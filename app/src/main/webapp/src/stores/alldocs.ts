@@ -3,8 +3,27 @@ import api from "@/utils/api";
 import { usePfgStore } from '@/stores/pfg';
 import { useBpStore } from '@/stores/bp';
 
-const pfgStore = usePfgStore()
-const bpStore = useBpStore()
+export interface DocOverview {
+  uri: string;
+  title: string;
+  docType: string;
+  dG: string;
+  directorate: string;
+  primaryOutcomes: string[];
+  secondaryOutcomes: string[];
+  keywords: string[];
+}
+
+export const DEF_DOC_OVERVIEW_DATA: DocOverview = {
+  uri: '',
+  title: '',
+  docType: '',
+  dG: '',
+  directorate: '',
+  primaryOutcomes: [''],
+  secondaryOutcomes: [''],
+  keywords: [''],
+}
 
 export const useAllDocsStore = defineStore('alldocs', {
   state: () => ({
@@ -27,6 +46,9 @@ export const useAllDocsStore = defineStore('alldocs', {
     },
     // Table Overview
     async fetchDetailedDocGraph(docType: string, id: string) {
+      const pfgStore = usePfgStore();
+      const bpStore = useBpStore()
+      
       switch (docType) {
         case "PFGDoc":
           return pfgStore.fetchPfgDocDetailedGraph(id)

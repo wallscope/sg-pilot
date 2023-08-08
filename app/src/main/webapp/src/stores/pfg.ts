@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import api from "@/utils/api";
+import { DocOverview, DEF_DOC_OVERVIEW_DATA } from "@/stores/alldocs";
 
 // Programme For Government Doc Store
 export interface PfgDoc {
@@ -59,17 +60,6 @@ export interface PfgAux {
   keywords: string[];
 }
 
-export interface PfgAuxOverview {
-  uri: string;
-  title: string;
-  docType: string;
-  dG: string;
-  directorate: string;
-  primaryOutcomes: string[];
-  secondaryOutcomes: string[];
-  keywords: string[];
-}
-
 // Template objects
 export const DEF_PFGAUX_DATA: PfgAux = {
   uri: '',
@@ -89,16 +79,6 @@ export const DEF_PFGAUX_DATA: PfgAux = {
   policyTitle: [''],
   keywords: [''],
 }
-export const DEF_PFGAUX_OVERVIEW_DATA: PfgAuxOverview = {
-  uri: '',
-  title: '',
-  docType: '',
-  dG: '',
-  directorate: '',
-  primaryOutcomes: [''],
-  secondaryOutcomes: [''],
-  keywords: [''],
-}
 
 export const usePfgStore = defineStore('pfg', {
   state: () => ({
@@ -106,12 +86,14 @@ export const usePfgStore = defineStore('pfg', {
     pfgDocDetailedGraphData: {} as any,
     pfgDoc: DEF_PFGDOC_DATA,
     pfgDocs: [DEF_PFGDOC_DATA] as PfgDoc[],
+    PfgDocOverview: DEF_DOC_OVERVIEW_DATA,
+    PfgDocOverviews: [DEF_DOC_OVERVIEW_DATA] as DocOverview[],
     // PFG Auxs
     pfgAuxDetailedGraphData: {} as any,
     pfgAux: DEF_PFGAUX_DATA,
     pfgAuxs: [DEF_PFGAUX_DATA] as PfgAux[],
-    PfgAuxOverview: DEF_PFGAUX_OVERVIEW_DATA,
-    PfgAuxOverviews: [DEF_PFGAUX_OVERVIEW_DATA] as PfgAuxOverview[],
+    PfgAuxOverview: DEF_DOC_OVERVIEW_DATA,
+    PfgAuxOverviews: [DEF_DOC_OVERVIEW_DATA] as DocOverview[],
   }),
   actions:{
     // PFG documents
@@ -121,6 +103,13 @@ export const usePfgStore = defineStore('pfg', {
       );
       this.pfgDocs = response.data;
     },
+    // Unused
+    // async fetchPfgDocOverviews() {
+    //   const response = await api.get<DocOverview[]>(
+    //     `/api/pfgdoc/overview/list`
+    //   );
+    //   this.PfgDocOverviews = response.data;
+    // },
     // Detailed graph
     async fetchPfgDocDetailedGraph(id: string) {
       const response = await api.get<any>(
@@ -158,7 +147,7 @@ export const usePfgStore = defineStore('pfg', {
       this.pfgAuxs = response.data;
     },
     async fetchPfgAuxOverviews() {
-      const response = await api.get<PfgAuxOverview[]>(
+      const response = await api.get<DocOverview[]>(
         `/api/pfgaux/overview/list`
       );
       this.PfgAuxOverviews = response.data;

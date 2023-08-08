@@ -3,7 +3,7 @@
     <SearchBar v-model="search" placeholder="SearchBar for Docs"></SearchBar>
   </div>
   <div class="add-doc">
-    <p>PFG Auxs ({{ filteredDocsList.length }})</p>
+    <p>Documents ({{ filteredDocsList.length }})</p>
   </div>
 <div class="internalDocs">
   <p><strong>All Docs</strong></p>
@@ -66,7 +66,9 @@ import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional defaul
 import Fuse from "fuse.js";
 import { refDebounced } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { PfgAuxOverview, usePfgStore } from '@/stores/pfg';
+import { usePfgStore } from '@/stores/pfg';
+import { useBpStore } from '@/stores/bp';
+import { DocOverview } from "@/stores/alldocs";
 
 type TypeInput = { input: string; items: string[] };
 
@@ -78,10 +80,11 @@ export default defineComponent({
   },
   setup() {
     const pfgStore = usePfgStore();
+    const bpStore = useBpStore();
     const minInput = ref(3);
     const search = refDebounced(ref(""), 2000);
 
-    const fuseOptions: Fuse.IFuseOptions<PfgAuxOverview> = {
+    const fuseOptions: Fuse.IFuseOptions<DocOverview> = {
       keys: [
         { name: "title", weight: 3 },
         { name: "docType", weight: 2 },
@@ -106,7 +109,10 @@ export default defineComponent({
     });
 
     const internalDocsList = computed(() => {
-      const allDocs = pfgStore.PfgAuxOverviews;
+      const allDocs = pfgStore.PfgAuxOverviews.concat(bpStore.bpComOverviews)
+      // Unused
+      // .concat(bpStore.bpDocOverviews)
+      // .concat(pfgStore.PfgDocOverviews)
 
       return allDocs
     });
@@ -158,6 +164,7 @@ export default defineComponent({
     // Mounted
     async function mounted() {
       await pfgStore.fetchPfgAuxOverviews();
+      await bpStore.fetchBpComOverviews();
     }
     onMounted(mounted);
 

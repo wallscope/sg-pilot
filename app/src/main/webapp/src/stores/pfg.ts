@@ -8,7 +8,7 @@ export interface PfgDoc {
   filename: string;
   ministerialPortfolio: string[];
   directorate: string[];
-  dG: string[];
+  dg: string[];
   unitBranch: string[];
   leadOfficial: string[];
   scsClearance: string[];
@@ -27,7 +27,7 @@ export const DEF_PFGDOC_DATA: PfgDoc = {
   filename: '',
   ministerialPortfolio: [''],
   directorate: [''],
-  dG: [''],
+  dg: [''],
   unitBranch: [''],
   leadOfficial: [''],
   scsClearance: [''],
@@ -52,7 +52,7 @@ export interface PfgAux {
   completionDate: string;
   ministerialPortfolio: string[];
   directorate: string[];
-  dG: string[];
+  dg: string[];
   leadOfficial: string[];
   primaryOutcomes: string[];
   secondaryOutcomes: string[];
@@ -72,7 +72,7 @@ export const DEF_PFGAUX_DATA: PfgAux = {
   completionDate: '',
   ministerialPortfolio: [''],
   directorate: [''],
-  dG: [''],
+  dg: [''],
   leadOfficial: [''],
   primaryOutcomes: [''],
   secondaryOutcomes: [''],

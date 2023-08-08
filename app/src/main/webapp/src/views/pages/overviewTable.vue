@@ -25,7 +25,7 @@
             <input id="Doc type" placeholder="Doc type" :value="doc.docType" disabled/>
           </td>
           <td>
-            <input id="dG" placeholder="Director General" v-model="doc.dG" disabled/>
+            <input id="dg" placeholder="Director General" v-model="doc.dg" disabled/>
             <input id="directorate" placeholder="Directorate" v-model="doc.directorate" disabled/>
           </td>
           <td><strong>
@@ -41,7 +41,8 @@
             <router-link :to="{ path: 'detailedChart', query: { uri: doc.uri.split('/SG/')[1]} }">
               <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-eye-outline" /> Document details</v-btn></VCardTitle>
             </router-link> 
-            <router-link :to="{ path: 'graphChartForce', query: { uri: doc.uri.split('/SG/')[1]} }">
+            <!-- router-link v-if="doc.primaryOutcomes.concat(doc.secondaryOutcomes).length > 0" :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }"> -->
+            <router-link :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }">
               <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-eye-outline" /> NPF relationships</v-btn></VCardTitle>
             </router-link> 
           </td>
@@ -88,7 +89,7 @@ export default defineComponent({
       keys: [
         { name: "title", weight: 3 },
         { name: "docType", weight: 2 },
-        { name: "dG", weight: 3 },
+        { name: "dg", weight: 3 },
         { name: "directorate", weight: 3 },
         { name: "primaryOutcomes", weight: 1 },
         { name: "secondaryOutcomes", weight: 1 },

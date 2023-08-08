@@ -7,7 +7,7 @@ export interface DocOverview {
   uri: string;
   title: string;
   docType: string;
-  dG: string;
+  dg: string;
   directorate: string;
   primaryOutcomes: string[];
   secondaryOutcomes: string[];
@@ -18,7 +18,7 @@ export const DEF_DOC_OVERVIEW_DATA: DocOverview = {
   uri: '',
   title: '',
   docType: '',
-  dG: '',
+  dg: '',
   directorate: '',
   primaryOutcomes: [''],
   secondaryOutcomes: [''],
@@ -66,6 +66,14 @@ export const useAllDocsStore = defineStore('alldocs', {
         `/api/alldocs/sankey/list`
       );
       return response.data;
+    },
+    async fetchDocsForcedNpfList(outcomes: string[]) {
+      try {
+        const response = await api.post('/api/alldocs/forcedgraph-npf/list', outcomes);
+        return response.data;
+      } catch (error) {
+        console.error('Error:', error);
+      }
     },
   }
 })

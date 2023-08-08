@@ -57,6 +57,30 @@ class AllGraphController {
             )
         )
     }
+    // Forced graph, docs with NPF relationships
+
+    @PostMapping("/api/alldocs/forcedgraph-npf/list")
+    suspend fun getDocsForcedNpfList(@RequestBody outcomes: List<String>): String = coroutineScope {
+
+        val pfgDocs = PFGDocDAO.getAll().filter { myDoc ->
+                myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
+        }
+        val pfgAuxs = PFGAuxDAO.getAll().filter { myDoc ->
+                myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
+        }
+
+        val bpComs = BPComDAO.getAll().filter { myDoc ->
+                myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
+        }
+
+        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+            mergeForcedGraphs(
+                async { PFGDoc.toForcedGraphJSONAll(pfgDocs) }.await(),
+                async { PFGAux.toForcedGraphJSONAll(pfgAuxs) }.await(),
+                async { BPCom.toForcedGraphJSONAll(bpComs) }.await()
+            )
+        )
+    }
 
     // TODO
 //    @GetMapping("/api/alldocs/overview/list")

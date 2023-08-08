@@ -9,6 +9,7 @@ import { GraphChart } from 'echarts/charts';
 import { CanvasRenderer } from "echarts/renderers";
 import Chart from "vue-echarts";
 import type { ECBasicOption } from "echarts/types/dist/shared";
+import { useRouter } from "vue-router";
 
 use([GridComponent, LegendComponent, TitleComponent, TooltipComponent, GraphChart, CanvasRenderer]);
 
@@ -24,24 +25,22 @@ const bpStore = useBpStore()
 const allDocsStore = useAllDocsStore()
 let hide = false;
 var ROOT_PATH = "";
+const router = useRouter();
 
 const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
 
   onMounted(async () => {
   try {
-    // const response = await fetch(ROOT_PATH + "/graph_example.json");
-    // const graph = await response.json();
+  
+    const outcomes = router.currentRoute.value.query.outcomes as string[]
+    let graph = null
 
-    // const graph = await pfgStore.fetchPfgDocForcedGraph()
-    // const graph = await pfgStore.fetchPfgDocForcedGraphAll()
-    // const graph = await pfgStore.fetchPfgAuxForcedGraph()
-    // const graph = await pfgStore.fetchPfgAuxForcedGraphAll()
-    // const graph = await bpStore.fetchBpDocForcedGraph()
-    // const graph = await bpStore.fetchBpDocForcedGraphAll()
-    // const graph = await bpStore.fetchBpComForcedGraph()
-    // const graph = await bpStore.fetchBpComForcedGraphAll()
+    if (outcomes !== undefined && outcomes.length > 0 ) {
+      graph = await allDocsStore.fetchDocsForcedNpfList(outcomes)
+    } else {
+      graph = await allDocsStore.fetchAllDocsForcedGraph()
+    }
 
-    const graph = await allDocsStore.fetchAllDocsForcedGraph()
     graph.nodes.forEach(function (node: GraphNode) {
       node.label = {
         show: node.symbolSize > 30

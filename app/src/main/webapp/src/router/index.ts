@@ -34,7 +34,7 @@ const router = createRouter({
           component: () => import('@/views/pages/charts/graphChartCirc.vue'),
         },
         {
-          path: "graphChartForce",
+          path: "graphChartForce/:outcomes?",
           name: "graphChartForce",
           component: () => import('@/views/pages/charts/graphChartForce.vue'),
         },

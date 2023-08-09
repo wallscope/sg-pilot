@@ -62,7 +62,11 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
           // selectedMode: 'single',
           data: graph.categories.map(function (a: { name: string }) {
             return a.name;
-          })
+          }),
+          selected: graph.categories.reduce(function (obj: { [x: string]: boolean; }, item: { name: string | number; }) {
+            obj[item.name] = false;
+            return obj;
+          }, {})
         }
       ],
       series: [

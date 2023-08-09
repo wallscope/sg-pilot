@@ -408,11 +408,11 @@ data class BPDoc(
         }
 
         // Forced graph
-        var count = 0
+//        var count = 0
         fun toForcedGraphJSONAll(bpComs: List<BPCom>, limit: Int? = null): ForcedGraph {
             val docs = limit?.let { bpComs.take(it) } ?: bpComs
             val allGraphs = docs.map { toForcedGraphJSON(it) }
-            count = 0
+//            count = 0
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
                 links = allGraphs.flatMap { it.links!! },
@@ -420,19 +420,19 @@ data class BPDoc(
             )
         }
         fun toForcedGraphJSON(bpCom: BPCom): ForcedGraph {
-            count++
+//            count++
 
             // Nodes
-            val docId = "BPCom|$count"
+            val docId = bpCom.commitment ?: "***NO TITLE***"
 //            val docId = bpCom.filename
-            val doc = ForcedNode(id = docId, name = "BP Com", symbolSize = 55, value = bpCom.filename)
-            val commitment = ForcedNode(
-                id = "${BPCom::commitment.name}|${bpCom.commitment}",
-                name = bpCom.commitment,
-                symbolSize = 20,
-                value = BPCom::commitment.name,
-                category = 0
-            )
+            val doc = ForcedNode(id = docId, name = bpCom.commitment ?: "***NO TITLE***", symbolSize = 55, value = "Title")
+//            val commitment = ForcedNode(
+//                id = "${BPCom::commitment.name}|${bpCom.commitment}",
+//                name = bpCom.commitment,
+//                symbolSize = 20,
+//                value = BPCom::commitment.name,
+//                category = 0
+//            )
             val priority = ForcedNode(
                 id = "${BPCom::priority.name}|${bpCom.priority}",
                 name = bpCom.priority,
@@ -495,7 +495,7 @@ data class BPDoc(
             val doc2propertyLinks = listOf(
 //                ForcedLink(source = docId, target = bpCom.filename),
                 ForcedLink(source = bpCom.filename, target = docId),
-                ForcedLink(source = docId, target = commitment.id),
+//                ForcedLink(source = docId, target = commitment.id),
                 ForcedLink(source = docId, target = priority.id),
                 ForcedLink(source = docId, target = commitmentLead.id),
                 ForcedLink(source = docId, target = projectBudget.id),
@@ -521,7 +521,7 @@ data class BPDoc(
             return ForcedGraph(
                 nodes = listOf(
                     doc,
-                    commitment,
+//                    commitment,
                     priority,
                     commitmentLead,
                     projectBudget,

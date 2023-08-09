@@ -151,11 +151,11 @@ data class PFGDoc(
         }
 
         // Forced graph
-        var count = 0
+//        var count = 0
         fun toForcedGraphJSONAll(pfgDocs: List<PFGDoc>, limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgDocs.take(it) } ?: pfgDocs
             val allGraphs = docs.map { toForcedGraphJSON(it) }
-            count = 0
+//            count = 0
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
                 links = allGraphs.flatMap { it.links!! },
@@ -163,11 +163,11 @@ data class PFGDoc(
             )
         }
         fun toForcedGraphJSON(pfgDoc: PFGDoc): ForcedGraph {
-            count++
+//            count++
 
             // Nodes
-            val docId = "PFGDoc|$count"
-            val doc = ForcedNode(id = docId, name = "PFG Doc", symbolSize = 55, value = pfgDoc.filename)
+            val docId = pfgDoc.policyTitle.firstOrNull() ?: "***NO TITLE***"
+            val doc = ForcedNode(id = docId, name = pfgDoc.policyTitle.firstOrNull() ?: "***NO TITLE***", symbolSize = 55, value = "Title")
             val ministerialPortfolio = ForcedNode(
                 id = "${PFGDoc::ministerialPortfolio.name}|${pfgDoc.ministerialPortfolio}",
                 name = pfgDoc.ministerialPortfolio.firstOrNull(),
@@ -196,13 +196,13 @@ data class PFGDoc(
                 value = PFGDoc::unitBranch.name,
                 category = 0
             )
-            val policyTitle = ForcedNode(
-                id = "${PFGDoc::policyTitle.name}|${pfgDoc.policyTitle}",
-                name = pfgDoc.policyTitle.firstOrNull(),
-                symbolSize = 20,
-                value = PFGDoc::policyTitle.name,
-                category = 0
-            )
+//            val policyTitle = ForcedNode(
+//                id = "${PFGDoc::policyTitle.name}|${pfgDoc.policyTitle}",
+//                name = pfgDoc.policyTitle.firstOrNull(),
+//                symbolSize = 20,
+//                value = PFGDoc::policyTitle.name,
+//                category = 0
+//            )
             val scsClearance = ForcedNode(
                 id = "${PFGDoc::scsClearance.name}|${pfgDoc.scsClearance}",
                 name = pfgDoc.scsClearance.firstOrNull(),
@@ -275,7 +275,7 @@ data class PFGDoc(
                 ForcedLink(source = docId, target = directorate.id),
                 ForcedLink(source = docId, target = leadOfficial.id),
                 ForcedLink(source = docId, target = unitBranch.id),
-                ForcedLink(source = docId, target = policyTitle.id),
+//                ForcedLink(source = docId, target = policyTitle.id),
                 ForcedLink(source = docId, target = scsClearance.id),
                 ForcedLink(source = docId, target = fbpClearance.id),
                 ForcedLink(source = docId, target = dG.id),
@@ -306,7 +306,7 @@ data class PFGDoc(
                     directorate,
                     leadOfficial,
                     unitBranch,
-                    policyTitle,
+//                    policyTitle,
                     scsClearance,
                     fbpClearance,
                     dG,
@@ -419,11 +419,11 @@ data class PFGAux(
         }
 
         // Forced graph
-        var count = 0
+//        var count = 0
         fun toForcedGraphJSONAll(pfgAuxs: List<PFGAux>, limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgAuxs.take(it) } ?: pfgAuxs
             val allGraphs = docs.map { toForcedGraphJSON(it) }
-            count = 0
+//            count = 0
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
                 links = allGraphs.flatMap { it.links!! },
@@ -431,11 +431,11 @@ data class PFGAux(
             )
         }
         fun toForcedGraphJSON(pfgAux: PFGAux): ForcedGraph {
-            count++
+//            count++
 
             // Nodes
-            val docId = "PFGAux|$count"
-            val doc = ForcedNode(id = docId, name = "PFG Aux", symbolSize = 55, value = pfgAux.accessURL)
+            val docId = pfgAux.policyTitle.firstOrNull() ?: "***NO TITLE***"
+            val doc = ForcedNode(id = docId, name = pfgAux.policyTitle.firstOrNull() ?: "***NO TITLE***", symbolSize = 55, value = "Title")
             val ministerialPortfolio = ForcedNode(
                 id = "${PFGAux::ministerialPortfolio.name}|${pfgAux.ministerialPortfolio}",
                 name = pfgAux.ministerialPortfolio.firstOrNull(),
@@ -464,13 +464,13 @@ data class PFGAux(
                 value = PFGAux::period.name,
                 category = 0
             )
-            val policyTitle = ForcedNode(
-                id = "${PFGAux::policyTitle.name}|${pfgAux.policyTitle}",
-                name = pfgAux.policyTitle.firstOrNull(),
-                symbolSize = 20,
-                value = PFGAux::policyTitle.name,
-                category = 0
-            )
+//            val policyTitle = ForcedNode(
+//                id = "${PFGAux::policyTitle.name}|${pfgAux.policyTitle}",
+//                name = pfgAux.policyTitle.firstOrNull(),
+//                symbolSize = 20,
+//                value = PFGAux::policyTitle.name,
+//                category = 0
+//            )
             val strategicPriority = ForcedNode(
                 id = "${PFGAux::strategicPriority.name}|${pfgAux.strategicPriority}",
                 name = pfgAux.strategicPriority,
@@ -543,7 +543,7 @@ data class PFGAux(
                 ForcedLink(source = docId, target = directorate.id),
                 ForcedLink(source = docId, target = leadOfficial.id),
                 ForcedLink(source = docId, target = period.id),
-                ForcedLink(source = docId, target = policyTitle.id),
+//                ForcedLink(source = docId, target = policyTitle.id),
                 ForcedLink(source = docId, target = strategicPriority.id),
                 ForcedLink(source = docId, target = legislativeProposal.id),
                 ForcedLink(source = docId, target = dG.id),
@@ -574,7 +574,7 @@ data class PFGAux(
                     directorate,
                     leadOfficial,
                     period,
-                    policyTitle,
+//                    policyTitle,
                     strategicPriority,
                     legislativeProposal,
                     dG,

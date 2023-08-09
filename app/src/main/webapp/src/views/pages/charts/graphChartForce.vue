@@ -84,7 +84,10 @@ const chartOptions: Ref<ECBasicOption | undefined> = ref(undefined);
           roam: true,
           label: {
             position: 'right',
-            formatter: '{b}'
+            // formatter: '{b}'
+            formatter: function(params: { name: string; }) {
+              return params.name.length > 20 ? params.name.substring(0, 20) + '...' : params.name;
+            }
           },
           lineStyle: {
             color: 'source',

@@ -55,10 +55,7 @@ class BPDocController {
     @ResponseBody
     fun getBPDocsForcedList(): String {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-            BPDoc.toForcedGraphJSONAll(
-                BPDocDAO.getAll(),
-                15
-            )
+            BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll(),"", 15)
         )
     }
 

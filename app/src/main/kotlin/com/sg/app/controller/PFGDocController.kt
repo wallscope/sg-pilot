@@ -66,7 +66,7 @@ class PFGDocController {
     @GetMapping("/api/pfgdoc/forcedgraph/list")
     @ResponseBody
     fun getPFGDocsForcedList(): String {
-        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(toForcedGraphJSONAll(PFGDocDAO.getAll(), 15))
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(toForcedGraphJSONAll(PFGDocDAO.getAll(), "",15))
     }
 
     // PFGDocs - forced graph, one doc

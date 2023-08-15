@@ -76,10 +76,7 @@ class PFGAuxController {
     @ResponseBody
     fun getPFGAuxsForcedList(): String {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-            PFGAux.toForcedGraphJSONAll(
-                PFGAuxDAO.getAll(),
-                15
-            )
+            PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), "",15)
         )
     }
 

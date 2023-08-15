@@ -151,19 +151,16 @@ data class PFGDoc(
         }
 
         // Forced graph
-//        var count = 0
-        fun toForcedGraphJSONAll(pfgDocs: List<PFGDoc>, limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(pfgDocs: List<PFGDoc>, searchTerm: String? = "", limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgDocs.take(it) } ?: pfgDocs
-            val allGraphs = docs.map { toForcedGraphJSON(it) }
-//            count = 0
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm) }
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
-                links = allGraphs.flatMap { it.links!! },
-                categories = allGraphs.flatMap { it.categories!! }.distinct()
+                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+                links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
+                categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(pfgDoc: PFGDoc): ForcedGraph {
-//            count++
+        fun toForcedGraphJSON(pfgDoc: PFGDoc, searchTerm: String? = ""): ForcedGraph? {
 
             // Nodes
             val docId = pfgDoc.policyTitle.firstOrNull() ?: "***NO TITLE***"
@@ -299,21 +296,47 @@ data class PFGDoc(
                 )
             }
 
-            return ForcedGraph(
-                nodes = listOf(
-                    doc,
-                    ministerialPortfolio,
-                    directorate,
-                    leadOfficial,
-                    unitBranch,
+            val nodes = listOf(
+                doc,
+                ministerialPortfolio,
+                directorate,
+                leadOfficial,
+                unitBranch,
 //                    policyTitle,
-                    scsClearance,
-                    fbpClearance,
-                    dG,
-                    portfolioCoordinator,
-                    completionDate
-                ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes,
-                links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks,
+                scsClearance,
+                fbpClearance,
+                dG,
+                portfolioCoordinator,
+                completionDate
+            ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes
+            val links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks
+
+            if (!searchTerm.isNullOrBlank()) {
+                val containsSearchTerm: Boolean = nodes.any { node ->
+                    node.name?.contains(searchTerm, ignoreCase = true) == true
+                } || links.any { link ->
+                    link.source?.contains(searchTerm, ignoreCase = true) == true ||
+                            link.target?.contains(searchTerm, ignoreCase = true) == true
+                }
+                if (containsSearchTerm){
+                    return ForcedGraph(
+                        nodes = nodes,
+                        links = links,
+                        categories = listOf(
+                            ForcedCategory(name = "Other"),
+                            ForcedCategory(name = "Primary outcomes"),
+                            ForcedCategory(name = "Secondary outcomes"),
+                            ForcedCategory(name = "Directorate"),
+                            ForcedCategory(name = "Keywords"),
+                        )
+                    )
+                } else {
+                    return null
+                }
+            }
+            return ForcedGraph(
+                nodes = nodes,
+                links = links,
                 categories = listOf(
                     ForcedCategory(name = "Other"),
                     ForcedCategory(name = "Primary outcomes"),
@@ -419,19 +442,16 @@ data class PFGAux(
         }
 
         // Forced graph
-//        var count = 0
-        fun toForcedGraphJSONAll(pfgAuxs: List<PFGAux>, limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(pfgAuxs: List<PFGAux>, searchTerm: String? = "", limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgAuxs.take(it) } ?: pfgAuxs
-            val allGraphs = docs.map { toForcedGraphJSON(it) }
-//            count = 0
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm) }
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
-                links = allGraphs.flatMap { it.links!! },
-                categories = allGraphs.flatMap { it.categories!! }.distinct()
+                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+                links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
+                categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(pfgAux: PFGAux): ForcedGraph {
-//            count++
+        fun toForcedGraphJSON(pfgAux: PFGAux, searchTerm: String? = ""): ForcedGraph? {
 
             // Nodes
             val docId = pfgAux.policyTitle.firstOrNull() ?: "***NO TITLE***"
@@ -567,21 +587,49 @@ data class PFGAux(
                 )
             }
 
-            return ForcedGraph(
-                nodes = listOf(
-                    doc,
-                    ministerialPortfolio,
-                    directorate,
-                    leadOfficial,
-                    period,
+            val nodes = listOf(
+                doc,
+                ministerialPortfolio,
+                directorate,
+                leadOfficial,
+                period,
 //                    policyTitle,
-                    strategicPriority,
-                    legislativeProposal,
-                    dG,
-                    buteHouseAgreementLink,
-                    completionDate
-                ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes,
-                links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks,
+                strategicPriority,
+                legislativeProposal,
+                dG,
+                buteHouseAgreementLink,
+                completionDate
+            ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes
+            val links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks
+
+
+            if (!searchTerm.isNullOrBlank()) {
+                val containsSearchTerm: Boolean = nodes.any { node ->
+                    node.name?.contains(searchTerm, ignoreCase = true) == true
+                } || links.any { link ->
+                    link.source?.contains(searchTerm, ignoreCase = true) == true ||
+                            link.target?.contains(searchTerm, ignoreCase = true) == true
+                }
+                if (containsSearchTerm){
+                    return ForcedGraph(
+                        nodes = nodes,
+                        links = links,
+                        categories = listOf(
+                            ForcedCategory(name = "Other"),
+                            ForcedCategory(name = "Primary outcomes"),
+                            ForcedCategory(name = "Secondary outcomes"),
+                            ForcedCategory(name = "Directorate"),
+                            ForcedCategory(name = "Keywords"),
+                        )
+                    )
+                } else {
+                    return null
+                }
+            }
+
+            return ForcedGraph(
+                nodes = nodes,
+                links = links,
                 categories = listOf(
                     ForcedCategory(name = "Other"),
                     ForcedCategory(name = "Primary outcomes"),

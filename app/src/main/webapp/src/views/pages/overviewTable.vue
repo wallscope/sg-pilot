@@ -101,13 +101,6 @@ export default defineComponent({
       threshold: 0,
     };
     const searchFuse = ref(new Fuse([], fuseOptions));
-    
-    // Computed
-    const tableStyles = computed(() => {
-      return {
-        width: 250 + "px",
-      };
-    });
 
     const internalDocsList = computed(() => {
       const allDocs = pfgStore.PfgAuxOverviews.concat(bpStore.bpComOverviews)
@@ -172,7 +165,6 @@ export default defineComponent({
     return {
       minInput,
       search,
-      tableStyles,
       internalDocsList,
       filteredDocsList,
       currentPage,

@@ -119,19 +119,16 @@ data class BPDoc(
         }
 
         // Forced graph
-//        var count = 0
-        fun toForcedGraphJSONAll(bpDocs: List<BPDoc>, limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(bpDocs: List<BPDoc>, searchTerm: String? = "", limit: Int? = null): ForcedGraph {
             val docs = limit?.let { bpDocs.take(it) } ?: bpDocs
-            val allGraphs = docs.map { toForcedGraphJSON(it) }
-//            count = 0
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm) }
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
-                links = allGraphs.flatMap { it.links!! },
-                categories = allGraphs.flatMap { it.categories!! }.distinct()
+                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+                links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
+                categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(bpDoc: BPDoc): ForcedGraph {
-//            count++
+        fun toForcedGraphJSON(bpDoc: BPDoc, searchTerm: String? = ""): ForcedGraph? {
 
             // Nodes
 //            val docId = "BPDoc|$count"
@@ -304,22 +301,48 @@ data class BPDoc(
                     ForcedLink(source = docId, target = "${BPDoc::keywords.name}|${keyword}")
                 )
             }
+            val nodes = listOf(
+                doc,
+                dG,
+                directorate,
+                director,
+                keyContact,
+                contactEmail,
+                resProgramme,
+                resTotalOperatingCosts,
+                resCorporateRunningCosts,
+                resTotal,
+                resCapital,
+                resFinancialTransactions) + divisionsNodes + divisionLeadsNodes + /*commitmentsNode +*/ keywordsNodes
+            val links = doc2propertyLinks + divisionsLinks + /*commitmentsLinks +*/ keywordsLinks
+
+            if (!searchTerm.isNullOrBlank()) {
+                val containsSearchTerm: Boolean = nodes.any { node ->
+                    node.name?.contains(searchTerm, ignoreCase = true) == true
+                } || links.any { link ->
+                    link.source?.contains(searchTerm, ignoreCase = true) == true ||
+                            link.target?.contains(searchTerm, ignoreCase = true) == true
+                }
+                if (containsSearchTerm){
+                    return ForcedGraph(
+                        nodes = nodes,
+                        links = links,
+                        categories = listOf(
+                            ForcedCategory(name = "Other"),
+                            ForcedCategory(name = "Primary outcomes"),
+                            ForcedCategory(name = "Secondary outcomes"),
+                            ForcedCategory(name = "Directorate"),
+                            ForcedCategory(name = "Keywords"),
+                        )
+                    )
+                } else {
+                    return null
+                }
+            }
 
             return ForcedGraph(
-                nodes = listOf(
-                    doc,
-                    dG,
-                    directorate,
-                    director,
-                    keyContact,
-                    contactEmail,
-                    resProgramme,
-                    resTotalOperatingCosts,
-                    resCorporateRunningCosts,
-                    resTotal,
-                    resCapital,
-                    resFinancialTransactions) + divisionsNodes + divisionLeadsNodes + /*commitmentsNode +*/ keywordsNodes,
-                links = doc2propertyLinks + divisionsLinks + /*commitmentsLinks +*/ keywordsLinks,
+                nodes = nodes,
+                links = links,
                 categories = listOf(
                     ForcedCategory(name = "Other"),
                     ForcedCategory(name = "Primary outcomes"),
@@ -408,19 +431,16 @@ data class BPDoc(
         }
 
         // Forced graph
-//        var count = 0
-        fun toForcedGraphJSONAll(bpComs: List<BPCom>, limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(bpComs: List<BPCom>, searchTerm: String? = "", limit: Int? = null): ForcedGraph {
             val docs = limit?.let { bpComs.take(it) } ?: bpComs
-            val allGraphs = docs.map { toForcedGraphJSON(it) }
-//            count = 0
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm) }
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() ?: false }.distinct(),
-                links = allGraphs.flatMap { it.links!! },
-                categories = allGraphs.flatMap { it.categories!! }.distinct()
+                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+                links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
+                categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(bpCom: BPCom): ForcedGraph {
-//            count++
+        fun toForcedGraphJSON(bpCom: BPCom, searchTerm: String? = ""): ForcedGraph? {
 
             // Nodes
             val docId = bpCom.commitment ?: "***NO TITLE***"
@@ -517,17 +537,43 @@ data class BPDoc(
                     ForcedLink(source = docId, target = "${BPCom::keywords.name}|${keyword}")
                 )
             }
+            val nodes = listOf(
+                doc,
+//                    commitment,
+                priority,
+                commitmentLead,
+                projectBudget,
+                budgetSufficient
+            ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes
+            val links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks
+
+            if (!searchTerm.isNullOrBlank()) {
+                val containsSearchTerm: Boolean = nodes.any { node ->
+                    node.name?.contains(searchTerm, ignoreCase = true) == true
+                } || links.any { link ->
+                    link.source?.contains(searchTerm, ignoreCase = true) == true ||
+                            link.target?.contains(searchTerm, ignoreCase = true) == true
+                }
+                if (containsSearchTerm){
+                    return ForcedGraph(
+                        nodes = nodes,
+                        links = links,
+                        categories = listOf(
+                            ForcedCategory(name = "Other"),
+                            ForcedCategory(name = "Primary outcomes"),
+                            ForcedCategory(name = "Secondary outcomes"),
+                            ForcedCategory(name = "Directorate"),
+                            ForcedCategory(name = "Keywords"),
+                        )
+                    )
+                } else {
+                    return null
+                }
+            }
 
             return ForcedGraph(
-                nodes = listOf(
-                    doc,
-//                    commitment,
-                    priority,
-                    commitmentLead,
-                    projectBudget,
-                    budgetSufficient
-                ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes,
-                links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks,
+                nodes = nodes,
+                links = links,
                 categories = listOf(
                     ForcedCategory(name = "Other"),
                     ForcedCategory(name = "Primary outcomes"),

@@ -47,66 +47,32 @@ class AllGraphController {
     // Forced graph, all docs
     @GetMapping("/api/alldocs/forcedgraph/list")
     @ResponseBody
-    suspend fun getDocsForcedList(): String = coroutineScope {
-        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+    suspend fun getDocsForcedList(@RequestParam searchTerm: String): String = coroutineScope {
+       mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
             mergeForcedGraphs(
-                async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), 15) }.await(),
-                async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), 15) }.await(),
-                async { BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll(), 15) }.await(),
-                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), 15) }.await()
+                async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), searchTerm,) }.await(),
+                async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), searchTerm, ) }.await(),
+                async { BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll(), searchTerm, ) }.await(),
+                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), searchTerm, ) }.await()
             )
         )
     }
+
     // Forced graph, docs with NPF relationships
-
     @PostMapping("/api/alldocs/forcedgraph-npf/list")
-    suspend fun getDocsForcedNpfList(@RequestBody outcomes: List<String>): String = coroutineScope {
-
-        val pfgDocs = PFGDocDAO.getAll().filter { myDoc ->
-                myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-        }
-        val pfgAuxs = PFGAuxDAO.getAll().filter { myDoc ->
-                myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-        }
-
-        val bpComs = BPComDAO.getAll().filter { myDoc ->
-                myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-        }
-
+    suspend fun getDocsForcedNpfList(@RequestBody outcomes: List<String>, @RequestParam searchTerm: String? = ""): String = coroutineScope {
         mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
             mergeForcedGraphs(
-                async { PFGDoc.toForcedGraphJSONAll(pfgDocs) }.await(),
-                async { PFGAux.toForcedGraphJSONAll(pfgAuxs) }.await(),
-                async { BPCom.toForcedGraphJSONAll(bpComs) }.await()
+                async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll().filter { myDoc ->
+                    myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
+                }, searchTerm) }.await(),
+                async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll().filter { myDoc ->
+                    myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
+                }, searchTerm) }.await(),
+                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll().filter { myDoc ->
+                    myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
+                }, searchTerm) }.await()
             )
         )
     }
-
-    // TODO
-//    @GetMapping("/api/alldocs/overview/list")
-//    @ResponseBody
-//    suspend fun getDocsOverviewList(): String = coroutineScope {
-//        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-//            mergeForcedGraphs(
-//                async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), 15) }.await(),
-//                async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), 15) }.await(),
-//                async { BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll(), 15) }.await(),
-//                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), 15) }.await()
-//            )
-//        )
-//    }
-
-    // Forced graph, all docs
-//    @GetMapping("/api/alldocs/forcedgraph/list")
-//    @ResponseBody
-//    fun getDocsForcedList(): String {
-//        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-//            mergeForcedGraphs(
-//                PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll()),
-//                PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll()),
-//                BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll()),
-//                BPCom.toForcedGraphJSONAll(BPComDAO.getAll())
-//            )
-//        )
-//    }
 }

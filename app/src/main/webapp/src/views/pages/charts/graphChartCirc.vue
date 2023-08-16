@@ -53,7 +53,7 @@ let hide = false;
 const router = useRouter();
 
 const searchTerm = ref('');
-const debouncedSearchTerm = refDebounced(searchTerm, 700); // Debounce for 2 seconds
+const debouncedSearchTerm = refDebounced(searchTerm, 700);
 const jsonData = ref<null | ForcedGraph>(null);
 
 const fetchData = async () => {

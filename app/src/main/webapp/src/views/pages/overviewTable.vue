@@ -2,11 +2,8 @@
   <div class="SearchBar-container">
     <SearchBar v-model="search" placeholder="SearchBar for Docs"></SearchBar>
   </div>
-  <div class="add-doc">
-    <p>Documents ({{ filteredDocsList.length }})</p>
-  </div>
 <div class="internalDocs">
-  <p><strong>All Docs</strong></p>
+  <p>Documents ({{ filteredDocsList.length }})</p>
   <div class="docs">
     <table>
       <thead>
@@ -30,19 +27,24 @@
           </td>
           <td><strong>
               <p>Primary </p></strong>
-            <input id="Primary Outcomes" placeholder="Primary Outcomes" v-model="doc.primaryOutcomes" disabled/><strong>
-              <p>Secondary</p></strong>
-            <input id="Secondary Outcomes" placeholder="Secondary Outcomes" v-model="doc.secondaryOutcomes" disabled/>
+            <!-- <input id="Primary Outcomes" placeholder="" v-model="doc.primaryOutcomes" disabled/> -->
+            <input class="outcome-container" id="Primary Outcomes" placeholder="" v-model="doc.primaryOutcomes" disabled/>
+            <strong><p>Secondary</p></strong>
+            <input id="Secondary Outcomes" placeholder="" v-model="doc.secondaryOutcomes" disabled/>
           </td>
           <td>
-            <input id="Keywords" placeholder="Keywords" v-model="doc.keywords" disabled/>
+            <input id="Keywords" placeholder="" v-model="doc.keywords[0]" disabled/>
+            <input id="Keywords" placeholder="" v-model="doc.keywords[1]" disabled/>
+            <input id="Keywords" placeholder="" v-model="doc.keywords[2]" disabled/>
+            <input id="Keywords" placeholder="" v-model="doc.keywords[3]" disabled/>
           </td>
           <td>
             <router-link :to="{ path: 'detailedChart', query: { uri: doc.uri.split('/SG/')[1]} }">
               <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-eye-outline" /> Document details</v-btn></VCardTitle>
             </router-link> 
-            <!-- router-link v-if="doc.primaryOutcomes.concat(doc.secondaryOutcomes).length > 0" :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }"> -->
-            <router-link :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }">
+            <router-link v-if="doc.primaryOutcomes.length > 0 || doc.secondaryOutcomes.length > 0" :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }">
+            <!-- <router-link v-if="doc.primaryOutcomes.concat(doc.secondaryOutcomes).length > 0" :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }"> -->
+            <!-- <router-link :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }"> -->
               <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-eye-outline" /> NPF relationships</v-btn></VCardTitle>
             </router-link> 
           </td>
@@ -319,6 +321,17 @@ td {
 .pagination-info {
   margin: 0 1rem;
   font-size: 1.2rem;
+}
+.outcome-container {
+  width: 200px; /* Adjust the width as needed */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.outcome-container:hover {
+  white-space: normal;
+  overflow: visible;
 }
 .disabled {
   pointer-events: none;

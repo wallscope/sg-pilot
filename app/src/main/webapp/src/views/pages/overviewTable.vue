@@ -43,8 +43,6 @@
               <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-eye-outline" /> Document details</v-btn></VCardTitle>
             </router-link> 
             <router-link v-if="doc.primaryOutcomes.length > 0 || doc.secondaryOutcomes.length > 0" :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }">
-            <!-- <router-link v-if="doc.primaryOutcomes.concat(doc.secondaryOutcomes).length > 0" :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }"> -->
-            <!-- <router-link :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }"> -->
               <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-eye-outline" /> NPF relationships</v-btn></VCardTitle>
             </router-link> 
           </td>
@@ -55,7 +53,9 @@
   <div class="pagination-container">
     <button @click="goToPage(1)" :disabled="currentPage === 1" class="pagination-button" :style="{ cursor: currentPage > 1 ? 'pointer' : 'default' }">First</button>
     <button @click="prevPage" :disabled="currentPage === 1" class="pagination-button" :style="{ cursor: currentPage > 1 ? 'pointer' : 'default' }">Previous</button>
-    <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+    <span class="pagination-info">
+      Page <input type="string" v-model="currentPage" @input="goToPage(currentPage)" class="editable-page-input"> of {{ totalPages }}
+    </span>
     <button @click="nextPage" :disabled="currentPage === totalPages" class="pagination-button" :style="{ cursor: currentPage < totalPages ? 'pointer' : 'default' }">Next</button>
     <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages" class="pagination-button" :style="{ cursor: currentPage < totalPages ? 'pointer' : 'default' }">Last</button>
   </div>
@@ -321,9 +321,17 @@ td {
 .pagination-info {
   margin: 0 1rem;
   font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.editable-page-input {
+  margin: 0 1rem;
+  width: 45px;
+  text-align: center;
 }
 .outcome-container {
-  width: 200px; /* Adjust the width as needed */
+  width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -335,6 +343,6 @@ td {
 }
 .disabled {
   pointer-events: none;
-  opacity: 0.5; /* You can adjust the opacity to your preference */
+  opacity: 0.5;
 }
 </style>

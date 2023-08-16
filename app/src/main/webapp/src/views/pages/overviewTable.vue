@@ -26,11 +26,20 @@
             <input id="directorate" placeholder="Directorate" v-model="doc.directorate" disabled/>
           </td>
           <td><strong>
-              <p>Primary </p></strong>
-            <!-- <input id="Primary Outcomes" placeholder="" v-model="doc.primaryOutcomes" disabled/> -->
-            <input class="outcome-container" id="Primary Outcomes" placeholder="" v-model="doc.primaryOutcomes" disabled/>
-            <strong><p>Secondary</p></strong>
-            <input id="Secondary Outcomes" placeholder="" v-model="doc.secondaryOutcomes" disabled/>
+              <p v-if="doc.primaryOutcomes.length > 0">Primary </p></strong>
+            <div class="dropdown">
+              <input v-if="doc.primaryOutcomes.length > 0" id="Primary Outcomes" placeholder="View primary outcomes" disabled/>
+              <ul class="dropdown-content">
+                <li v-for="outcome in doc.primaryOutcomes">{{ outcome }}</li>
+              </ul>
+            </div>
+            <strong><p v-if="doc.secondaryOutcomes.length > 0">Secondary</p></strong>
+            <div class="dropdown">
+              <input v-if="doc.secondaryOutcomes.length > 0" id="Primary Outcomes" placeholder="View secondary outcomes" disabled/>
+              <ul class="dropdown-content">
+                <li v-for="outcome in doc.secondaryOutcomes">{{ outcome }}</li>
+              </ul>
+            </div>
           </td>
           <td>
             <input id="Keywords" placeholder="" v-model="doc.keywords[0]" disabled/>
@@ -289,10 +298,10 @@ td {
   background: #e5e5e5;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cb5185;
+  background: rgb(106, 168, 201);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a5416c;
+  background: rgb(106, 168, 201);
 }
 .SearchBar-container, .add-doc {
   max-width: 1200px;
@@ -330,16 +339,33 @@ td {
   width: 45px;
   text-align: center;
 }
-.outcome-container {
-  width: 200px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.dropdown {
+  position: relative;
+  display: inline-block;
 }
 
-.outcome-container:hover {
-  white-space: normal;
-  overflow: visible;
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 2px solid rgb(106, 168, 201);
+  list-style: none;
+  padding: 0;
+  max-height: 120px;
+  overflow-y: auto;
+  z-index: 9999;
+}
+
+.dropdown-content li {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+.dropdown input::placeholder {
+  color: rgb(106, 168, 201); 
 }
 .disabled {
   pointer-events: none;

@@ -30,12 +30,12 @@
           </td>
           <td><strong>
               <p>Primary </p></strong>
-            <input id="Primary Outcomes" placeholder="Primary Outcomes" v-model="doc.primaryOutcomes[0]" disabled/><strong>
+            <input id="Primary Outcomes" placeholder="Primary Outcomes" v-model="doc.primaryOutcomes" disabled/><strong>
               <p>Secondary</p></strong>
-            <input id="Secondary Outcomes" placeholder="Secondary Outcomes" v-model="doc.secondaryOutcomes[0]" disabled/>
+            <input id="Secondary Outcomes" placeholder="Secondary Outcomes" v-model="doc.secondaryOutcomes" disabled/>
           </td>
           <td>
-            <input id="Keywords" placeholder="Keywords" v-model="doc.keywords[0]" disabled/>
+            <input id="Keywords" placeholder="Keywords" v-model="doc.keywords" disabled/>
           </td>
           <td>
             <router-link :to="{ path: 'detailedChart', query: { uri: doc.uri.split('/SG/')[1]} }">
@@ -82,8 +82,8 @@ export default defineComponent({
   setup() {
     const pfgStore = usePfgStore();
     const bpStore = useBpStore();
-    const minInput = ref(3);
-    const search = refDebounced(ref(""), 2000);
+    const search = ref('');
+    const debouncedSearchTerm = refDebounced(search, 500);
 
     const fuseOptions: Fuse.IFuseOptions<DocOverview> = {
       keys: [
@@ -112,8 +112,8 @@ export default defineComponent({
     });
 
     const filteredDocsList = computed(() => {
-      if (search.value == "") return internalDocsList.value;
-      const matches = searchFuse.value.search(search.value);
+      if (debouncedSearchTerm.value == "") return internalDocsList.value;
+      const matches = searchFuse.value.search(debouncedSearchTerm.value);
       return matches
         .sort((a, b) => (a.score || 0) - (b.score || 0))
         .map((m) => m.item);
@@ -163,7 +163,6 @@ export default defineComponent({
     onMounted(mounted);
 
     return {
-      minInput,
       search,
       internalDocsList,
       filteredDocsList,
@@ -294,7 +293,7 @@ td {
   background: #a5416c;
 }
 .SearchBar-container, .add-doc {
-  max-width: 1000px;
+  max-width: 1200px;
 }
 .add-doc {
   display: flex;
@@ -320,5 +319,9 @@ td {
 .pagination-info {
   margin: 0 1rem;
   font-size: 1.2rem;
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.5; /* You can adjust the opacity to your preference */
 }
 </style>

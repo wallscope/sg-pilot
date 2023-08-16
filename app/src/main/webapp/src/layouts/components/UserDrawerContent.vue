@@ -30,13 +30,13 @@ const vuetifyTheme = useTheme()
         icon: { icon: 'mdi-file-chart' }
       }"
     />
-    <VerticalNavLink
+    <!-- <VerticalNavLink
       :item="{
         title: 'Detailed Chart',
         to: 'detailedChart',
         icon: { icon: 'mdi-chart-bar' }
       }"
-    />
+    /> -->
     <!-- <VerticalNavLink
       :item="{
         title: 'Graph Chart XY preset',

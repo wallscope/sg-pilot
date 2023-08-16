@@ -2,10 +2,10 @@
   <VRow>
     <VCol cols="12">
       <v-table>
-        <div class="search-bar">
-          <input v-model="searchTerm" placeholder="Search..." />
-        </div>
         <template v-if="!hide">
+          <div class="SearchBar-container">
+            <SearchBar v-model="searchTerm" placeholder="Search..."></SearchBar>
+          </div>
           <Suspense>
             <Chart class="chart" :option="chartOptions" :autoresize="true"></Chart>
           </Suspense>
@@ -27,6 +27,7 @@
 import { useAllDocsStore } from '@/stores/alldocs';
 import { ref, onMounted, Ref, computed, watch, } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
+import SearchBar from "@/layouts/components/SearchBar.vue";
 import { use } from "echarts/core";
 import { GraphChart } from 'echarts/charts';
 import { CanvasRenderer } from "echarts/renderers";
@@ -52,7 +53,7 @@ let hide = false;
 const router = useRouter();
 
 const searchTerm = ref('');
-const debouncedSearchTerm = refDebounced(searchTerm, 500); // Debounce for 2 seconds
+const debouncedSearchTerm = refDebounced(searchTerm, 700); // Debounce for 2 seconds
 const jsonData = ref<null | ForcedGraph>(null);
 
 const fetchData = async () => {
@@ -155,6 +156,9 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.SearchBar-container, .add-doc {
+  max-width: 1200px;
+}
 .chart {
   height: 820px;
 }

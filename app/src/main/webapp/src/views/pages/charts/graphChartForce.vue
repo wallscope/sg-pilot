@@ -3,8 +3,12 @@
     <VCol cols="12">
       <v-table>
         <template v-if="!hide">
-          <div class="SearchBar-container">
-            <SearchBar v-model="searchTerm" placeholder="Search..."></SearchBar>
+          <div class="Tag-container">
+            <v-chip v-for="tag in tags" :key="tag" class="ma-1" @click="removeTag(tag)">
+              {{ tag }}
+              <v-icon small>mdi-close</v-icon>
+            </v-chip>
+            <input v-model="newTag" @keydown.enter="addTag" placeholder="Add a tag" class="tag-input" />
           </div>
           <Suspense>
             <Chart class="chart" :option="chartOptions" :autoresize="true"></Chart>
@@ -22,8 +26,6 @@
 </template>
 
 <script setup lang="ts">
-// import { usePfgStore } from '@/stores/pfg';
-// import { useBpStore } from '@/stores/bp';
 import { useAllDocsStore } from '@/stores/alldocs';
 import { ref, onMounted, Ref, computed, watch, } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
@@ -45,29 +47,40 @@ interface GraphNode {
   };
 }
 
-// const pfgStore = usePfgStore()
-// const bpStore = useBpStore()
 const allDocsStore = useAllDocsStore()
 let hide = false;
-// var ROOT_PATH = "";
 const router = useRouter();
 
-const searchTerm = ref('');
-const debouncedSearchTerm = refDebounced(searchTerm, 700);
+const tags = ref<string[]>([]);
+const newTag = ref('');
+
+const addTag = () => {
+  if (newTag.value.trim() !== '' && !tags.value.includes(newTag.value)) {
+    tags.value.push(newTag.value);
+    newTag.value = '';
+    fetchData();
+  }
+};
+
+const removeTag = (tag: string) => {
+  const index = tags.value.indexOf(tag);
+  if (index !== -1) {
+    tags.value.splice(index, 1);
+    fetchData();
+  }
+};
+
 const jsonData = ref<null | ForcedGraph>(null);
 
 const fetchData = async () => {
   try {
     const outcomes = router.currentRoute.value.query.outcomes as string[];
-    const searchTermValue = debouncedSearchTerm.value;
+    const searchTags = tags.value;
     let graph = null;
-    // console.log("searchTermValue: ", searchTermValue)
     if (outcomes !== undefined && outcomes.length > 0 ) {
-      // console.log("outcomes: ", outcomes)
-      graph = await allDocsStore.fetchDocsForcedNpfList(outcomes, searchTermValue) as ForcedGraph;
+      graph = await allDocsStore.fetchDocsForcedNpfList(outcomes, searchTags.join("|")) as ForcedGraph;
     } else {
-      // console.log("No outcomes")
-      graph = await allDocsStore.fetchAllDocsForcedGraph(searchTermValue) as ForcedGraph;
+      graph = await allDocsStore.fetchAllDocsForcedGraph(searchTags.join("|")) as ForcedGraph;
     }
 
     graph.nodes.forEach(function (node: GraphNode) {
@@ -83,7 +96,7 @@ const fetchData = async () => {
   }
 };
 
-watch(debouncedSearchTerm, () => {
+watch(tags, () => {
   fetchData();
 });
 
@@ -156,8 +169,25 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.SearchBar-container, .add-doc {
+.tag-input:focus {
+  border-color: rgb(106, 168, 201); /* Change border color on focus */
+}
+.tag-input {
+  flex: 1;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  padding: 5px;
+  margin-right: 10px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.Tag-container {
   max-width: 1200px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
 }
 .chart {
   height: 820px;

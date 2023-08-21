@@ -119,16 +119,16 @@ data class BPDoc(
         }
 
         // Forced graph
-        fun toForcedGraphJSONAll(bpDocs: List<BPDoc>, searchTerm: String? = "", limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(bpDocs: List<BPDoc>, searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { bpDocs.take(it) } ?: bpDocs
-            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm) }
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerms) }
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(bpDoc: BPDoc, searchTerm: String? = ""): ForcedGraph? {
+        fun toForcedGraphJSON(bpDoc: BPDoc, searchTerms: List<String>? = emptyList()): ForcedGraph? {
 
             // Nodes
 //            val docId = "BPDoc|$count"
@@ -317,27 +317,29 @@ data class BPDoc(
                 resFinancialTransactions) + divisionsNodes + divisionLeadsNodes + /*commitmentsNode +*/ keywordsNodes
             val links = doc2propertyLinks + divisionsLinks + /*commitmentsLinks +*/ keywordsLinks
 
-            if (!searchTerm.isNullOrBlank()) {
-                val containsSearchTerm: Boolean = nodes.any { node ->
-                    node.name?.contains(searchTerm, ignoreCase = true) == true
-                } || links.any { link ->
-                    link.source?.contains(searchTerm, ignoreCase = true) == true ||
-                            link.target?.contains(searchTerm, ignoreCase = true) == true
+            if (!searchTerms.isNullOrEmpty()) {
+                val containsSearchTerms = searchTerms.all { searchTerm ->
+                    nodes.any { node ->
+                        node.name?.contains(searchTerm, ignoreCase = true) == true
+                    } || links.any { link ->
+                        link.source?.contains(searchTerm, ignoreCase = true) == true ||
+                                link.target?.contains(searchTerm, ignoreCase = true) == true
+                    }
                 }
-                if (containsSearchTerm){
-                    return ForcedGraph(
+
+                return if (containsSearchTerms) {
+                    ForcedGraph(
                         nodes = nodes,
                         links = links,
                         categories = listOf(
                             ForcedCategory(name = "Other"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
-//                            ForcedCategory(name = "Directorate"),
                             ForcedCategory(name = "Keywords"),
                         )
                     )
                 } else {
-                    return null
+                    null
                 }
             }
 
@@ -432,16 +434,16 @@ data class BPDoc(
         }
 
         // Forced graph
-        fun toForcedGraphJSONAll(bpComs: List<BPCom>, searchTerm: String? = "", bpDocsFilenamesDirectorates: Map<String?,String?> = emptyMap(), limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(bpComs: List<BPCom>, searchTerms: List<String>? = emptyList(), bpDocsFilenamesDirectorates: Map<String?,String?> = emptyMap(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { bpComs.take(it) } ?: bpComs
-            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm, bpDocsFilenamesDirectorates) }
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerms, bpDocsFilenamesDirectorates) }
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(bpCom: BPCom, searchTerm: String? = "", bpDocsFilenamesDirectorates: Map<String?,String?> = emptyMap()): ForcedGraph? {
+        fun toForcedGraphJSON(bpCom: BPCom, searchTerms: List<String>? = emptyList(), bpDocsFilenamesDirectorates: Map<String?,String?> = emptyMap()): ForcedGraph? {
 
             // Nodes
             val directorate = bpDocsFilenamesDirectorates?.get(bpCom.filename)
@@ -550,27 +552,29 @@ data class BPDoc(
             ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes
             val links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks
 
-            if (!searchTerm.isNullOrBlank()) {
-                val containsSearchTerm: Boolean = nodes.any { node ->
-                    node.name?.contains(searchTerm, ignoreCase = true) == true
-                } || links.any { link ->
-                    link.source?.contains(searchTerm, ignoreCase = true) == true ||
-                            link.target?.contains(searchTerm, ignoreCase = true) == true
+            if (!searchTerms.isNullOrEmpty()) {
+                val containsSearchTerms = searchTerms.all { searchTerm ->
+                    nodes.any { node ->
+                        node.name?.contains(searchTerm, ignoreCase = true) == true
+                    } || links.any { link ->
+                        link.source?.contains(searchTerm, ignoreCase = true) == true ||
+                                link.target?.contains(searchTerm, ignoreCase = true) == true
+                    }
                 }
-                if (containsSearchTerm){
-                    return ForcedGraph(
+
+                return if (containsSearchTerms) {
+                    ForcedGraph(
                         nodes = nodes,
                         links = links,
                         categories = listOf(
                             ForcedCategory(name = "Other"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
-//                            ForcedCategory(name = "Directorate"),
                             ForcedCategory(name = "Keywords"),
                         )
                     )
                 } else {
-                    return null
+                    null
                 }
             }
 

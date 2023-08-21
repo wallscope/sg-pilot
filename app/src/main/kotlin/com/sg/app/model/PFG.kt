@@ -151,16 +151,16 @@ data class PFGDoc(
         }
 
         // Forced graph
-        fun toForcedGraphJSONAll(pfgDocs: List<PFGDoc>, searchTerm: String? = "", limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(pfgDocs: List<PFGDoc>, searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgDocs.take(it) } ?: pfgDocs
-            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm) }
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerms) }
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(pfgDoc: PFGDoc, searchTerm: String? = ""): ForcedGraph? {
+        fun toForcedGraphJSON(pfgDoc: PFGDoc, searchTerms: List<String>? = emptyList()): ForcedGraph? {
 
             // Nodes
             val docId = pfgDoc.directorate.firstOrNull() ?: "***NO DIRECTORATE***"
@@ -311,27 +311,29 @@ data class PFGDoc(
             ) + primaryOutcomesNodes + secondaryOutcomesNodes + keywordsNodes
             val links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks
 
-            if (!searchTerm.isNullOrBlank()) {
-                val containsSearchTerm: Boolean = nodes.any { node ->
-                    node.name?.contains(searchTerm, ignoreCase = true) == true
-                } || links.any { link ->
-                    link.source?.contains(searchTerm, ignoreCase = true) == true ||
-                            link.target?.contains(searchTerm, ignoreCase = true) == true
+            if (!searchTerms.isNullOrEmpty()) {
+                val containsSearchTerms = searchTerms.all { searchTerm ->
+                    nodes.any { node ->
+                        node.name?.contains(searchTerm, ignoreCase = true) == true
+                    } || links.any { link ->
+                        link.source?.contains(searchTerm, ignoreCase = true) == true ||
+                                link.target?.contains(searchTerm, ignoreCase = true) == true
+                    }
                 }
-                if (containsSearchTerm){
-                    return ForcedGraph(
+
+                return if (containsSearchTerms) {
+                    ForcedGraph(
                         nodes = nodes,
                         links = links,
                         categories = listOf(
                             ForcedCategory(name = "Other"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
-//                            ForcedCategory(name = "Directorate"),
                             ForcedCategory(name = "Keywords"),
                         )
                     )
                 } else {
-                    return null
+                    null
                 }
             }
             return ForcedGraph(
@@ -442,16 +444,16 @@ data class PFGAux(
         }
 
         // Forced graph
-        fun toForcedGraphJSONAll(pfgAuxs: List<PFGAux>, searchTerm: String? = "", limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(pfgAuxs: List<PFGAux>, searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgAuxs.take(it) } ?: pfgAuxs
-            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm) }
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerms) }
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(pfgAux: PFGAux, searchTerm: String? = ""): ForcedGraph? {
+        fun toForcedGraphJSON(pfgAux: PFGAux, searchTerms: List<String>? = emptyList()): ForcedGraph? {
 
             // Nodes
             val docId = pfgAux.directorate.firstOrNull() ?: "***NO DIRECTORATE***"
@@ -603,27 +605,29 @@ data class PFGAux(
             val links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks
 
 
-            if (!searchTerm.isNullOrBlank()) {
-                val containsSearchTerm: Boolean = nodes.any { node ->
-                    node.name?.contains(searchTerm, ignoreCase = true) == true
-                } || links.any { link ->
-                    link.source?.contains(searchTerm, ignoreCase = true) == true ||
-                            link.target?.contains(searchTerm, ignoreCase = true) == true
+            if (!searchTerms.isNullOrEmpty()) {
+                val containsSearchTerms = searchTerms.all { searchTerm ->
+                    nodes.any { node ->
+                        node.name?.contains(searchTerm, ignoreCase = true) == true
+                    } || links.any { link ->
+                        link.source?.contains(searchTerm, ignoreCase = true) == true ||
+                                link.target?.contains(searchTerm, ignoreCase = true) == true
+                    }
                 }
-                if (containsSearchTerm){
-                    return ForcedGraph(
+
+                return if (containsSearchTerms) {
+                    ForcedGraph(
                         nodes = nodes,
                         links = links,
                         categories = listOf(
                             ForcedCategory(name = "Other"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
-//                            ForcedCategory(name = "Directorate"),
                             ForcedCategory(name = "Keywords"),
                         )
                     )
                 } else {
-                    return null
+                    null
                 }
             }
 

@@ -78,21 +78,21 @@ export const useAllDocsStore = defineStore('alldocs', {
   }),
   actions:{
     // Forced graph
-    async fetchAllDocsForcedGraph(searchTerm: string) {
+    async fetchAllDocsForcedGraph(searchString: string) {
       const response = await api.get<any>(
         `/api/alldocs/forcedgraph/list`, {
           params: {
-            searchTerm: searchTerm
+            searchString: searchString
           }
         }
       );
       return response.data;
     },
-    async fetchDocsForcedNpfList(outcomes: string[], searchTerm: string) {
+    async fetchDocsForcedNpfList(outcomes: string[], searchString: string) {
       try {
         const response = await api.post('/api/alldocs/forcedgraph-npf/list', 
         outcomes, {
-          params: { searchTerm: searchTerm }
+          params: { searchString: searchString }
         }
         );
         return response.data;

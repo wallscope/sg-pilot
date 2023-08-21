@@ -47,8 +47,12 @@ class AllGraphController {
     // Forced graph, all docs
     @GetMapping("/api/alldocs/forcedgraph/list")
     @ResponseBody
-    suspend fun getDocsForcedList(@RequestParam searchTerm: String): String = coroutineScope {
+    suspend fun getDocsForcedList(@RequestParam searchString: String? = ""): String = coroutineScope {
         val bpDocs = BPDocDAO.getAll()
+        val searchTerms = searchString
+            ?.split('|')
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
 
         val bpDocsFilenamesDirectorates = bpDocs
             .distinctBy { it.filename }
@@ -58,28 +62,33 @@ class AllGraphController {
 
         mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
             mergeForcedGraphs(
-                async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), searchTerm,) }.await(),
-                async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), searchTerm, ) }.await(),
-                async { BPDoc.toForcedGraphJSONAll(bpDocs, searchTerm, ) }.await(),
-                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), searchTerm, bpDocsFilenamesDirectorates) }.await()
+                async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), searchTerms,) }.await(),
+                async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), searchTerms, ) }.await(),
+                async { BPDoc.toForcedGraphJSONAll(bpDocs, searchTerms, ) }.await(),
+                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), searchTerms, bpDocsFilenamesDirectorates) }.await()
             )
         )
     }
 
     // Forced graph, docs with NPF relationships
     @PostMapping("/api/alldocs/forcedgraph-npf/list")
-    suspend fun getDocsForcedNpfList(@RequestBody outcomes: List<String>, @RequestParam searchTerm: String? = ""): String = coroutineScope {
+    suspend fun getDocsForcedNpfList(@RequestBody outcomes: List<String>, @RequestParam searchString: String? = ""): String = coroutineScope {
+        val searchTerms = searchString
+            ?.split('|')
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+
         mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
             mergeForcedGraphs(
                 async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll().filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-                }, searchTerm) }.await(),
+                }, searchTerms) }.await(),
                 async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll().filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-                }, searchTerm) }.await(),
+                }, searchTerms) }.await(),
                 async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll().filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-                }, searchTerm) }.await()
+                }, searchTerms) }.await()
             )
         )
     }

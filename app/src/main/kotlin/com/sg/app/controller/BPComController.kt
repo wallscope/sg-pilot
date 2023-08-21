@@ -81,7 +81,7 @@ class BPComController {
     @ResponseBody
     fun getBPComsForcedList(): String {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-            BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), "", 15)
+            BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), "")
         )
     }
 

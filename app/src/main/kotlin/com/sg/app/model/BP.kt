@@ -132,8 +132,9 @@ data class BPDoc(
 
             // Nodes
 //            val docId = "BPDoc|$count"
-            val docId = bpDoc.filename
-            val doc = ForcedNode(id = docId, name = "BP Doc", symbolSize = 55, value = bpDoc.filename)
+//            val docId = bpDoc.filename
+            val docId = bpDoc.directorate.firstOrNull() ?: "***NO DIRECTORATE***"
+            val doc = ForcedNode(id = docId, name = docId, symbolSize = 55, value = "Directorate")
             val dG = ForcedNode(
                 id = "${BPDoc::dG.name}|${bpDoc.dG}",
                 name = bpDoc.dG.firstOrNull(),
@@ -141,13 +142,13 @@ data class BPDoc(
                 value = BPDoc::dG.name,
                 category = 0
             )
-            val directorate = ForcedNode(
-                id = "${BPDoc::directorate.name}|${bpDoc.directorate}",
-                name = bpDoc.directorate.firstOrNull(),
-                symbolSize = 40,
-                value = BPDoc::directorate.name,
-                category = 3
-            )
+//            val directorate = ForcedNode(
+//                id = "${BPDoc::directorate.name}|${bpDoc.directorate}",
+//                name = bpDoc.directorate.firstOrNull(),
+//                symbolSize = 40,
+//                value = BPDoc::directorate.name,
+//                category = 3
+//            )
             val director = ForcedNode(
                 id = "${BPDoc::director.name}|${bpDoc.director}",
                 name = bpDoc.director.firstOrNull(),
@@ -250,14 +251,14 @@ data class BPDoc(
                     name = keyword,
                     symbolSize = 31,
                     value = "keyword",
-                    category = 4
+                    category = 3
                 )
             }
 
             // Links
             val doc2propertyLinks = listOf(
                 ForcedLink(source = docId, target = dG.id),
-                ForcedLink(source = docId, target = directorate.id),
+//                ForcedLink(source = docId, target = directorate.id),
                 ForcedLink(source = docId, target = director.id),
                 ForcedLink(source = docId, target = keyContact.id),
                 ForcedLink(source = docId, target = contactEmail.id),
@@ -304,7 +305,7 @@ data class BPDoc(
             val nodes = listOf(
                 doc,
                 dG,
-                directorate,
+//                directorate,
                 director,
                 keyContact,
                 contactEmail,
@@ -331,7 +332,7 @@ data class BPDoc(
                             ForcedCategory(name = "Other"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
-                            ForcedCategory(name = "Directorate"),
+//                            ForcedCategory(name = "Directorate"),
                             ForcedCategory(name = "Keywords"),
                         )
                     )
@@ -347,7 +348,7 @@ data class BPDoc(
                     ForcedCategory(name = "Other"),
                     ForcedCategory(name = "Primary outcomes"),
                     ForcedCategory(name = "Secondary outcomes"),
-                    ForcedCategory(name = "Directorate"),
+//                    ForcedCategory(name = "Directorate"),
                     ForcedCategory(name = "Keywords"),
                 )
             )
@@ -431,21 +432,22 @@ data class BPDoc(
         }
 
         // Forced graph
-        fun toForcedGraphJSONAll(bpComs: List<BPCom>, searchTerm: String? = "", limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(bpComs: List<BPCom>, searchTerm: String? = "", bpDocsFilenamesDirectorates: Map<String?,String?> = emptyMap(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { bpComs.take(it) } ?: bpComs
-            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm) }
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerm, bpDocsFilenamesDirectorates) }
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(bpCom: BPCom, searchTerm: String? = ""): ForcedGraph? {
+        fun toForcedGraphJSON(bpCom: BPCom, searchTerm: String? = "", bpDocsFilenamesDirectorates: Map<String?,String?> = emptyMap()): ForcedGraph? {
 
             // Nodes
+            val directorate = bpDocsFilenamesDirectorates?.get(bpCom.filename)
             val docId = bpCom.commitment ?: "***NO TITLE***"
 //            val docId = bpCom.filename
-            val doc = ForcedNode(id = docId, name = bpCom.commitment ?: "***NO TITLE***", symbolSize = 55, value = "Title")
+            val doc = ForcedNode(id = docId, name = bpCom.commitment ?: "***NO TITLE***", symbolSize = 55, value = "Commitment title")
 //            val commitment = ForcedNode(
 //                id = "${BPCom::commitment.name}|${bpCom.commitment}",
 //                name = bpCom.commitment,
@@ -507,12 +509,13 @@ data class BPDoc(
                     name = keyword,
                     symbolSize = 31,
                     value = "keyword",
-                    category = 4
+                    category = 3
                 )
             }
 
             // Links
             val doc2propertyLinks = listOf(
+                ForcedLink(source = docId, target = directorate),
 //                ForcedLink(source = docId, target = bpCom.filename),
                 ForcedLink(source = bpCom.filename, target = docId),
 //                ForcedLink(source = docId, target = commitment.id),
@@ -562,7 +565,7 @@ data class BPDoc(
                             ForcedCategory(name = "Other"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
-                            ForcedCategory(name = "Directorate"),
+//                            ForcedCategory(name = "Directorate"),
                             ForcedCategory(name = "Keywords"),
                         )
                     )
@@ -578,7 +581,7 @@ data class BPDoc(
                     ForcedCategory(name = "Other"),
                     ForcedCategory(name = "Primary outcomes"),
                     ForcedCategory(name = "Secondary outcomes"),
-                    ForcedCategory(name = "Directorate"),
+//                    ForcedCategory(name = "Directorate"),
                     ForcedCategory(name = "Keywords"),
                 )
             )

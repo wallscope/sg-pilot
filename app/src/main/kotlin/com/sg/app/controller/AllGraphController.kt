@@ -48,12 +48,20 @@ class AllGraphController {
     @GetMapping("/api/alldocs/forcedgraph/list")
     @ResponseBody
     suspend fun getDocsForcedList(@RequestParam searchTerm: String): String = coroutineScope {
-       mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+        val bpDocs = BPDocDAO.getAll()
+
+        val bpDocsFilenamesDirectorates = bpDocs
+            .distinctBy { it.filename }
+            .associate { bpDoc ->
+                bpDoc.filename?.takeIf { it.isNotEmpty() } to bpDoc.directorate.getOrNull(0)
+            }
+
+        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
             mergeForcedGraphs(
                 async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), searchTerm,) }.await(),
                 async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), searchTerm, ) }.await(),
-                async { BPDoc.toForcedGraphJSONAll(BPDocDAO.getAll(), searchTerm, ) }.await(),
-                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), searchTerm, ) }.await()
+                async { BPDoc.toForcedGraphJSONAll(bpDocs, searchTerm, ) }.await(),
+                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), searchTerm, bpDocsFilenamesDirectorates) }.await()
             )
         )
     }

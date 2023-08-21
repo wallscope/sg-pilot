@@ -49,10 +49,10 @@
           </td>
           <td>
             <router-link :to="{ path: 'detailedChart', query: { uri: doc.uri.split('/SG/')[1]} }">
-              <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-eye-outline" /> Document details</v-btn></VCardTitle>
+              <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-file-document" /> Document details</v-btn></VCardTitle>
             </router-link> 
             <router-link v-if="doc.primaryOutcomes.length > 0 || doc.secondaryOutcomes.length > 0" :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }">
-              <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-eye-outline" /> NPF relationships</v-btn></VCardTitle>
+              <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-graph" /> NPF relationships</v-btn></VCardTitle>
             </router-link> 
           </td>
         </tr>

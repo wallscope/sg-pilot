@@ -163,8 +163,8 @@ data class PFGDoc(
         fun toForcedGraphJSON(pfgDoc: PFGDoc, searchTerm: String? = ""): ForcedGraph? {
 
             // Nodes
-            val docId = pfgDoc.policyTitle.firstOrNull() ?: "***NO TITLE***"
-            val doc = ForcedNode(id = docId, name = pfgDoc.policyTitle.firstOrNull() ?: "***NO TITLE***", symbolSize = 55, value = "Title")
+            val docId = pfgDoc.directorate.firstOrNull() ?: "***NO DIRECTORATE***"
+            val doc = ForcedNode(id = docId, name = docId, symbolSize = 55, value = "Directorate")
             val ministerialPortfolio = ForcedNode(
                 id = "${PFGDoc::ministerialPortfolio.name}|${pfgDoc.ministerialPortfolio}",
                 name = pfgDoc.ministerialPortfolio.firstOrNull(),
@@ -172,13 +172,13 @@ data class PFGDoc(
                 value = PFGDoc::ministerialPortfolio.name,
                 category = 0
             )
-            val directorate = ForcedNode(
-                id = "${PFGDoc::directorate.name}|${pfgDoc.directorate}",
-                name = pfgDoc.directorate.firstOrNull(),
-                symbolSize = 40,
-                value = PFGDoc::directorate.name,
-                category = 3
-            )
+//            val directorate = ForcedNode(
+//                id = "${PFGDoc::directorate.name}|${pfgDoc.directorate}",
+//                name = pfgDoc.directorate.firstOrNull(),
+//                symbolSize = 40,
+//                value = PFGDoc::directorate.name,
+//                category = 3
+//            )
             val leadOfficial = ForcedNode(
                 id = "${PFGDoc::leadOfficial.name}|${pfgDoc.leadOfficial}",
                 name = pfgDoc.leadOfficial.firstOrNull(),
@@ -193,13 +193,13 @@ data class PFGDoc(
                 value = PFGDoc::unitBranch.name,
                 category = 0
             )
-//            val policyTitle = ForcedNode(
-//                id = "${PFGDoc::policyTitle.name}|${pfgDoc.policyTitle}",
-//                name = pfgDoc.policyTitle.firstOrNull(),
-//                symbolSize = 20,
-//                value = PFGDoc::policyTitle.name,
-//                category = 0
-//            )
+            val policyTitle = ForcedNode(
+                id = "${PFGDoc::policyTitle.name}|${pfgDoc.policyTitle}",
+                name = pfgDoc.policyTitle.firstOrNull(),
+                symbolSize = 20,
+                value = PFGDoc::policyTitle.name,
+                category = 0
+            )
             val scsClearance = ForcedNode(
                 id = "${PFGDoc::scsClearance.name}|${pfgDoc.scsClearance}",
                 name = pfgDoc.scsClearance.firstOrNull(),
@@ -262,17 +262,17 @@ data class PFGDoc(
                     name = keyword,
                     symbolSize = 31,
                     value = "keyword",
-                    category = 4
+                    category = 3
                 )
             }
 
             // Links
             val doc2propertyLinks = listOf(
                 ForcedLink(source = docId, target = ministerialPortfolio.id),
-                ForcedLink(source = docId, target = directorate.id),
+//                ForcedLink(source = docId, target = directorate.id),
                 ForcedLink(source = docId, target = leadOfficial.id),
                 ForcedLink(source = docId, target = unitBranch.id),
-//                ForcedLink(source = docId, target = policyTitle.id),
+                ForcedLink(source = docId, target = policyTitle.id),
                 ForcedLink(source = docId, target = scsClearance.id),
                 ForcedLink(source = docId, target = fbpClearance.id),
                 ForcedLink(source = docId, target = dG.id),
@@ -299,10 +299,10 @@ data class PFGDoc(
             val nodes = listOf(
                 doc,
                 ministerialPortfolio,
-                directorate,
+//                directorate,
                 leadOfficial,
                 unitBranch,
-//                    policyTitle,
+                policyTitle,
                 scsClearance,
                 fbpClearance,
                 dG,
@@ -326,7 +326,7 @@ data class PFGDoc(
                             ForcedCategory(name = "Other"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
-                            ForcedCategory(name = "Directorate"),
+//                            ForcedCategory(name = "Directorate"),
                             ForcedCategory(name = "Keywords"),
                         )
                     )
@@ -341,7 +341,7 @@ data class PFGDoc(
                     ForcedCategory(name = "Other"),
                     ForcedCategory(name = "Primary outcomes"),
                     ForcedCategory(name = "Secondary outcomes"),
-                    ForcedCategory(name = "Directorate"),
+//                    ForcedCategory(name = "Directorate"),
                     ForcedCategory(name = "Keywords"),
                 )
             )
@@ -454,8 +454,8 @@ data class PFGAux(
         fun toForcedGraphJSON(pfgAux: PFGAux, searchTerm: String? = ""): ForcedGraph? {
 
             // Nodes
-            val docId = pfgAux.policyTitle.firstOrNull() ?: "***NO TITLE***"
-            val doc = ForcedNode(id = docId, name = pfgAux.policyTitle.firstOrNull() ?: "***NO TITLE***", symbolSize = 55, value = "Title")
+            val docId = pfgAux.directorate.firstOrNull() ?: "***NO DIRECTORATE***"
+            val doc = ForcedNode(id = docId, name = docId, symbolSize = 55, value = "Directorate")
             val ministerialPortfolio = ForcedNode(
                 id = "${PFGAux::ministerialPortfolio.name}|${pfgAux.ministerialPortfolio}",
                 name = pfgAux.ministerialPortfolio.firstOrNull(),
@@ -463,13 +463,13 @@ data class PFGAux(
                 value = PFGAux::ministerialPortfolio.name,
                 category = 0
             )
-            val directorate = ForcedNode(
-                id = "${PFGAux::directorate.name}|${pfgAux.directorate}",
-                name = pfgAux.directorate.firstOrNull(),
-                symbolSize = 40,
-                value = PFGAux::directorate.name,
-                category = 3
-            )
+//            val directorate = ForcedNode(
+//                id = "${PFGAux::directorate.name}|${pfgAux.directorate}",
+//                name = pfgAux.directorate.firstOrNull(),
+//                symbolSize = 40,
+//                value = PFGAux::directorate.name,
+//                category = 3
+//            )
             val leadOfficial = ForcedNode(
                 id = "${PFGAux::leadOfficial.name}|${pfgAux.leadOfficial}",
                 name = pfgAux.leadOfficial.firstOrNull(),
@@ -484,13 +484,13 @@ data class PFGAux(
                 value = PFGAux::period.name,
                 category = 0
             )
-//            val policyTitle = ForcedNode(
-//                id = "${PFGAux::policyTitle.name}|${pfgAux.policyTitle}",
-//                name = pfgAux.policyTitle.firstOrNull(),
-//                symbolSize = 20,
-//                value = PFGAux::policyTitle.name,
-//                category = 0
-//            )
+            val policyTitle = ForcedNode(
+                id = "${PFGAux::policyTitle.name}|${pfgAux.policyTitle}",
+                name = pfgAux.policyTitle.firstOrNull(),
+                symbolSize = 20,
+                value = PFGAux::policyTitle.name,
+                category = 0
+            )
             val strategicPriority = ForcedNode(
                 id = "${PFGAux::strategicPriority.name}|${pfgAux.strategicPriority}",
                 name = pfgAux.strategicPriority,
@@ -553,17 +553,17 @@ data class PFGAux(
                     name = keyword,
                     symbolSize = 31,
                     value = "keyword",
-                    category = 4
+                    category = 3
                 )
             }
 
             // Links
             val doc2propertyLinks = listOf(
                 ForcedLink(source = docId, target = ministerialPortfolio.id),
-                ForcedLink(source = docId, target = directorate.id),
+//                ForcedLink(source = docId, target = directorate.id),
                 ForcedLink(source = docId, target = leadOfficial.id),
                 ForcedLink(source = docId, target = period.id),
-//                ForcedLink(source = docId, target = policyTitle.id),
+                ForcedLink(source = docId, target = policyTitle.id),
                 ForcedLink(source = docId, target = strategicPriority.id),
                 ForcedLink(source = docId, target = legislativeProposal.id),
                 ForcedLink(source = docId, target = dG.id),
@@ -590,10 +590,10 @@ data class PFGAux(
             val nodes = listOf(
                 doc,
                 ministerialPortfolio,
-                directorate,
+//                directorate,
                 leadOfficial,
                 period,
-//                    policyTitle,
+                policyTitle,
                 strategicPriority,
                 legislativeProposal,
                 dG,
@@ -618,7 +618,7 @@ data class PFGAux(
                             ForcedCategory(name = "Other"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
-                            ForcedCategory(name = "Directorate"),
+//                            ForcedCategory(name = "Directorate"),
                             ForcedCategory(name = "Keywords"),
                         )
                     )
@@ -634,7 +634,7 @@ data class PFGAux(
                     ForcedCategory(name = "Other"),
                     ForcedCategory(name = "Primary outcomes"),
                     ForcedCategory(name = "Secondary outcomes"),
-                    ForcedCategory(name = "Directorate"),
+//                    ForcedCategory(name = "Directorate"),
                     ForcedCategory(name = "Keywords"),
                 )
             )

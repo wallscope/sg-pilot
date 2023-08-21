@@ -48,14 +48,14 @@ const vuetifyTheme = useTheme()
       :item="{
         title: 'Graph Chart circular',
         to: 'graphChartCirc',
-        icon: { icon: 'mdi-chart-line' }
+        icon: { icon: 'mdi-chart-donut' }
       }"
     />
     <VerticalNavLink
       :item="{
         title: 'Graph Chart forced',
         to: 'graphChartForce',
-        icon: { icon: 'mdi-chart-line' }
+        icon: { icon: 'mdi-sitemap' }
       }"
     />
     <!-- <VerticalNavLink

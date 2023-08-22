@@ -20,7 +20,9 @@ services:
 #      - KEYCLOAK_SERVER_URL=http://keycloak:3003
 #      - KEYCLOAK_CLIENT_SECRET=
 #    ports:
-#      - "3000:3000"
+#      - "2000:2000"
+#    volumes:
+#      - "${PWD}/resources:/build/resources"
 #    networks:
 #      - sg-net
 

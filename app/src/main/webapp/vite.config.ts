@@ -64,15 +64,15 @@ export default defineConfig({
     ],
   },
   server: {
-    port: 3001,
+    port: 2001,
     proxy: {
       "/api": {
-        target: process.env.API || "http://localhost:3000",
+        target: process.env.API || "http://localhost:2000",
         changeOrigin: true,
         secure: false,
       },
       // "/keycloak": {
-      //   target: process.env.KEYCLOAK || "http://localhost:3003",
+      //   target: process.env.KEYCLOAK || "http://localhost:2003",
       //   changeOrigin: true,
       //   secure: false,
       //   rewrite: (path: string) => path.replace(/^\/keycloak/, ""),

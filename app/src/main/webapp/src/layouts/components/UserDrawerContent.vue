@@ -26,7 +26,7 @@ const vuetifyTheme = useTheme()
     <VerticalNavLink
       :item="{
         title: 'Instructions',
-        to: 'about',
+        to: 'instructions',
         icon: { icon: 'mdi-book-open-page-variant' }
       }"
     />
@@ -61,7 +61,7 @@ const vuetifyTheme = useTheme()
     <VerticalNavLink
       :item="{
         title: 'About the Pilot',
-        to: 'sankeyChart',
+        to: 'about',
         icon: { icon: 'mdi-information-outline' }
       }"
     />

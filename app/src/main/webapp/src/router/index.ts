@@ -35,11 +35,11 @@ const router = createRouter({
       children: [
         {
           path: '',
-          name: 'about',
+          name: 'instructions',
           // route level code-splitting
           // this generates a separate chunk (about.[hash].js) for this route
           // which is lazy-loaded when the route is visited.
-          component: () => import(/* webpackChunkName: "home" */ '@/views/pages/aboutPilot.vue'),
+          component: () => import(/* webpackChunkName: "home" */ '@/views/pages/instructions.vue'),
         },
         {
           path: "detailedChart",
@@ -86,11 +86,11 @@ const router = createRouter({
           name: "data",
           component: () => import('@/views/pages/overviewTable.vue'),
         },
-        // {
-        //   path: "about",
-        //   name: "about",
-        //   component: () => import('@/views/pages/aboutPilot.vue'),
-        // },
+        {
+          path: "about",
+          name: "about",
+          component: () => import('@/views/pages/aboutPilot.vue'),
+        },
       ],
     },
   ],

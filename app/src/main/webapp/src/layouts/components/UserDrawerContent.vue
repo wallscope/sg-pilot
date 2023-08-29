@@ -25,9 +25,44 @@ const vuetifyTheme = useTheme()
     <VerticalNavSectionTitle :item="{ heading: 'Charts' }" />
     <VerticalNavLink
       :item="{
-        title: 'Overview',
-        to: 'overview',
-        icon: { icon: 'mdi-file-chart' }
+        title: 'Instructions',
+        to: 'about',
+        icon: { icon: 'mdi-book-open-page-variant' }
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'Data References',
+        to: 'data',
+        icon: { icon: 'mdi-file-document-outline' }
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'Graph Overview',
+        to: 'graphChartForce',
+        icon: { icon: 'mdi-graph' }
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'Graph Circle',
+        to: 'graphChartCirc',
+        icon: { icon: 'mdi-chart-donut' }
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'Example - Sankey',
+        to: 'sankeyChart',
+        icon: { icon: 'mdi-chart-sankey' }
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'About the Pilot',
+        to: 'sankeyChart',
+        icon: { icon: 'mdi-information-outline' }
       }"
     />
     <!-- <VerticalNavLink
@@ -44,20 +79,6 @@ const vuetifyTheme = useTheme()
         icon: { icon: 'mdi-chart-line' }
       }"
     /> -->
-    <VerticalNavLink
-      :item="{
-        title: 'Graph Chart circular',
-        to: 'graphChartCirc',
-        icon: { icon: 'mdi-chart-donut' }
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'Graph Chart forced',
-        to: 'graphChartForce',
-        icon: { icon: 'mdi-sitemap' }
-      }"
-    />
     <!-- <VerticalNavLink
       :item="{
         title: 'Other Graph Chart dep',
@@ -72,20 +93,6 @@ const vuetifyTheme = useTheme()
         icon: { icon: 'mdi-chart-line' }
       }"
     /> -->
-    <VerticalNavLink
-      :item="{
-        title: 'Sankey Chart',
-        to: 'sankeyChart',
-        icon: { icon: 'mdi-chart-areaspline' }
-      }"
-    />
-    <VerticalNavLink
-      :item="{
-        title: 'About the Pilot',
-        to: 'about',
-        icon: { icon: 'mdi-information-outline' }
-      }"
-    />
   </ul>
 </template>
 

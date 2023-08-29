@@ -109,15 +109,15 @@ const chartOptions: Ref<ECBasicOption | undefined> = computed(() => {
 
   return {
     animation: false,
-    title: {
-      text: 'Big graph',
-      subtext: 'Default layout',
-      top: 'bottom',
-      left: 'right'
-    },
     tooltip: {},
     legend: [
       {
+        left: 1,
+        orient: 'vertical',
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+        borderColor: 'rgb(106, 168, 201)',
+        borderWidth: 2,
+        borderRadius: 5,
         // selectedMode: 'single',
         data: graph.categories.map(function (a: { name: string }) {
           return a.name;
@@ -190,6 +190,6 @@ onMounted(() => {
 
 }
 .chart {
-  height: 820px;
+  height: 770px;
 }
 </style>

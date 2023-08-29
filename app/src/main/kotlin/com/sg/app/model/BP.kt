@@ -332,7 +332,7 @@ data class BPDoc(
                         nodes = nodes,
                         links = links,
                         categories = listOf(
-                            ForcedCategory(name = "Other"),
+                            ForcedCategory(name = "More"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
                             ForcedCategory(name = "Keywords"),
@@ -347,7 +347,7 @@ data class BPDoc(
                 nodes = nodes,
                 links = links,
                 categories = listOf(
-                    ForcedCategory(name = "Other"),
+                    ForcedCategory(name = "More"),
                     ForcedCategory(name = "Primary outcomes"),
                     ForcedCategory(name = "Secondary outcomes"),
 //                    ForcedCategory(name = "Directorate"),
@@ -567,7 +567,7 @@ data class BPDoc(
                         nodes = nodes,
                         links = links,
                         categories = listOf(
-                            ForcedCategory(name = "Other"),
+                            ForcedCategory(name = "More"),
                             ForcedCategory(name = "Primary outcomes"),
                             ForcedCategory(name = "Secondary outcomes"),
                             ForcedCategory(name = "Keywords"),
@@ -582,7 +582,7 @@ data class BPDoc(
                 nodes = nodes,
                 links = links,
                 categories = listOf(
-                    ForcedCategory(name = "Other"),
+                    ForcedCategory(name = "More"),
                     ForcedCategory(name = "Primary outcomes"),
                     ForcedCategory(name = "Secondary outcomes"),
 //                    ForcedCategory(name = "Directorate"),

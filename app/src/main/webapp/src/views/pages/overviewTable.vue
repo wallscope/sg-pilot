@@ -1,6 +1,6 @@
 <template>
   <div class="SearchBar-container">
-    <SearchBar v-model="search" placeholder="SearchBar for Docs"></SearchBar>
+    <SearchBar v-model="search" placeholder="Search References"></SearchBar>
   </div>
 <div class="internalDocs">
   <p>Documents ({{ filteredDocsList.length }})</p>
@@ -48,11 +48,11 @@
             <input id="Keywords" placeholder="" v-model="doc.keywords[3]" disabled/>
           </td>
           <td>
+            <router-link v-if="doc.primaryOutcomes.length > 0 || doc.secondaryOutcomes.length > 0" :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }">
+              <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-share-variant" /> Outcome relationships</v-btn></VCardTitle>
+            </router-link> 
             <router-link :to="{ path: 'detailedChart', query: { uri: doc.uri.split('/SG/')[1]} }">
               <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-file-document" /> Document details</v-btn></VCardTitle>
-            </router-link> 
-            <router-link v-if="doc.primaryOutcomes.length > 0 || doc.secondaryOutcomes.length > 0" :to="{ path: 'graphChartForce', query: { outcomes: doc.primaryOutcomes.concat(doc.secondaryOutcomes) } }">
-              <VCardTitle><v-btn variant="outlined" class="open"><v-icon icon="mdi-graph" /> NPF relationships</v-btn></VCardTitle>
             </router-link> 
           </td>
         </tr>

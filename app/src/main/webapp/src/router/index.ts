@@ -1,5 +1,6 @@
 import defaultLayout from '@/layouts/default.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { usePasswordStore } from '@/stores/password';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,19 +10,46 @@ const router = createRouter({
       name: "Default",
       component: defaultLayout,
       // component: () => import('@/layouts/default/Default.vue'),
+      beforeEnter: (to, from, next) => {
+        let isPasswordCorrect = false;
+  
+        while (!isPasswordCorrect) {
+          const inputPassword = prompt('Enter password:');
+  
+          if (inputPassword === null) {
+            // User canceled the prompt
+            next(false); // Prevent navigation
+            return;
+          }
+  
+          isPasswordCorrect = usePasswordStore().checkPassword(inputPassword);
+  
+          if (!isPasswordCorrect) {
+            alert('Incorrect password. Please try again.');
+          }
+        }
+  
+        // Password is correct, allow navigation
+        next();
+      },
       children: [
         {
           path: '',
-          name: 'home',
+          name: 'about',
           // route level code-splitting
           // this generates a separate chunk (about.[hash].js) for this route
           // which is lazy-loaded when the route is visited.
-          component: () => import(/* webpackChunkName: "home" */ '@/pages/home.vue'),
+          component: () => import(/* webpackChunkName: "home" */ '@/views/pages/aboutPilot.vue'),
         },
         {
           path: "detailedChart",
           name: "detailedChart",
           component: () => import('@/pages/detailedchart.vue'),
+        },
+        {
+          path: "protected",
+          name: "protected",
+          component: () => import('@/pages/Protected.vue'),
         },
         {
           path: "graphChartXY",
@@ -54,15 +82,15 @@ const router = createRouter({
           component: () => import('@/views/pages/charts/sankeyChart.vue'),
         },
         {
-          path: "overview",
-          name: "overview",
+          path: "data",
+          name: "data",
           component: () => import('@/views/pages/overviewTable.vue'),
         },
-        {
-          path: "about",
-          name: "about",
-          component: () => import('@/views/pages/aboutPilot.vue'),
-        },
+        // {
+        //   path: "about",
+        //   name: "about",
+        //   component: () => import('@/views/pages/aboutPilot.vue'),
+        // },
       ],
     },
   ],

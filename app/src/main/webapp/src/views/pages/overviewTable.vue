@@ -18,7 +18,7 @@
       <tbody>
         <tr v-for="(doc, i) in paginatedDocsList" :key="doc.uri">
           <td>
-              <div class="wrapped-data" v-text="doc.title ? doc.title : 'Default Title'"></div>
+              <div class="wrapped-data" v-text="doc.title ? doc.title : '<Title>'"></div>
               <hr class="data-divider">
               <input id="Doc type" placeholder="Doc type" :value="doc.docType" disabled/>
           </td>

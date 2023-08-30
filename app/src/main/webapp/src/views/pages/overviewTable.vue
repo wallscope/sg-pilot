@@ -18,12 +18,14 @@
       <tbody>
         <tr v-for="(doc, i) in paginatedDocsList" :key="doc.uri">
           <td>
-            <input id="policyTitle" placeholder="Title" v-model="doc.title" disabled/>
-            <input id="Doc type" placeholder="Doc type" :value="doc.docType" disabled/>
+              <div class="wrapped-data" v-text="doc.title ? doc.title : 'Default Title'"></div>
+              <hr class="data-divider">
+              <input id="Doc type" placeholder="Doc type" :value="doc.docType" disabled/>
           </td>
           <td>
-            <input id="dg" placeholder="Director General" v-model="doc.dg" disabled/>
-            <input id="directorate" placeholder="Directorate" v-model="doc.directorate" disabled/>
+            <div class="wrapped-data" v-text="doc.dg ? doc.dg : '<Director General>'"></div>
+              <hr class="data-divider">
+            <div class="wrapped-data" v-text="doc.directorate ? doc.directorate : '<Directorate>'"></div>
           </td>
           <td><strong>
               <p v-if="doc.primaryOutcomes.length > 0">Primary </p></strong>
@@ -210,6 +212,24 @@ textarea {
   font-weight: normal;
   width: 98%;
 }
+.wrapped-data {
+  padding: 4.5px 5px;
+  font-size: 16px;
+  font-weight: normal;
+  width: 100%;
+  max-height: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  border: none;
+  background-color: transparent;
+  margin: 1px 0;
+}
+.data-divider {
+  margin: 1px auto;
+  width: 5%;
+}
+
 input.border {
   border: 2px solid #ffffff;
   background-color: #ffffff;

@@ -46,11 +46,11 @@ const router = createRouter({
           name: "detailedChart",
           component: () => import('@/pages/detailedchart.vue'),
         },
-        {
-          path: "protected",
-          name: "protected",
-          component: () => import('@/pages/Protected.vue'),
-        },
+        // {
+        //   path: "protected",
+        //   name: "protected",
+        //   component: () => import('@/pages/Protected.vue'),
+        // },
         {
           path: "graphChartXY",
           name: "graphChartXY",

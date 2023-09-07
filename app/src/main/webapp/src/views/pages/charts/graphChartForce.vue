@@ -3,6 +3,15 @@
     <VCol cols="12">
       <v-table>
         <template v-if="!hide">
+          <!-- Directorate search -->
+          <div class="Tag-container">
+            <v-chip v-for="dir in dirs" :key="dir" class="ma-1" @click="removeDirectorate(dir)">
+                {{ dir }}
+                <v-icon small>mdi-close</v-icon>
+              </v-chip>
+              <input v-model="newDirectorate" @keydown.enter="addDirectorate" placeholder="Add a Directorate" class="tag-input" />
+          </div>
+          <!-- Term search -->
           <div class="Tag-container">
             <v-chip v-for="tag in tags" :key="tag" class="ma-1" @click="removeTag(tag)">
               {{ tag }}
@@ -71,13 +80,33 @@ const removeTag = (tag: string) => {
   }
 };
 
+const dirs = ref<string[]>([]);
+const newDirectorate = ref('');
+
+const addDirectorate = () => {
+  if (newDirectorate.value.trim() !== '' && !dirs.value.includes(newDirectorate.value)) {
+    dirs.value.push(newDirectorate.value);
+    newDirectorate.value = '';
+    fetchData();
+  }
+};
+
+const removeDirectorate = (dir: string) => {
+  const index = dirs.value.indexOf(dir);
+  if (index !== -1) {
+    dirs.value.splice(index, 1);
+    fetchData();
+  }
+};
+
 const jsonData = ref<null | ForcedGraph>(null);
 const nodeColors = ref<{ [key: string]: string }>({});
 const chartOptions: Ref<ECBasicOption | undefined> = ref({});
 
 const fetchData = async () => {
   try {
-    
+    chartOptions.value = {};
+
     let outcomes = router.currentRoute.value.query.outcomes as string[]
     if(outcomes){
       outcomes = Array.isArray(outcomes)
@@ -86,75 +115,78 @@ const fetchData = async () => {
     }
 
     const searchTags = tags.value;
-    let graph = null;
-    if (outcomes !== undefined && outcomes.length > 0 ) {
-      graph = await allDocsStore.fetchDocsForcedNpfList(outcomes, searchTags.join("|")) as ForcedGraph;
-    } else {
-      graph = await allDocsStore.fetchAllDocsForcedGraph(searchTags.join("|")) as ForcedGraph;
-    }
+    const searchDirs = dirs.value;
 
-    graph.nodes.forEach(function (node: GraphNode) {
-      node.label = {
-        show: node.symbolSize >= 20
-      };
-    });
+    if(searchTags.length > 0 || searchDirs.length > 0 ) {
+      let graph = null;
+      if (outcomes !== undefined && outcomes.length > 0 ) {
+        graph = await allDocsStore.fetchDocsForcedNpfList(outcomes, searchDirs.join("|"), searchTags.join("|")) as ForcedGraph;
+      } else {
+        graph = await allDocsStore.fetchAllDocsForcedGraph(searchDirs.join("|"), searchTags.join("|")) as ForcedGraph;
+      }
 
-    jsonData.value = graph;
+      graph.nodes.forEach(function (node: GraphNode) {
+        node.label = {
+          show: node.symbolSize >= 20
+        };
+      });
 
-    // Update chartOptions directly
-    chartOptions.value = {
-      animation: false,
-      tooltip: {},
-      legend: [
-        {
-          left: 1,
-          orient: 'vertical',
-          backgroundColor: 'rgba(255, 255, 255, 1)',
-          borderColor: 'rgb(106, 168, 201)',
-          borderWidth: 2,
-          borderRadius: 5,
-          data: graph.categories.map(function (a: { name: string }) {
-            return a.name;
-          }),
-          selected: graph.categories.reduce(function (obj: { [x: string]: boolean; }, item: { name: string | number; }) {
-            obj[item.name] = false;
-            return obj;
-          }, {})
-        }
-      ],
-      series: [
-        {
-          name: "",
-          type: "graph",
-          layout: "force",
-          force: {
-            repulsion: 700,
-            edgeLength: 300,
-          },
-          data: graph.nodes,
-          links: graph.links,
-          categories: graph.categories,
-          roam: true,
-          label: {
-            position: 'right',
-            // formatter: '{b}'
-            formatter: function(params: { name: string; }) {
-              return params.name.length > 20 ? params.name.substring(0, 20) + '...' : params.name;
-            }
-          },
-          lineStyle: {
-            color: 'source',
-            curveness: 0.3
-          },
-          emphasis: {
-            focus: 'adjacency',
+      jsonData.value = graph;
+      // Update chartOptions directly
+      chartOptions.value = {
+        animation: false,
+        tooltip: {},
+        legend: [
+          {
+            left: 1,
+            orient: 'vertical',
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            borderColor: 'rgb(106, 168, 201)',
+            borderWidth: 2,
+            borderRadius: 5,
+            data: graph.categories.map(function (a: { name: string }) {
+              return a.name;
+            }),
+            selected: graph.categories.reduce(function (obj: { [x: string]: boolean; }, item: { name: string | number; }) {
+              obj[item.name] = false;
+              return obj;
+            }, {})
+          }
+        ],
+        series: [
+          {
+            name: "",
+            type: "graph",
+            layout: "force",
+            force: {
+              repulsion: 700,
+              edgeLength: 300,
+            },
+            data: graph.nodes,
+            links: graph.links,
+            categories: graph.categories,
+            roam: true,
+            label: {
+              position: 'right',
+              // formatter: '{b}'
+              formatter: function(params: { name: string; }) {
+                return params.name.length > 20 ? params.name.substring(0, 20) + '...' : params.name;
+              }
+            },
             lineStyle: {
-              width: 10
+              color: 'source',
+              curveness: 0.3
+            },
+            emphasis: {
+              focus: 'adjacency',
+              lineStyle: {
+                width: 10
+              }
             }
           }
-        }
-      ]
-    };
+        ]
+      };
+    }
 
   } catch (error) {
     console.error(error);

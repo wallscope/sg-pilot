@@ -22,14 +22,14 @@ data class SankeyNode(val name: String? = "")
 data class SankeyLink(val source: String? = "", val target: String? = "", val value: Int? = 1, val label: String? = "")
 
 // ForcedGraph
-data class ForcedGraph(val nodes: List<ForcedNode>? = listOf(ForcedNode(name = "")), val links: List<ForcedLink>? = null, val categories: List<ForcedCategory>? = null)
+data class ForcedGraph(var nodes: List<ForcedNode>? = listOf(ForcedNode(name = "")), var links: List<ForcedLink>? = null, var categories: List<ForcedCategory>? = null)
 data class ForcedNode(val id: String? = "", val name: String? = "", val symbolSize: Int? = null, val value: String? = "", val category: Int? = null )
 data class ForcedLink(val source: String? = "", val target: String? = "")
 data class ForcedCategory(val name: String? = "")
 
 fun mergeForcedGraphs(vararg forcedGraphs: ForcedGraph): ForcedGraph {
-    val allNodes = forcedGraphs.flatMap { it.nodes!! }.distinct()
-    val allLinks = forcedGraphs.flatMap { it.links!! }
+    val allNodes = forcedGraphs.flatMap { it.nodes!! }.filter { it.name?.isNotEmpty() == true }.distinct()
+    val allLinks = forcedGraphs.flatMap { it.links!! }.distinct()
     val allCategories = forcedGraphs.flatMap { it.categories!! }.distinct()
 
     return ForcedGraph(nodes = allNodes, links = allLinks, categories = allCategories)

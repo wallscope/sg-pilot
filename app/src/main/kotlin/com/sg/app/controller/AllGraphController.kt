@@ -57,7 +57,7 @@ class AllGraphController {
         val bpDocsFilenamesDirectorates = bpDocs
             .distinctBy { it.filename }
             .associate { bpDoc ->
-                bpDoc.filename?.takeIf { it.isNotEmpty() } to bpDoc.directorate.getOrNull(0)
+                bpDoc.filename?.lowercase().takeIf { it.isNotEmpty() } to bpDoc.directorate.getOrNull(0)
             }
 
         mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
@@ -66,7 +66,11 @@ class AllGraphController {
                 async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), searchTerms, ) }.await(),
                 async { BPDoc.toForcedGraphJSONAll(bpDocs, searchTerms, ) }.await(),
                 async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), searchTerms, bpDocsFilenamesDirectorates) }.await()
-            )
+            ).apply {
+                nodes?.filter { it.name?.isNotEmpty() == true }?.distinctBy { it.name to it.id }
+                links?.distinct()
+                categories?.distinct()
+            }
         )
     }
 
@@ -78,6 +82,13 @@ class AllGraphController {
             ?.map { it.trim() }
             ?.filter { it.isNotEmpty() }
 
+        val bpDocs = BPDocDAO.getAll()
+        val bpDocsFilenamesDirectorates = bpDocs
+            .distinctBy { it.filename }
+            .associate { bpDoc ->
+                bpDoc.filename?.lowercase().takeIf { it.isNotEmpty() } to bpDoc.directorate.getOrNull(0)
+            }
+
         mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
             mergeForcedGraphs(
                 async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll().filter { myDoc ->
@@ -88,8 +99,12 @@ class AllGraphController {
                 }, searchTerms) }.await(),
                 async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll().filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-                }, searchTerms) }.await()
-            )
+                }, searchTerms, bpDocsFilenamesDirectorates = bpDocsFilenamesDirectorates) }.await()
+            ).apply {
+                nodes?.filter { it.name?.isNotEmpty() == true }?.distinctBy { it.name to it.id }
+                links?.distinct()
+                categories?.distinct()
+            }
         )
     }
 }

@@ -80,8 +80,14 @@ class BPComController {
     @GetMapping("/api/bpcom/forcedgraph/list")
     @ResponseBody
     fun getBPComsForcedList(): String {
+        val bpDocs = BPDocDAO.getAll()
+        val bpDocsFilenamesDirectorates = bpDocs
+            .distinctBy { it.filename }
+            .associate { bpDoc ->
+                bpDoc.filename?.lowercase().takeIf { it.isNotEmpty() } to bpDoc.directorate.getOrNull(0)
+            }
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-            BPCom.toForcedGraphJSONAll(BPComDAO.getAll())
+            BPCom.toForcedGraphJSONAll(BPComDAO.getAll(), bpDocsFilenamesDirectorates = bpDocsFilenamesDirectorates)
         )
     }
 
@@ -94,8 +100,15 @@ class BPComController {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "no BPCom with id: $id")
         }
 
+        val bpDocs = BPDocDAO.getAll()
+        val bpDocsFilenamesDirectorates = bpDocs
+            .distinctBy { it.filename }
+            .associate { bpDoc ->
+                bpDoc.filename?.lowercase().takeIf { it.isNotEmpty() } to bpDoc.directorate.getOrNull(0)
+            }
+
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
             BPComDAO.getOne(uri)
-            ?.let { BPCom.toForcedGraphJSON(it) })
+            ?.let { BPCom.toForcedGraphJSON(it, bpDocsFilenamesDirectorates = bpDocsFilenamesDirectorates) })
     }
 }

@@ -11,7 +11,8 @@
             <input v-model="newTag" @keydown.enter="addTag" placeholder="Add a tag" class="tag-input" />
           </div>
           <Suspense>
-            <Chart class="chart" :option="chartOptions" :autoresize="true"></Chart>
+            <Chart class="chart" :option="chartOptions" :autoresize="true" ></Chart>
+            <!-- <Chart class="chart" :option="chartOptions" @click="handleNodeClick" :autoresize="true" ></Chart> -->
           </Suspense>
         </template>
         <template v-else>
@@ -27,7 +28,7 @@
 
 <script setup lang="ts">
 import { useAllDocsStore } from '@/stores/alldocs';
-import { ref, onMounted, Ref, computed, watch, } from "vue";
+import { ref, onMounted, Ref, watch, } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import SearchBar from "@/layouts/components/SearchBar.vue";
 import { use } from "echarts/core";
@@ -71,10 +72,19 @@ const removeTag = (tag: string) => {
 };
 
 const jsonData = ref<null | ForcedGraph>(null);
+const nodeColors = ref<{ [key: string]: string }>({});
+const chartOptions: Ref<ECBasicOption | undefined> = ref({});
 
 const fetchData = async () => {
   try {
-    const outcomes = router.currentRoute.value.query.outcomes as string[];
+    
+    let outcomes = router.currentRoute.value.query.outcomes as string[]
+    if(outcomes){
+      outcomes = Array.isArray(outcomes)
+      ? outcomes
+      : [outcomes as string];
+    }
+
     const searchTags = tags.value;
     let graph = null;
     if (outcomes !== undefined && outcomes.length > 0 ) {
@@ -85,11 +95,66 @@ const fetchData = async () => {
 
     graph.nodes.forEach(function (node: GraphNode) {
       node.label = {
-        show: node.symbolSize > 30
+        show: node.symbolSize >= 20
       };
     });
 
     jsonData.value = graph;
+
+    // Update chartOptions directly
+    chartOptions.value = {
+      animation: false,
+      tooltip: {},
+      legend: [
+        {
+          left: 1,
+          orient: 'vertical',
+          backgroundColor: 'rgba(255, 255, 255, 1)',
+          borderColor: 'rgb(106, 168, 201)',
+          borderWidth: 2,
+          borderRadius: 5,
+          data: graph.categories.map(function (a: { name: string }) {
+            return a.name;
+          }),
+          selected: graph.categories.reduce(function (obj: { [x: string]: boolean; }, item: { name: string | number; }) {
+            obj[item.name] = false;
+            return obj;
+          }, {})
+        }
+      ],
+      series: [
+        {
+          name: "",
+          type: "graph",
+          layout: "force",
+          force: {
+            repulsion: 700,
+            edgeLength: 300,
+          },
+          data: graph.nodes,
+          links: graph.links,
+          categories: graph.categories,
+          roam: true,
+          label: {
+            position: 'right',
+            // formatter: '{b}'
+            formatter: function(params: { name: string; }) {
+              return params.name.length > 20 ? params.name.substring(0, 20) + '...' : params.name;
+            }
+          },
+          lineStyle: {
+            color: 'source',
+            curveness: 0.3
+          },
+          emphasis: {
+            focus: 'adjacency',
+            lineStyle: {
+              width: 10
+            }
+          }
+        }
+      ]
+    };
 
   } catch (error) {
     console.error(error);
@@ -100,68 +165,29 @@ watch(tags, () => {
   fetchData();
 });
 
-const chartOptions: Ref<ECBasicOption | undefined> = computed(() => {
-  const graph = jsonData.value;
-  
-  if (!graph) {
-    return {};
-  }
+const handleNodeClick = (params: any) => {
+  if (params.dataType === 'node') {
+    const nodeData = params.data;
+    const nodeId = nodeData.id;
 
-  return {
-    animation: false,
-    tooltip: {},
-    legend: [
-      {
-        left: 1,
-        orient: 'vertical',
-        backgroundColor: 'rgba(255, 255, 255, 1)',
-        borderColor: 'rgb(106, 168, 201)',
-        borderWidth: 2,
-        borderRadius: 5,
-        // selectedMode: 'single',
-        data: graph.categories.map(function (a: { name: string }) {
-          return a.name;
-        }),
-        selected: graph.categories.reduce(function (obj: { [x: string]: boolean; }, item: { name: string | number; }) {
-          obj[item.name] = false;
-          return obj;
-        }, {})
+    // Toggle the color of the clicked node
+    if (nodeColors.value[nodeId] === 'green') {
+      delete nodeColors.value[nodeId];
+    } else {
+      nodeColors.value[nodeId] = 'green';
+    }
+
+    // Update the series data with the modified color
+    const seriesData = chartOptions.value.series[0].data;
+    seriesData.forEach((node: any) => {
+      if (node.id === nodeId) {
+        node.itemStyle = { color: nodeColors.value[nodeId] };
+        // console.log("node: ", node)
       }
-    ],
-    series: [
-      {
-        name: "",
-        type: "graph",
-        layout: "force",
-        force: {
-          repulsion: 700,
-          edgeLength: 200,
-        },
-        data: graph.nodes,
-        links: graph.links,
-        categories: graph.categories,
-        roam: true,
-        label: {
-          position: 'right',
-          // formatter: '{b}'
-          formatter: function(params: { name: string; }) {
-            return params.name.length > 20 ? params.name.substring(0, 20) + '...' : params.name;
-          }
-        },
-        lineStyle: {
-          color: 'source',
-          curveness: 0.3
-        },
-        emphasis: {
-          focus: 'adjacency',
-          lineStyle: {
-            width: 10
-          }
-        }
-      }
-    ]
-  };
-});
+    });
+
+  }
+};
 
 onMounted(() => {
   fetchData();

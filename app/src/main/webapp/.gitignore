@@ -24,6 +24,12 @@ dist-ssr
 
 /cypress/videos/
 /cypress/screenshots/
+/public/image1.png
+/public/image2.png
+/public/image3.png
+/public/image4.png
+/public/image5.png
+/public/image6.png
 
 # Editor directories and files
 .vscode/*

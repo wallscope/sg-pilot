@@ -117,10 +117,6 @@ export default defineComponent({
 
     const internalDocsList = computed(() => {
       const allDocs = pfgStore.PfgAuxOverviews.concat(bpStore.bpComOverviews)
-      // Unused
-      // .concat(bpStore.bpDocOverviews)
-      // .concat(pfgStore.PfgDocOverviews)
-
       return allDocs
     });
 

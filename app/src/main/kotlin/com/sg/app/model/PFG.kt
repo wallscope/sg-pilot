@@ -187,11 +187,13 @@ data class PFGDoc(
 //                category = 3
 //            )
             val leadOfficial = ForcedNode(
-                id = "${PFGDoc::leadOfficial.name}|${pfgDoc.leadOfficial}",
+                id = "Lead|${pfgDoc.leadOfficial.firstOrNull()?.trim()?.lowercase()}",
+//                id = "${PFGDoc::leadOfficial.name}|${pfgDoc.leadOfficial}",
                 name = pfgDoc.leadOfficial.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
-                value = PFGDoc::leadOfficial.name,
-                category = 0
+                value = "Lead",
+//                value = PFGDoc::leadOfficial.name,
+                category = 1
             )
             val unitBranch = ForcedNode(
                 id = "${PFGDoc::unitBranch.name}|${pfgDoc.unitBranch}",
@@ -249,7 +251,7 @@ data class PFGDoc(
                     name = primaryOutcome.trim().lowercase(),
                     symbolSize = 36,
                     value = "Primary Outcome",
-                    category = 1
+                    category = 3
                 )
             }
             val secondaryOutcomesNodes = pfgDoc.secondaryOutcomes.map { secondaryOutcome ->
@@ -258,7 +260,7 @@ data class PFGDoc(
                     name = secondaryOutcome.trim().lowercase(),
                     symbolSize = 36,
                     value = "Secondary Outcome",
-                    category = 2
+                    category = 4
                 )
             }
             val keywordsNodes = pfgDoc.keywords.map { keyword ->
@@ -267,7 +269,7 @@ data class PFGDoc(
                     name = keyword.trim().lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 3
+                    category = 2
                 )
             }
 
@@ -476,11 +478,13 @@ data class PFGAux(
 //                category = 3
 //            )
             val leadOfficial = ForcedNode(
-                id = "${PFGAux::leadOfficial.name}|${pfgAux.leadOfficial}",
+                id = "Lead|${pfgAux.leadOfficial.firstOrNull()?.trim()?.lowercase()}",
+//                id = "${PFGAux::leadOfficial.name}|${pfgAux.leadOfficial}",
                 name = pfgAux.leadOfficial.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
-                value = PFGAux::leadOfficial.name,
-                category = 0
+                value = "Lead",
+//                value = PFGAux::leadOfficial.name,
+                category = 1
             )
             val period = ForcedNode(
                 id = "${PFGAux::period.name}|${pfgAux.period}",
@@ -538,7 +542,7 @@ data class PFGAux(
                     name = primaryOutcome.trim().lowercase(),
                     symbolSize = 36,
                     value = "Primary Outcome",
-                    category = 1
+                    category = 3
                 )
             }
             val secondaryOutcomesNodes = pfgAux.secondaryOutcomes.map { secondaryOutcome ->
@@ -547,7 +551,7 @@ data class PFGAux(
                     name = secondaryOutcome.trim().lowercase(),
                     symbolSize = 36,
                     value = "Secondary Outcome",
-                    category = 2
+                    category = 4
                 )
             }
             val keywordsNodes = pfgAux.keywords.map { keyword ->
@@ -556,7 +560,7 @@ data class PFGAux(
                     name = keyword.trim().lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 3
+                    category = 2
                 )
             }
 

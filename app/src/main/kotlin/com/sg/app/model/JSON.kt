@@ -23,7 +23,8 @@ data class SankeyLink(val source: String? = "", val target: String? = "", val va
 
 // ForcedGraph
 data class ForcedGraph(var nodes: List<ForcedNode>? = listOf(ForcedNode(name = "")), var links: List<ForcedLink>? = null, var categories: List<ForcedCategory>? = null)
-data class ForcedNode(val id: String? = "", val name: String? = "", val symbolSize: Int? = null, val value: String? = "", val category: Int? = null )
+data class ForcedNode(val id: String? = "", val name: String? = "", val symbolSize: Int? = null, val value: String? = "", val category: Int? = null, val itemStyle: ItemStyle? = null )
+data class ItemStyle(val color: String? = null)
 data class ForcedLink(val source: String? = "", val target: String? = "")
 data class ForcedCategory(val name: String? = "")
 
@@ -50,7 +51,8 @@ val mapper: ObjectMapper = ObjectMapper().registerModule(
 // Categories
 val categories = listOf(
     ForcedCategory(name = "More"),
-    ForcedCategory(name = "Primary outcomes"),
-    ForcedCategory(name = "Secondary outcomes"),
+    ForcedCategory(name = "Leads"),
     ForcedCategory(name = "Keywords"),
+    ForcedCategory(name = "Primary outcomes"),
+    ForcedCategory(name = "Secondary outcomes")
 )

@@ -156,18 +156,22 @@ data class BPDoc(
 //                category = 3
 //            )
             val director = ForcedNode(
-                id = "${BPDoc::director.name}|${bpDoc.director}",
+                id = "Lead|${bpDoc.director.firstOrNull()?.trim()?.lowercase()}",
+                // id = "${BPDoc::director.name}|${bpDoc.director}",
                 name = bpDoc.director.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
-                value = BPDoc::director.name,
-                category = 0
+                value = "Lead",
+//                value = BPDoc::director.name,
+                category = 1
             )
             val keyContact = ForcedNode(
-                id = "${BPDoc::keyContact.name}|${bpDoc.keyContact}",
+                id = "Lead|${bpDoc.keyContact.firstOrNull()?.trim()?.lowercase()}",
+//                id = "${BPDoc::keyContact.name}|${bpDoc.keyContact}",
                 name = bpDoc.keyContact.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
-                value = BPDoc::keyContact.name,
-                category = 0
+                value = "Lead",
+//                value = BPDoc::keyContact.name,
+                category = 1
             )
             val contactEmail = ForcedNode(
                 id = "${BPDoc::contactEmail.name}|${bpDoc.contactEmail}",
@@ -221,22 +225,23 @@ data class BPDoc(
 
             val divisionsNodes = bpDoc.divisions.map { division ->
                 ForcedNode(
-                    id = "${BPDoc::divisions.name}|${division.split("|")[1]}",
-//                    id = "npfOutcome|${primaryOutcome}",
+                    id = "${BPDoc::divisions.name}|${division.split("|")[1].trim().lowercase()}",
                     name = division.split("|")[1].trim().lowercase(),
-                    symbolSize = 20,
+                    symbolSize = 30,
                     value = "Division",
-                    category = 0
+                    category = 1,
+                    itemStyle = ItemStyle(color = "blue")
                 )
             }
             val divisionLeadsNodes = bpDoc.divisionLeads.map { divisionLead ->
                 ForcedNode(
-                    id = "${BPDoc::divisionLeads.name}|${divisionLead.split("|")[1]}",
-//                    id = "npfOutcome|${primaryOutcome}",
+                    id = "Lead|${divisionLead.split("|")[1].trim().lowercase()}",
+//                    id = "${BPDoc::divisionLeads.name}|${divisionLead.split("|")[1].trim().lowercase()}",
                     name = divisionLead.split("|")[1].trim().lowercase(),
                     symbolSize = 20,
-                    value = "Division Lead",
-                    category = 0
+                    value = "Lead",
+//                    value = "Division Lead",
+                    category = 1
                 )
             }
             // Buggy
@@ -257,7 +262,7 @@ data class BPDoc(
                     name = keyword.trim().lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 3
+                    category = 2
                 )
             }
 
@@ -278,13 +283,17 @@ data class BPDoc(
             )
             val divisionsLinks = bpDoc.divisions.flatMap { division ->
                 val (divisionIndex, divisionName) = division.split("|")
-                val divisionId = "${BPDoc::divisions.name}|${divisionName}"
+                val divisionId = "${BPDoc::divisions.name}|${divisionName.trim().lowercase()}"
 
-                val matchingDivisionLead = bpDoc.divisionLeads.find { it.startsWith("$divisionIndex|") }?.split("|")?.get(1)
+                val matchingDivisionLead = bpDoc.divisionLeads.find { it.startsWith("$divisionIndex|") }
+                    ?.split("|")?.get(1)
+                    ?.trim()
+                    ?.lowercase()
 
                 listOf(
                     ForcedLink(target = docId, source = divisionId),
-                    ForcedLink(target = divisionId, source = "${BPDoc::divisionLeads.name}|${matchingDivisionLead}")
+//                    ForcedLink(target = divisionId, source = "${BPDoc::divisionLeads.name}|${matchingDivisionLead}")
+                    ForcedLink(target = divisionId, source = "Lead|${matchingDivisionLead}")
                 )
             }
 //            val divisionLeadsLinks = bpDoc.divisionLeads.flatMap { divisionLead ->
@@ -468,11 +477,13 @@ data class BPDoc(
                 category = 0
             )
             val commitmentLead = ForcedNode(
-                id = "${BPCom::commitmentLead.name}|${bpCom.commitmentLead}",
+                id = "Lead|${bpCom.commitmentLead?.trim()?.lowercase()}",
+//                id = "${BPCom::commitmentLead.name}|${bpCom.commitmentLead}",
                 name = bpCom.commitmentLead?.trim()?.lowercase(),
                 symbolSize = 20,
-                value = BPCom::commitmentLead.name,
-                category = 0
+                value = "Lead",
+//                value = BPCom::commitmentLead.name,
+                category = 1
             )
             val projectBudget = ForcedNode(
                 id = "${BPCom::projectBudget.name}|${bpCom.projectBudget}",
@@ -495,7 +506,7 @@ data class BPDoc(
                     name = primaryOutcome.trim()?.lowercase(),
                     symbolSize = 36,
                     value = "Primary Outcome",
-                    category = 1
+                    category = 3
                 )
             }
             val secondaryOutcomesNodes = bpCom.secondaryOutcomes.map { secondaryOutcome ->
@@ -504,7 +515,7 @@ data class BPDoc(
                     name = secondaryOutcome.trim()?.lowercase(),
                     symbolSize = 36,
                     value = "Secondary Outcome",
-                    category = 2
+                    category = 4
                 )
             }
 
@@ -514,7 +525,7 @@ data class BPDoc(
                     name = keyword.trim()?.lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 3
+                    category = 2
                 )
             }
 

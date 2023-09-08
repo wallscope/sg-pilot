@@ -46,3 +46,11 @@ val mapper: ObjectMapper = ObjectMapper().registerModule(
         .configure(KotlinFeature.StrictNullChecks, false)
         .build()
 )
+
+// Categories
+val categories = listOf(
+    ForcedCategory(name = "More"),
+    ForcedCategory(name = "Primary outcomes"),
+    ForcedCategory(name = "Secondary outcomes"),
+    ForcedCategory(name = "Keywords"),
+)

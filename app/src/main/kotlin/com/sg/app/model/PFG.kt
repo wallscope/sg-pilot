@@ -332,12 +332,7 @@ data class PFGDoc(
                     ForcedGraph(
                         nodes = nodes,
                         links = links,
-                        categories = listOf(
-                            ForcedCategory(name = "More"),
-                            ForcedCategory(name = "Primary outcomes"),
-                            ForcedCategory(name = "Secondary outcomes"),
-                            ForcedCategory(name = "Keywords"),
-                        )
+                        categories = categories
                     )
                 } else {
                     null
@@ -346,13 +341,7 @@ data class PFGDoc(
             return ForcedGraph(
                 nodes = nodes,
                 links = links,
-                categories = listOf(
-                    ForcedCategory(name = "More"),
-                    ForcedCategory(name = "Primary outcomes"),
-                    ForcedCategory(name = "Secondary outcomes"),
-//                    ForcedCategory(name = "Directorate"),
-                    ForcedCategory(name = "Keywords"),
-                )
+                categories = categories
             )
         }
     }
@@ -632,12 +621,7 @@ data class PFGAux(
                     ForcedGraph(
                         nodes = nodes,
                         links = links,
-                        categories = listOf(
-                            ForcedCategory(name = "More"),
-                            ForcedCategory(name = "Primary outcomes"),
-                            ForcedCategory(name = "Secondary outcomes"),
-                            ForcedCategory(name = "Keywords"),
-                        )
+                        categories = categories
                     )
                 } else {
                     null
@@ -647,13 +631,7 @@ data class PFGAux(
             return ForcedGraph(
                 nodes = nodes,
                 links = links,
-                categories = listOf(
-                    ForcedCategory(name = "More"),
-                    ForcedCategory(name = "Primary outcomes"),
-                    ForcedCategory(name = "Secondary outcomes"),
-//                    ForcedCategory(name = "Directorate"),
-                    ForcedCategory(name = "Keywords"),
-                )
+                categories = categories
             )
         }
     }

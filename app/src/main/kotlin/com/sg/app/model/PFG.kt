@@ -151,20 +151,25 @@ data class PFGDoc(
         }
 
         // Forced graph
-        fun toForcedGraphJSONAll(pfgDocs: List<PFGDoc>, searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(pfgDocs: List<PFGDoc>, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgDocs.take(it) } ?: pfgDocs
-            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerms) }
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchDirs, searchTerms) }
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(pfgDoc: PFGDoc, searchTerms: List<String>? = emptyList()): ForcedGraph? {
+        fun toForcedGraphJSON(pfgDoc: PFGDoc, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList()): ForcedGraph? {
 
             // Nodes
-            val mainId = "Directorate|${pfgDoc.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***"}"
-            val main = ForcedNode(id = mainId, name = pfgDoc.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***", symbolSize = 65, value = "Directorate")
+            val mainName = pfgDoc.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***"
+
+            // Continue ONLY if the user wants to see this directorate
+            if (!searchDirs.orEmpty().any { mainName.contains(it, ignoreCase = true) }) return null
+
+            val mainId = "Directorate|$mainName"
+            val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate")
             val docId = "Policy|${pfgDoc.policyTitle.firstOrNull()?: "***NO POLICY TITLE***"}"
             val doc = ForcedNode(id = docId, name = pfgDoc.policyTitle.firstOrNull() ?: "***NO POLICY TITLE***", symbolSize = 55, value = "Policy title")
             val ministerialPortfolio = ForcedNode(
@@ -446,20 +451,25 @@ data class PFGAux(
         }
 
         // Forced graph
-        fun toForcedGraphJSONAll(pfgAuxs: List<PFGAux>, searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(pfgAuxs: List<PFGAux>, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgAuxs.take(it) } ?: pfgAuxs
-            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerms) }
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchDirs, searchTerms) }
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(pfgAux: PFGAux, searchTerms: List<String>? = emptyList()): ForcedGraph? {
+        fun toForcedGraphJSON(pfgAux: PFGAux, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList()): ForcedGraph? {
 
             // Nodes
-            val mainId = "Directorate|${pfgAux.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***"}"
-            val main = ForcedNode(id = mainId, name = pfgAux.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***", symbolSize = 65, value = "Directorate")
+            val mainName = pfgAux.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***"
+
+            // Continue ONLY if the user wants to see this directorate
+            if (!searchDirs.orEmpty().any { mainName.contains(it, ignoreCase = true) }) return null
+
+            val mainId = "Directorate|$mainName"
+            val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate")
             val docId = "Policy|${pfgAux.policyTitle.firstOrNull()?: "***NO POLICY TITLE***"}"
             val doc = ForcedNode(id = docId, name = pfgAux.policyTitle.firstOrNull() ?: "***NO POLICY TITLE***", symbolSize = 55, value = "Policy title")
             val ministerialPortfolio = ForcedNode(

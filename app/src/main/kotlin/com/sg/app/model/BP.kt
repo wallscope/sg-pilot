@@ -119,19 +119,23 @@ data class BPDoc(
         }
 
         // Forced graph
-        fun toForcedGraphJSONAll(bpDocs: List<BPDoc>, searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(bpDocs: List<BPDoc>, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { bpDocs.take(it) } ?: bpDocs
-            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerms) }
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchDirs, searchTerms) }
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(bpDoc: BPDoc, searchTerms: List<String>? = emptyList()): ForcedGraph? {
+        fun toForcedGraphJSON(bpDoc: BPDoc, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList()): ForcedGraph? {
 
             // Nodes
             val mainName = bpDoc.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***"
+
+            // Continue ONLY if the user wants to see this directorate
+            if (!searchDirs.orEmpty().any { mainName.contains(it, ignoreCase = true) }) return null
+
             val mainId = "Directorate|$mainName"
             val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate")
             val docIdDG = bpDoc.dG.firstOrNull()?.trim()?.lowercase() ?: "***NO DG***"
@@ -438,19 +442,23 @@ data class BPDoc(
         }
 
         // Forced graph
-        fun toForcedGraphJSONAll(bpComs: List<BPCom>, searchTerms: List<String>? = emptyList(), bpDocsFilenamesDirectorates: Map<String?,String?>, limit: Int? = null): ForcedGraph {
+        fun toForcedGraphJSONAll(bpComs: List<BPCom>, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList(), bpDocsFilenamesDirectorates: Map<String?,String?>, limit: Int? = null): ForcedGraph {
             val docs = limit?.let { bpComs.take(it) } ?: bpComs
-            val allGraphs = docs.map { toForcedGraphJSON(it, searchTerms, bpDocsFilenamesDirectorates) }
+            val allGraphs = docs.map { toForcedGraphJSON(it, searchDirs, searchTerms, bpDocsFilenamesDirectorates) }
             return ForcedGraph(
                 nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
         }
-        fun toForcedGraphJSON(bpCom: BPCom, searchTerms: List<String>? = emptyList(), bpDocsFilenamesDirectorates: Map<String?,String?>): ForcedGraph? {
+        fun toForcedGraphJSON(bpCom: BPCom, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList(), bpDocsFilenamesDirectorates: Map<String?,String?>): ForcedGraph? {
 
             // Nodes
             val mainName = bpDocsFilenamesDirectorates[bpCom.filename]?.trim()?.lowercase() ?: "***NO DIRECTORATE***"
+
+            // Continue ONLY if the user wants to see this directorate
+            if (!searchDirs.orEmpty().any { mainName.contains(it, ignoreCase = true) }) return null
+
             val mainId = "Directorate|$mainName"
             val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate")
             val docName = bpCom.commitment?.trim()?.lowercase() ?: "***NO COMMITMENT TITLE***"

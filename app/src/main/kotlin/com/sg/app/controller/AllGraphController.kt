@@ -48,19 +48,20 @@ class AllGraphController {
     @GetMapping("/api/alldocs/forcedgraph/list")
     @ResponseBody
     suspend fun getDocsForcedList(@RequestParam searchDirs: String? = "", @RequestParam searchString: String? = ""): String = coroutineScope {
-        val bpDocs = BPDocDAO.getAll()
-
         val findDirs = searchDirs
             ?.split('|')
             ?.map { it.trim() }
             ?.filter { it.isNotEmpty() }
+            ?: emptyList()
 
         val searchTerms = searchString
             ?.split('|')
             ?.map { it.trim() }
             ?.filter { it.isNotEmpty() }
+            ?: emptyList()
 
-        if (findDirs!!.isNotEmpty() || searchTerms!!.isNotEmpty()) {
+        if (findDirs.isNotEmpty() || searchTerms.isNotEmpty()) {
+            val bpDocs = BPDocDAO.getAll()
             val bpDocsFilenamesDirectorates = bpDocs
                 .distinctBy { it.filename }
                 .associate { bpDoc ->
@@ -69,12 +70,13 @@ class AllGraphController {
 
             mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
                 mergeForcedGraphs(
-                    async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), searchTerms,) }.await(),
-                    async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), searchTerms,) }.await(),
-                    async { BPDoc.toForcedGraphJSONAll(bpDocs, searchTerms,) }.await(),
+                    async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), findDirs, searchTerms) }.await(),
+                    async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), findDirs, searchTerms) }.await(),
+                    async { BPDoc.toForcedGraphJSONAll(bpDocs, findDirs, searchTerms) }.await(),
                     async {
                         BPCom.toForcedGraphJSONAll(
                             BPComDAO.getAll(),
+                            findDirs,
                             searchTerms,
                             bpDocsFilenamesDirectorates
                         )
@@ -96,11 +98,13 @@ class AllGraphController {
             ?.split('|')
             ?.map { it.trim() }
             ?.filter { it.isNotEmpty() }
+            ?: emptyList()
 
         val searchTerms = searchString
             ?.split('|')
             ?.map { it.trim() }
             ?.filter { it.isNotEmpty() }
+            ?: emptyList()
 
         val bpDocs = BPDocDAO.getAll()
         val bpDocsFilenamesDirectorates = bpDocs
@@ -113,13 +117,13 @@ class AllGraphController {
             mergeForcedGraphs(
                 async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll().filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-                }, searchTerms) }.await(),
+                }, findDirs, searchTerms) }.await(),
                 async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll().filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-                }, searchTerms) }.await(),
+                }, findDirs, searchTerms) }.await(),
                 async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll().filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
-                }, searchTerms, bpDocsFilenamesDirectorates = bpDocsFilenamesDirectorates) }.await()
+                }, findDirs, searchTerms, bpDocsFilenamesDirectorates = bpDocsFilenamesDirectorates) }.await()
             ).apply {
                 nodes?.filter { it.name?.isNotEmpty() == true }?.distinctBy { it.name to it.id }
                 links?.distinct()

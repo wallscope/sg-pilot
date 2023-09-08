@@ -117,7 +117,7 @@ const fetchData = async () => {
     const searchTags = tags.value;
     const searchDirs = dirs.value;
 
-    if(searchTags.length > 0 || searchDirs.length > 0 ) {
+    if(searchTags.length > 0 || searchDirs.length > 0  || (outcomes !== undefined && outcomes.length > 0)) {
       let graph = null;
       if (outcomes !== undefined && outcomes.length > 0 ) {
         graph = await allDocsStore.fetchDocsForcedNpfList(outcomes, searchDirs.join("|"), searchTags.join("|")) as ForcedGraph;

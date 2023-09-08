@@ -502,20 +502,22 @@ data class BPDoc(
 
             val primaryOutcomesNodes = bpCom.primaryOutcomes.map { primaryOutcome ->
                 ForcedNode(
-                    id = "${BPCom::primaryOutcomes.name}|${primaryOutcome}",
+//                    id = "${BPCom::primaryOutcomes.name}|${primaryOutcome}",
+                    id = "Outcome|${primaryOutcome}",
                     name = primaryOutcome.trim()?.lowercase(),
                     symbolSize = 36,
-                    value = "Primary Outcome",
-                    category = 3
+                    value = "Outcome",
+                    category = getOutcomeCategory(primaryOutcome.trim().lowercase())
                 )
             }
             val secondaryOutcomesNodes = bpCom.secondaryOutcomes.map { secondaryOutcome ->
                 ForcedNode(
-                    id = "${BPCom::secondaryOutcomes.name}|${secondaryOutcome}",
+//                    id = "${BPCom::secondaryOutcomes.name}|${secondaryOutcome}",
+                    id = "Outcome|${secondaryOutcome}",
                     name = secondaryOutcome.trim()?.lowercase(),
                     symbolSize = 36,
-                    value = "Secondary Outcome",
-                    category = 4
+                    value = "Outcome",
+                    category = getOutcomeCategory(secondaryOutcome.trim().lowercase())
                 )
             }
 
@@ -543,12 +545,14 @@ data class BPDoc(
 
             val primaryOutcomesLinks = bpCom.primaryOutcomes.flatMap { primaryOutcome ->
                 listOf(
-                    ForcedLink(target = docId, source = "${BPCom::primaryOutcomes.name}|${primaryOutcome}")
+//                    ForcedLink(target = docId, source = "${BPCom::primaryOutcomes.name}|${primaryOutcome}")
+                    ForcedLink(target = docId, source = "Outcome|${primaryOutcome}")
                 )
             }
             val secondaryOutcomesLinks = bpCom.secondaryOutcomes.flatMap { secondaryOutcome ->
                 listOf(
-                    ForcedLink(target = docId, source = "${BPCom::secondaryOutcomes.name}|${secondaryOutcome}")
+//                    ForcedLink(target = docId, source = "${BPCom::secondaryOutcomes.name}|${secondaryOutcome}")
+                    ForcedLink(target = docId, source = "Outcome|${secondaryOutcome}")
                 )
             }
             val keywordsLinks = bpCom.keywords.flatMap { keyword ->

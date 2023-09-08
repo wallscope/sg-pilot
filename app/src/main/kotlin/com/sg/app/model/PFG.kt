@@ -247,20 +247,22 @@ data class PFGDoc(
 
             val primaryOutcomesNodes = pfgDoc.primaryOutcomes.map { primaryOutcome ->
                 ForcedNode(
-                    id = "${PFGDoc::primaryOutcomes.name}|${primaryOutcome}",
+//                    id = "${PFGDoc::primaryOutcomes.name}|${primaryOutcome}",
+                    id = "Outcome|${primaryOutcome}",
                     name = primaryOutcome.trim().lowercase(),
                     symbolSize = 36,
-                    value = "Primary Outcome",
-                    category = 3
+                    value = "Outcome",
+                    category = getOutcomeCategory(primaryOutcome.trim().lowercase())
                 )
             }
             val secondaryOutcomesNodes = pfgDoc.secondaryOutcomes.map { secondaryOutcome ->
                 ForcedNode(
-                    id = "${PFGDoc::secondaryOutcomes.name}|${secondaryOutcome}",
+//                    id = "${PFGDoc::secondaryOutcomes.name}|${secondaryOutcome}",
+                    id = "Outcome|${secondaryOutcome}",
                     name = secondaryOutcome.trim().lowercase(),
                     symbolSize = 36,
-                    value = "Secondary Outcome",
-                    category = 4
+                    value = "Outcome",
+                    category = getOutcomeCategory(secondaryOutcome.trim().lowercase())
                 )
             }
             val keywordsNodes = pfgDoc.keywords.map { keyword ->
@@ -289,13 +291,15 @@ data class PFGDoc(
             )
             val primaryOutcomesLinks = pfgDoc.primaryOutcomes.flatMap { primaryOutcome ->
                 listOf(
-                    ForcedLink(target = docId, source = "${PFGDoc::primaryOutcomes.name}|${primaryOutcome}")
+//                    ForcedLink(target = docId, source = "${PFGDoc::primaryOutcomes.name}|${primaryOutcome}")
+                    ForcedLink(target = docId, source = "Outcome|${primaryOutcome}")
                 )
             }
 
             val secondaryOutcomesLinks = pfgDoc.secondaryOutcomes.flatMap { secondaryOutcome ->
                 listOf(
-                    ForcedLink(target = docId, source = "${PFGDoc::secondaryOutcomes.name}|${secondaryOutcome}")
+//                    ForcedLink(target = docId, source = "${PFGDoc::secondaryOutcomes.name}|${secondaryOutcome}")
+                    ForcedLink(target = docId, source = "Outcome|${secondaryOutcome}")
                 )
             }
             val keywordsLinks = pfgDoc.keywords.flatMap { keyword ->
@@ -538,20 +542,22 @@ data class PFGAux(
 
             val primaryOutcomesNodes = pfgAux.primaryOutcomes.map { primaryOutcome ->
                 ForcedNode(
-                    id = "${PFGAux::primaryOutcomes.name}|${primaryOutcome}",
+//                    id = "${PFGAux::primaryOutcomes.name}|${primaryOutcome}",
+                    id = "Outcome|${primaryOutcome}",
                     name = primaryOutcome.trim().lowercase(),
                     symbolSize = 36,
-                    value = "Primary Outcome",
-                    category = 3
+                    value = "Outcome",
+                    category = getOutcomeCategory(primaryOutcome.trim().lowercase())
                 )
             }
             val secondaryOutcomesNodes = pfgAux.secondaryOutcomes.map { secondaryOutcome ->
                 ForcedNode(
-                    id = "${PFGAux::secondaryOutcomes.name}|${secondaryOutcome}",
+//                    id = "${PFGAux::secondaryOutcomes.name}|${secondaryOutcome}",
+                    id = "Outcome|${secondaryOutcome}",
                     name = secondaryOutcome.trim().lowercase(),
                     symbolSize = 36,
-                    value = "Secondary Outcome",
-                    category = 4
+                    value = "Outcome",
+                    category = getOutcomeCategory(secondaryOutcome.trim().lowercase())
                 )
             }
             val keywordsNodes = pfgAux.keywords.map { keyword ->
@@ -580,13 +586,15 @@ data class PFGAux(
             )
             val primaryOutcomesLinks = pfgAux.primaryOutcomes.flatMap { primaryOutcome ->
                 listOf(
-                    ForcedLink(target = docId, source = "${PFGAux::primaryOutcomes.name}|${primaryOutcome}")
+//                    ForcedLink(target = docId, source = "${PFGAux::primaryOutcomes.name}|${primaryOutcome}")
+                    ForcedLink(target = docId, source = "Outcome|${primaryOutcome}")
                 )
             }
 
             val secondaryOutcomesLinks = pfgAux.secondaryOutcomes.flatMap { secondaryOutcome ->
                 listOf(
-                    ForcedLink(target = docId, source = "${PFGAux::secondaryOutcomes.name}|${secondaryOutcome}")
+//                    ForcedLink(target = docId, source = "${PFGAux::secondaryOutcomes.name}|${secondaryOutcome}")
+                    ForcedLink(target = docId, source = "Outcome|${secondaryOutcome}")
                 )
             }
             val keywordsLinks = pfgAux.keywords.flatMap { keyword ->

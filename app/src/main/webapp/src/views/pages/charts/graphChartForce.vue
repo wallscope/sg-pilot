@@ -1,45 +1,7 @@
-<template>
-  <VRow>
-    <VCol cols="12">
-      <v-table>
-        <template v-if="!hide">
-          <!-- Directorate search -->
-          <div class="Tag-container">
-            <v-chip v-for="dir in dirs" :key="dir" class="ma-1" @click="removeDirectorate(dir)">
-                {{ dir }}
-                <v-icon small>mdi-close</v-icon>
-              </v-chip>
-              <input v-model="newDirectorate" @keydown.enter="addDirectorate" placeholder="Add a Directorate" class="tag-input" />
-          </div>
-          <!-- Term search -->
-          <div class="Tag-container">
-            <v-chip v-for="tag in tags" :key="tag" class="ma-1" @click="removeTag(tag)">
-              {{ tag }}
-              <v-icon small>mdi-close</v-icon>
-            </v-chip>
-            <input v-model="newTag" @keydown.enter="addTag" placeholder="Add a tag" class="tag-input" />
-          </div>
-          <Suspense>
-            <Chart class="chart" :option="chartOptions" :autoresize="true" ></Chart>
-            <!-- <Chart class="chart" :option="chartOptions" @click="handleNodeClick" :autoresize="true" ></Chart> -->
-          </Suspense>
-        </template>
-        <template v-else>
-          <p>No activity to show</p>
-        </template>
-      </v-table>
-    </VCol>
-  </VRow>
-  <p>
-    <hr>
-  </p>
-</template>
-
 <script setup lang="ts">
 import { useAllDocsStore } from '@/stores/alldocs';
 import { ref, onMounted, Ref, watch, } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
-import SearchBar from "@/layouts/components/SearchBar.vue";
 import { use } from "echarts/core";
 import { GraphChart } from 'echarts/charts';
 import { CanvasRenderer } from "echarts/renderers";
@@ -58,7 +20,6 @@ interface GraphNode {
 }
 
 const allDocsStore = useAllDocsStore()
-let hide = false;
 const router = useRouter();
 
 const tags = ref<string[]>([]);
@@ -99,14 +60,19 @@ const removeDirectorate = (dir: string) => {
   }
 };
 
-const jsonData = ref<null | ForcedGraph>(null);
 const nodeColors = ref<{ [key: string]: string }>({});
-const chartOptions: Ref<ECBasicOption | undefined> = ref({});
+const myChart = ref<echarts.ECharts | null>(null);
+const chartOptions: Ref<ECBasicOption> = ref({});
+
+type LegendStatus = {
+  [key: string]: boolean;
+};
+const legend = ref<LegendStatus>({});
 
 const fetchData = async () => {
   try {
-    chartOptions.value = {};
 
+    // Get outcomes from the table page
     let outcomes = router.currentRoute.value.query.outcomes as string[]
     if(outcomes){
       outcomes = Array.isArray(outcomes)
@@ -114,24 +80,33 @@ const fetchData = async () => {
       : [outcomes as string];
     }
 
+    // Get Search terms - at least 1 directorate is required to show anything on the graph, as per requirements
     const searchTags = tags.value;
     const searchDirs = dirs.value;
 
     if(searchTags.length > 0 || searchDirs.length > 0  || (outcomes !== undefined && outcomes.length > 0)) {
-      let graph = null;
+      let graph = {} as ForcedGraph;
       if (outcomes !== undefined && outcomes.length > 0 ) {
         graph = await allDocsStore.fetchDocsForcedNpfList(outcomes, searchDirs.join("|"), searchTags.join("|")) as ForcedGraph;
       } else {
         graph = await allDocsStore.fetchAllDocsForcedGraph(searchDirs.join("|"), searchTags.join("|")) as ForcedGraph;
       }
 
+      // Assign visibility of labels depending on size
       graph.nodes.forEach(function (node: GraphNode) {
         node.label = {
           show: node.symbolSize >= 20
         };
       });
 
-      jsonData.value = graph;
+      // If empty, populate the legend with items disabled
+      if (Object.keys(legend.value).length === 0) {
+        legend.value = graph.categories.reduce(function (obj: { [x: string]: boolean; }, item: { name: string | number; }) {
+          obj[item.name] = false;
+          return obj;
+        }, {});
+      }
+
       // Update chartOptions directly
       chartOptions.value = {
         animation: false,
@@ -147,10 +122,7 @@ const fetchData = async () => {
             data: graph.categories.map(function (a: { name: string }) {
               return a.name;
             }),
-            selected: graph.categories.reduce(function (obj: { [x: string]: boolean; }, item: { name: string | number; }) {
-              obj[item.name] = false;
-              return obj;
-            }, {})
+            selected: legend,
           }
         ],
         series: [
@@ -185,9 +157,10 @@ const fetchData = async () => {
             }
           }
         ]
-      };
+      } as ECBasicOption;
     }
 
+    myChart.value?.setOption(chartOptions.value)
   } catch (error) {
     console.error(error);
   }
@@ -209,15 +182,25 @@ const handleNodeClick = (params: any) => {
       nodeColors.value[nodeId] = 'green';
     }
 
-    // Update the series data with the modified color
-    const seriesData = chartOptions.value.series[0].data;
-    seriesData.forEach((node: any) => {
+    chartOptions.value.series[0].data.forEach((node: any) => {
       if (node.id === nodeId) {
         node.itemStyle = { color: nodeColors.value[nodeId] };
         // console.log("node: ", node)
       }
     });
 
+    myChart.value?.setOption(chartOptions.value);
+  }
+};
+
+const handleLegendSelectChange = (eventData: any) => {
+  const selected = eventData.selected;
+  // console.log("selected: ", selected)
+  // Update the `legend` object with the new selected state
+  for (const itemName in selected) {
+    if (selected.hasOwnProperty(itemName)) {
+      legend.value[itemName] = selected[itemName];
+    }
   }
 };
 
@@ -225,6 +208,38 @@ onMounted(() => {
   fetchData();
 });
 </script>
+
+<template>
+  <VRow>
+    <VCol cols="12">
+      <v-table>
+          <!-- Directorate search -->
+          <div class="Tag-container">
+            <v-chip v-for="dir in dirs" :key="dir" class="ma-1" @click="removeDirectorate(dir)">
+                {{ dir }}
+                <v-icon small>mdi-close</v-icon>
+              </v-chip>
+              <input v-model="newDirectorate" @keydown.enter="addDirectorate" placeholder="Add a Directorate" class="tag-input" />
+          </div>
+          <!-- Term search -->
+          <div class="Tag-container">
+            <v-chip v-for="tag in tags" :key="tag" class="ma-1" @click="removeTag(tag)">
+              {{ tag }}
+              <v-icon small>mdi-close</v-icon>
+            </v-chip>
+            <input v-model="newTag" @keydown.enter="addTag" placeholder="Add a tag" class="tag-input" />
+          </div>
+          <Suspense>
+            <!-- <Chart id="echarts-graph" class="chart" :option="chartOptions" @click="handleNodeClick" :autoresize="true" ></Chart> -->
+            <Chart class="chart" ref="myChart" @legendselectchanged="handleLegendSelectChange" @click="handleNodeClick" :autoresize="true" ></Chart>
+          </Suspense>
+      </v-table>
+    </VCol>
+  </VRow>
+  <p>
+    <hr>
+  </p>
+</template>
 
 <style lang="scss" scoped>
 .tag-input:focus {

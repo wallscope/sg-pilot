@@ -154,8 +154,19 @@ data class PFGDoc(
         fun toForcedGraphJSONAll(pfgDocs: List<PFGDoc>, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgDocs.take(it) } ?: pfgDocs
             val allGraphs = docs.map { toForcedGraphJSON(it, searchDirs, searchTerms) }
+
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+//                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+                nodes = allGraphs
+                    .flatMap { it?.nodes ?: emptyList() }
+                    .filter { it.name?.isNotEmpty() == true }
+                    .groupBy { it.id }
+                    .map { (_, nodesWithSameId) ->
+                        nodesWithSameId.reduce { acc, node ->
+                            val mergedUriList = (acc.uriList ?: emptyList()) + (node.uriList ?: emptyList())
+                            acc.copy(uriList = mergedUriList)
+                        }
+                    },
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
@@ -164,20 +175,37 @@ data class PFGDoc(
 
             // Nodes
             val mainName = pfgDoc.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***"
+            val docUri = pfgDoc.uri.value
 
             // Continue ONLY if the user wants to see this directorate
             if (!searchDirs.orEmpty().any { mainName.contains(it, ignoreCase = true) }) return null
 
             val mainId = "Directorate|$mainName"
-            val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate")
-            val docId = "Policy|${pfgDoc.policyTitle.firstOrNull()?: "***NO POLICY TITLE***"}"
-            val doc = ForcedNode(id = docId, name = pfgDoc.policyTitle.firstOrNull() ?: "***NO POLICY TITLE***", symbolSize = 55, value = "Policy title")
+//            val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate", uriList = listOf(docUri))
+            val main = ForcedNode(
+                id = mainId,
+                name = mainName,
+                symbolSize = 65,
+                value = "Directorate",
+                itemStyle = ItemStyle(color = "red"),
+                uriList = listOf(docUri))
+            val docName = pfgDoc.policyTitle.firstOrNull() ?: "***NO POLICY TITLE***"
+            val docId = "Policy|$docName"
+//            val doc = ForcedNode(id = docId, name = docName, symbolSize = 55, value = "Policy title", uriList = listOf(docUri))
+            val doc = ForcedNode(
+                id = docId,
+                name = docName,
+                symbolSize = 55,
+                value = "Policy title",
+                itemStyle = ItemStyle(color = "brown"),
+                uriList = listOf(docUri))
             val ministerialPortfolio = ForcedNode(
                 id = "${PFGDoc::ministerialPortfolio.name}|${pfgDoc.ministerialPortfolio}",
                 name = pfgDoc.ministerialPortfolio.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::ministerialPortfolio.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
 //            val directorate = ForcedNode(
 //                id = "${PFGDoc::directorate.name}|${pfgDoc.directorate}",
@@ -193,56 +221,64 @@ data class PFGDoc(
                 symbolSize = 20,
                 value = "Lead",
 //                value = PFGDoc::leadOfficial.name,
-                category = 1
+                category = 1,
+                uriList = listOf(docUri)
             )
             val unitBranch = ForcedNode(
                 id = "${PFGDoc::unitBranch.name}|${pfgDoc.unitBranch}",
                 name = pfgDoc.unitBranch.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::unitBranch.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val policyTitle = ForcedNode(
                 id = "${PFGDoc::policyTitle.name}|${pfgDoc.policyTitle}",
                 name = pfgDoc.policyTitle.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::policyTitle.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val scsClearance = ForcedNode(
                 id = "${PFGDoc::scsClearance.name}|${pfgDoc.scsClearance}",
                 name = pfgDoc.scsClearance.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::scsClearance.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val fbpClearance = ForcedNode(
                 id = "${PFGDoc::fbpClearance.name}|${pfgDoc.fbpClearance}",
                 name = pfgDoc.fbpClearance.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::fbpClearance.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val dG = ForcedNode(
                 id = "${PFGDoc::dG.name}|${pfgDoc.dG}",
                 name = pfgDoc.dG.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::dG.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val portfolioCoordinator = ForcedNode(
                 id = "${PFGDoc::portfolioCoordinator.name}|${pfgDoc.portfolioCoordinator}",
                 name = pfgDoc.portfolioCoordinator.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::portfolioCoordinator.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val completionDate = ForcedNode(
                 id = "${PFGDoc::completionDate.name}|${pfgDoc.completionDate}",
                 name = pfgDoc.completionDate?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::completionDate.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
 
             val primaryOutcomesNodes = pfgDoc.primaryOutcomes.map { primaryOutcome ->
@@ -252,7 +288,8 @@ data class PFGDoc(
                     name = primaryOutcome.trim().lowercase(),
                     symbolSize = 36,
                     value = "Outcome",
-                    category = getOutcomeCategory(primaryOutcome.trim().lowercase())
+                    category = getOutcomeCategory(primaryOutcome.trim().lowercase()),
+                    uriList = listOf(docUri)
                 )
             }
             val secondaryOutcomesNodes = pfgDoc.secondaryOutcomes.map { secondaryOutcome ->
@@ -262,7 +299,8 @@ data class PFGDoc(
                     name = secondaryOutcome.trim().lowercase(),
                     symbolSize = 36,
                     value = "Outcome",
-                    category = getOutcomeCategory(secondaryOutcome.trim().lowercase())
+                    category = getOutcomeCategory(secondaryOutcome.trim().lowercase()),
+                    uriList = listOf(docUri)
                 )
             }
             val keywordsNodes = pfgDoc.keywords.map { keyword ->
@@ -271,7 +309,8 @@ data class PFGDoc(
                     name = keyword.trim().lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 2
+                    category = 2,
+                    uriList = listOf(docUri)
                 )
             }
 
@@ -449,8 +488,19 @@ data class PFGAux(
         fun toForcedGraphJSONAll(pfgAuxs: List<PFGAux>, searchDirs: List<String>? = emptyList(), searchTerms: List<String>? = emptyList(), limit: Int? = null): ForcedGraph {
             val docs = limit?.let { pfgAuxs.take(it) } ?: pfgAuxs
             val allGraphs = docs.map { toForcedGraphJSON(it, searchDirs, searchTerms) }
+
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+//                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+                nodes = allGraphs
+                    .flatMap { it?.nodes ?: emptyList() }
+                    .filter { it.name?.isNotEmpty() == true }
+                    .groupBy { it.id }
+                    .map { (_, nodesWithSameId) ->
+                        nodesWithSameId.reduce { acc, node ->
+                            val mergedUriList = (acc.uriList ?: emptyList()) + (node.uriList ?: emptyList())
+                            acc.copy(uriList = mergedUriList)
+                        }
+                    },
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
@@ -459,20 +509,36 @@ data class PFGAux(
 
             // Nodes
             val mainName = pfgAux.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***"
-
+            val docUri = pfgAux.uri.value
             // Continue ONLY if the user wants to see this directorate
             if (!searchDirs.orEmpty().any { mainName.contains(it, ignoreCase = true) }) return null
 
             val mainId = "Directorate|$mainName"
-            val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate")
-            val docId = "Policy|${pfgAux.policyTitle.firstOrNull()?: "***NO POLICY TITLE***"}"
-            val doc = ForcedNode(id = docId, name = pfgAux.policyTitle.firstOrNull() ?: "***NO POLICY TITLE***", symbolSize = 55, value = "Policy title")
+//            val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate", uriList = listOf(docUri))
+            val main = ForcedNode(
+                id = mainId,
+                name = mainName,
+                symbolSize = 65,
+                value = "Directorate",
+                itemStyle = ItemStyle(color = "red"),
+                uriList = listOf(docUri))
+            val docName = pfgAux.policyTitle.firstOrNull() ?: "***NO POLICY TITLE***"
+            val docId = "Policy|$docName"
+//            val doc = ForcedNode(id = docId, name = docName, symbolSize = 55, value = "Policy title", uriList = listOf(docUri))
+            val doc = ForcedNode(
+                id = docId,
+                name = docName,
+                symbolSize = 55,
+                value = "Policy title",
+                itemStyle = ItemStyle(color = "brown"),
+                uriList = listOf(docUri))
             val ministerialPortfolio = ForcedNode(
                 id = "${PFGAux::ministerialPortfolio.name}|${pfgAux.ministerialPortfolio}",
                 name = pfgAux.ministerialPortfolio.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::ministerialPortfolio.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
 //            val directorate = ForcedNode(
 //                id = "${PFGAux::directorate.name}|${pfgAux.directorate}",
@@ -488,56 +554,64 @@ data class PFGAux(
                 symbolSize = 20,
                 value = "Lead",
 //                value = PFGAux::leadOfficial.name,
-                category = 1
+                category = 1,
+                uriList = listOf(docUri)
             )
             val period = ForcedNode(
                 id = "${PFGAux::period.name}|${pfgAux.period}",
                 name = pfgAux.period?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::period.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val policyTitle = ForcedNode(
                 id = "${PFGAux::policyTitle.name}|${pfgAux.policyTitle}",
                 name = pfgAux.policyTitle.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::policyTitle.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val strategicPriority = ForcedNode(
                 id = "${PFGAux::strategicPriority.name}|${pfgAux.strategicPriority}",
                 name = pfgAux.strategicPriority?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::strategicPriority.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val legislativeProposal = ForcedNode(
                 id = "${PFGAux::legislativeProposal.name}|${pfgAux.legislativeProposal}",
                 name = pfgAux.legislativeProposal?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::legislativeProposal.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val dG = ForcedNode(
                 id = "${PFGAux::dG.name}|${pfgAux.dG}",
                 name = pfgAux.dG.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::dG.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val buteHouseAgreementLink = ForcedNode(
                 id = "${PFGAux::buteHouseAgreementLink.name}|${pfgAux.buteHouseAgreementLink}",
                 name = pfgAux.buteHouseAgreementLink?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::buteHouseAgreementLink.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val completionDate = ForcedNode(
                 id = "${PFGAux::completionDate.name}|${pfgAux.completionDate}",
                 name = pfgAux.completionDate?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::completionDate.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
 
             val primaryOutcomesNodes = pfgAux.primaryOutcomes.map { primaryOutcome ->
@@ -547,7 +621,8 @@ data class PFGAux(
                     name = primaryOutcome.trim().lowercase(),
                     symbolSize = 36,
                     value = "Outcome",
-                    category = getOutcomeCategory(primaryOutcome.trim().lowercase())
+                    category = getOutcomeCategory(primaryOutcome.trim().lowercase()),
+                    uriList = listOf(docUri)
                 )
             }
             val secondaryOutcomesNodes = pfgAux.secondaryOutcomes.map { secondaryOutcome ->
@@ -557,7 +632,8 @@ data class PFGAux(
                     name = secondaryOutcome.trim().lowercase(),
                     symbolSize = 36,
                     value = "Outcome",
-                    category = getOutcomeCategory(secondaryOutcome.trim().lowercase())
+                    category = getOutcomeCategory(secondaryOutcome.trim().lowercase()),
+                    uriList = listOf(docUri)
                 )
             }
             val keywordsNodes = pfgAux.keywords.map { keyword ->
@@ -566,7 +642,8 @@ data class PFGAux(
                     name = keyword.trim().lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 2
+                    category = 2,
+                    uriList = listOf(docUri)
                 )
             }
 

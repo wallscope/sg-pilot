@@ -22,6 +22,12 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 
+data class AllGraphData(val bpDocs: List<BPDoc>? = emptyList(),
+                        val pfgDocs: List<PFGDoc>? = emptyList(),
+                        val pfgAuxs: List<PFGAux>? = emptyList(),
+                        val bpComs: List<BPCom>? = emptyList(),
+                        val graph: String? = "")
+
 @CrossOrigin
 @RestController
 class AllGraphController {
@@ -62,31 +68,47 @@ class AllGraphController {
 
         if (findDirs.isNotEmpty() || searchTerms.isNotEmpty()) {
             val bpDocs = BPDocDAO.getAll()
+            val pfgDocs = PFGDocDAO.getAll()
+            val pfgAuxs = PFGAuxDAO.getAll()
+            val bpComs = BPComDAO.getAll()
+
             val bpDocsFilenamesDirectorates = bpDocs
                 .distinctBy { it.filename }
                 .associate { bpDoc ->
                     bpDoc.filename?.lowercase().takeIf { it.isNotEmpty() } to bpDoc.directorate.getOrNull(0)
                 }
 
-            mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+            val graph = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
                 mergeForcedGraphs(
-                    async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll(), findDirs, searchTerms) }.await(),
-                    async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll(), findDirs, searchTerms) }.await(),
+                    async { PFGDoc.toForcedGraphJSONAll(pfgDocs, findDirs, searchTerms) }.await(),
+                    async { PFGAux.toForcedGraphJSONAll(pfgAuxs, findDirs, searchTerms) }.await(),
                     async { BPDoc.toForcedGraphJSONAll(bpDocs, findDirs, searchTerms) }.await(),
                     async {
                         BPCom.toForcedGraphJSONAll(
-                            BPComDAO.getAll(),
+                            bpComs,
                             findDirs,
                             searchTerms,
                             bpDocsFilenamesDirectorates
                         )
                     }.await()
                 ).apply {
-                    nodes?.filter { it.name?.isNotEmpty() == true }?.distinctBy { it.name to it.id }
+//                    nodes?.filter { it.name?.isNotEmpty() == true }?.distinctBy { it.name to it.id }
+                    nodes = nodes?.filter { it.name?.isNotEmpty() == true }
+                        ?.groupBy { it.name to it.id }
+                        ?.map { (_, nodesWithSameNameAndId) ->
+                            nodesWithSameNameAndId.reduce { acc, node ->
+                                // Merge the uriLists into a single list
+                                val mergedUriList = (acc.uriList ?: emptyList()) + (node.uriList ?: emptyList())
+
+                                // Return a new ForcedNode with merged uriList and other properties retained
+                                acc.copy(uriList = mergedUriList)
+                            }
+                        }
                     links?.distinct()
                     categories?.distinct()
                 }
             )
+            graph
         } else ""
 
     }
@@ -112,23 +134,38 @@ class AllGraphController {
             .associate { bpDoc ->
                 bpDoc.filename?.lowercase().takeIf { it.isNotEmpty() } to bpDoc.directorate.getOrNull(0)
             }
+        val pfgDocs = PFGDocDAO.getAll()
+        val pfgAuxs = PFGAuxDAO.getAll()
+        val bpComs = BPComDAO.getAll()
 
-        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
+        val graph = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(
             mergeForcedGraphs(
-                async { PFGDoc.toForcedGraphJSONAll(PFGDocDAO.getAll().filter { myDoc ->
+                async { PFGDoc.toForcedGraphJSONAll(pfgDocs.filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
                 }, findDirs, searchTerms) }.await(),
-                async { PFGAux.toForcedGraphJSONAll(PFGAuxDAO.getAll().filter { myDoc ->
+                async { PFGAux.toForcedGraphJSONAll(pfgAuxs.filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
                 }, findDirs, searchTerms) }.await(),
-                async { BPCom.toForcedGraphJSONAll(BPComDAO.getAll().filter { myDoc ->
+                async { BPCom.toForcedGraphJSONAll(bpComs.filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
                 }, findDirs, searchTerms, bpDocsFilenamesDirectorates = bpDocsFilenamesDirectorates) }.await()
             ).apply {
-                nodes?.filter { it.name?.isNotEmpty() == true }?.distinctBy { it.name to it.id }
+//                    nodes?.filter { it.name?.isNotEmpty() == true }?.distinctBy { it.name to it.id }
+                nodes = nodes?.filter { it.name?.isNotEmpty() == true }
+                    ?.groupBy { it.name to it.id }
+                    ?.map { (_, nodesWithSameNameAndId) ->
+                        nodesWithSameNameAndId.reduce { acc, node ->
+                            // Merge the uriLists into a single list
+                            val mergedUriList = (acc.uriList ?: emptyList()) + (node.uriList ?: emptyList())
+
+                            // Return a new ForcedNode with merged uriList and other properties retained
+                            acc.copy(uriList = mergedUriList)
+                        }
+                    }
                 links?.distinct()
                 categories?.distinct()
             }
         )
+        graph
     }
 }

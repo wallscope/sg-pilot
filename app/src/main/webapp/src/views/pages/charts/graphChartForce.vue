@@ -9,6 +9,7 @@ import Chart from "vue-echarts";
 import type { ECBasicOption } from "echarts/types/dist/shared";
 import { useRouter } from "vue-router";
 import { ForcedGraph } from "@/stores/alldocs";
+import echarts from "echarts";
 
 use([GridComponent, LegendComponent, TitleComponent, TooltipComponent, GraphChart, CanvasRenderer]);
 
@@ -24,6 +25,7 @@ const router = useRouter();
 
 const tags = ref<string[]>([]);
 const newTag = ref('');
+const HL_COLOUR = "green";
 
 const addTag = () => {
   if (newTag.value.trim() !== '' && !tags.value.includes(newTag.value)) {
@@ -109,7 +111,7 @@ const fetchData = async () => {
 
       // Update chartOptions directly
       chartOptions.value = {
-        animation: false,
+        // animation: false, // animation false is NOT supported by the graph chart!
         tooltip: {},
         legend: [
           {
@@ -175,17 +177,24 @@ const handleNodeClick = (params: any) => {
     const nodeData = params.data;
     const nodeId = nodeData.id;
 
-    // Toggle the color of the clicked node
-    if (nodeColors.value[nodeId] === 'green') {
-      delete nodeColors.value[nodeId];
-    } else {
-      nodeColors.value[nodeId] = 'green';
-    }
-
     chartOptions.value.series[0].data.forEach((node: any) => {
       if (node.id === nodeId) {
-        node.itemStyle = { color: nodeColors.value[nodeId] };
-        // console.log("node: ", node)
+        if(!node.itemStyle){
+          node.itemStyle = { color: HL_COLOUR };
+          // console.log("node data: ", node)
+        } else if(node.itemStyle.color === HL_COLOUR){
+          // console.log("no data shown because node was green")
+          if(nodeColors.value[nodeId]) {
+            node.itemStyle = { color: nodeColors.value[nodeId] };
+          }
+          else {
+            node.itemStyle.color = null;
+          }
+        } else if(node.itemStyle.color !== HL_COLOUR){
+          // console.log("node data: ", node)
+          nodeColors.value[nodeId] = node.itemStyle.color;
+          node.itemStyle = { color: HL_COLOUR };
+        }
       }
     });
 

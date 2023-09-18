@@ -23,7 +23,7 @@ data class SankeyLink(val source: String? = "", val target: String? = "", val va
 
 // ForcedGraph
 data class ForcedGraph(var nodes: List<ForcedNode>? = listOf(ForcedNode(name = "")), var links: List<ForcedLink>? = null, var categories: List<ForcedCategory>? = null)
-data class ForcedNode(val id: String? = "", val name: String? = "", val symbolSize: Int? = null, val value: String? = "", val category: Int? = null, val itemStyle: ItemStyle? = null )
+data class ForcedNode(val id: String? = "", val name: String? = "", val symbolSize: Int? = null, val value: String? = "", val category: Int? = null, val itemStyle: ItemStyle? = null, val uriList: List<String>? = emptyList() )
 data class ItemStyle(val color: String? = null)
 data class ForcedLink(val source: String? = "", val target: String? = "")
 data class ForcedCategory(val name: String? = "")

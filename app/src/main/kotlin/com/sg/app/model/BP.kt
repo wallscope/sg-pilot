@@ -123,7 +123,17 @@ data class BPDoc(
             val docs = limit?.let { bpDocs.take(it) } ?: bpDocs
             val allGraphs = docs.map { toForcedGraphJSON(it, searchDirs, searchTerms) }
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+//                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+                nodes = allGraphs
+                    .flatMap { it?.nodes ?: emptyList() }
+                    .filter { it.name?.isNotEmpty() == true }
+                    .groupBy { it.id }
+                    .map { (_, nodesWithSameId) ->
+                        nodesWithSameId.reduce { acc, node ->
+                            val mergedUriList = (acc.uriList ?: emptyList()) + (node.uriList ?: emptyList())
+                            acc.copy(uriList = mergedUriList)
+                        }
+                    },
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
@@ -132,21 +142,35 @@ data class BPDoc(
 
             // Nodes
             val mainName = bpDoc.directorate.firstOrNull()?.trim()?.lowercase() ?: "***NO DIRECTORATE***"
+            val docUri = bpDoc.uri.value
 
             // Continue ONLY if the user wants to see this directorate
             if (!searchDirs.orEmpty().any { mainName.contains(it, ignoreCase = true) }) return null
 
             val mainId = "Directorate|$mainName"
-            val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate")
+            val main = ForcedNode(
+                id = mainId,
+                name = mainName,
+                symbolSize = 65,
+                value = "Directorate",
+                itemStyle = ItemStyle(color = "red"),
+                uriList = listOf(docUri))
             val docIdDG = bpDoc.dG.firstOrNull()?.trim()?.lowercase() ?: "***NO DG***"
             val docId = "$mainName | $docIdDG"
-            val doc = ForcedNode(id = docId, name = docId, symbolSize = 55, value = "Directorate | DG")
+            val doc = ForcedNode(
+                id = docId,
+                name = docId,
+                symbolSize = 55,
+                value = "Directorate | DG",
+                itemStyle = ItemStyle(color = "brown"),
+                uriList = listOf(docUri))
             val dG = ForcedNode(
                 id = "${BPDoc::dG.name}|${bpDoc.dG}",
                 name = bpDoc.dG.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::dG.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
 //            val directorate = ForcedNode(
 //                id = "${BPDoc::directorate.name}|${bpDoc.directorate}",
@@ -162,7 +186,8 @@ data class BPDoc(
                 symbolSize = 20,
                 value = "Lead",
 //                value = BPDoc::director.name,
-                category = 1
+                category = 1,
+                uriList = listOf(docUri)
             )
             val keyContact = ForcedNode(
                 id = "Lead|${bpDoc.keyContact.firstOrNull()?.trim()?.lowercase()}",
@@ -171,56 +196,64 @@ data class BPDoc(
                 symbolSize = 20,
                 value = "Lead",
 //                value = BPDoc::keyContact.name,
-                category = 1
+                category = 1,
+                uriList = listOf(docUri)
             )
             val contactEmail = ForcedNode(
                 id = "${BPDoc::contactEmail.name}|${bpDoc.contactEmail}",
                 name = bpDoc.contactEmail.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::contactEmail.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val resProgramme = ForcedNode(
                 id = "${BPDoc::resProgramme.name}|${bpDoc.resProgramme}",
                 name = bpDoc.resProgramme?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resProgramme.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val resTotalOperatingCosts = ForcedNode(
                 id = "${BPDoc::resTotalOperatingCosts.name}|${bpDoc.resTotalOperatingCosts}",
                 name = bpDoc.resTotalOperatingCosts?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resTotalOperatingCosts.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val resCorporateRunningCosts = ForcedNode(
                 id = "${BPDoc::resCorporateRunningCosts.name}|${bpDoc.resCorporateRunningCosts}",
                 name = bpDoc.resCorporateRunningCosts?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resCorporateRunningCosts.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val resTotal = ForcedNode(
                 id = "${BPDoc::resTotal.name}|${bpDoc.resTotal}",
                 name = bpDoc.resTotal?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resTotal.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val resCapital = ForcedNode(
                 id = "${BPDoc::resCapital.name}|${bpDoc.resCapital}",
                 name = bpDoc.resCapital?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resCapital.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val resFinancialTransactions = ForcedNode(
                 id = "${BPDoc::resFinancialTransactions.name}|${bpDoc.resFinancialTransactions}",
                 name = bpDoc.resFinancialTransactions?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resFinancialTransactions.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
 
             val divisionsNodes = bpDoc.divisions.map { division ->
@@ -230,7 +263,8 @@ data class BPDoc(
                     symbolSize = 30,
                     value = "Division",
                     category = 1,
-                    itemStyle = ItemStyle(color = "blue")
+                    itemStyle = ItemStyle(color = "blue"),
+                    uriList = listOf(docUri)
                 )
             }
             val divisionLeadsNodes = bpDoc.divisionLeads.map { divisionLead ->
@@ -241,7 +275,8 @@ data class BPDoc(
                     symbolSize = 20,
                     value = "Lead",
 //                    value = "Division Lead",
-                    category = 1
+                    category = 1,
+                    uriList = listOf(docUri)
                 )
             }
             // Buggy
@@ -262,7 +297,8 @@ data class BPDoc(
                     name = keyword.trim().lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 2
+                    category = 2,
+                    uriList = listOf(docUri)
                 )
             }
 
@@ -444,7 +480,17 @@ data class BPDoc(
             val docs = limit?.let { bpComs.take(it) } ?: bpComs
             val allGraphs = docs.map { toForcedGraphJSON(it, searchDirs, searchTerms, bpDocsFilenamesDirectorates) }
             return ForcedGraph(
-                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+//                nodes = allGraphs.flatMap { it?.nodes ?: emptyList() }.filter { it?.name?.isNotEmpty() == true }.distinct(),
+                nodes = allGraphs
+                    .flatMap { it?.nodes ?: emptyList() }
+                    .filter { it.name?.isNotEmpty() == true }
+                    .groupBy { it.id }
+                    .map { (_, nodesWithSameId) ->
+                        nodesWithSameId.reduce { acc, node ->
+                            val mergedUriList = (acc.uriList ?: emptyList()) + (node.uriList ?: emptyList())
+                            acc.copy(uriList = mergedUriList)
+                        }
+                    },
                 links = allGraphs.flatMap { it?.links ?: emptyList() }.distinct(),
                 categories = allGraphs.flatMap { it?.categories ?: emptyList() }.distinct()
             )
@@ -453,15 +499,30 @@ data class BPDoc(
 
             // Nodes
             val mainName = bpDocsFilenamesDirectorates[bpCom.filename]?.trim()?.lowercase() ?: "***NO DIRECTORATE***"
+            val docUri = bpCom.uri.value
 
             // Continue ONLY if the user wants to see this directorate
             if (!searchDirs.orEmpty().any { mainName.contains(it, ignoreCase = true) }) return null
 
             val mainId = "Directorate|$mainName"
-            val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate")
+//            val main = ForcedNode(id = mainId, name = mainName, symbolSize = 65, value = "Directorate", uriList = listOf(docUri))
+            val main = ForcedNode(
+                id = mainId,
+                name = mainName,
+                symbolSize = 65,
+                value = "Directorate",
+                itemStyle = ItemStyle(color = "red"),
+                uriList = listOf(docUri))
             val docName = bpCom.commitment?.trim()?.lowercase() ?: "***NO COMMITMENT TITLE***"
             val docId = "Commitment|$docName"
-            val doc = ForcedNode(id = docId, name = docName, symbolSize = 55, value = "Commitment title")
+//            val doc = ForcedNode(id = docId, name = docName, symbolSize = 55, value = "Commitment title", uriList = listOf(docUri))
+            val doc = ForcedNode(
+                id = docId,
+                name = docName,
+                symbolSize = 55,
+                value = "Commitment title",
+                itemStyle = ItemStyle(color = "brown"),
+                uriList = listOf(docUri))
 //            val commitment = ForcedNode(
 //                id = "${BPCom::commitment.name}|${bpCom.commitment}",
 //                name = bpCom.commitment,
@@ -474,7 +535,8 @@ data class BPDoc(
                 name = bpCom.priority?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPCom::priority.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val commitmentLead = ForcedNode(
                 id = "Lead|${bpCom.commitmentLead?.trim()?.lowercase()}",
@@ -483,21 +545,24 @@ data class BPDoc(
                 symbolSize = 20,
                 value = "Lead",
 //                value = BPCom::commitmentLead.name,
-                category = 1
+                category = 1,
+                uriList = listOf(docUri)
             )
             val projectBudget = ForcedNode(
                 id = "${BPCom::projectBudget.name}|${bpCom.projectBudget}",
                 name = bpCom.projectBudget?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPCom::projectBudget.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
             val budgetSufficient = ForcedNode(
                 id = "${BPCom::budgetSufficient.name}|${bpCom.budgetSufficient}",
                 name = bpCom.budgetSufficient?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPCom::budgetSufficient.name,
-                category = 0
+                category = 0,
+                uriList = listOf(docUri)
             )
 
             val primaryOutcomesNodes = bpCom.primaryOutcomes.map { primaryOutcome ->
@@ -507,7 +572,8 @@ data class BPDoc(
                     name = primaryOutcome.trim()?.lowercase(),
                     symbolSize = 36,
                     value = "Outcome",
-                    category = getOutcomeCategory(primaryOutcome.trim().lowercase())
+                    category = getOutcomeCategory(primaryOutcome.trim().lowercase()),
+                    uriList = listOf(docUri)
                 )
             }
             val secondaryOutcomesNodes = bpCom.secondaryOutcomes.map { secondaryOutcome ->
@@ -517,7 +583,8 @@ data class BPDoc(
                     name = secondaryOutcome.trim()?.lowercase(),
                     symbolSize = 36,
                     value = "Outcome",
-                    category = getOutcomeCategory(secondaryOutcome.trim().lowercase())
+                    category = getOutcomeCategory(secondaryOutcome.trim().lowercase()),
+                    uriList = listOf(docUri)
                 )
             }
 
@@ -527,7 +594,8 @@ data class BPDoc(
                     name = keyword.trim()?.lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 2
+                    category = 2,
+                    uriList = listOf(docUri)
                 )
             }
 

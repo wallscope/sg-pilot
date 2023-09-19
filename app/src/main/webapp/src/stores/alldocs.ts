@@ -26,6 +26,34 @@ export const DEF_DOC_OVERVIEW_DATA: DocOverview = {
   keywords: [''],
 }
 
+// Node Overview
+export interface NodeOverview {
+  uri: string;
+  id: string;
+  directorate: string;
+  policyTitle?: string;
+  commitmentTitle?: string;
+  date?: string;
+  priority?: string;
+  lead?: string;
+  director?: string;
+  keyContact?: string;
+  accessURL?: string;
+  keywords: string[];
+}
+
+export const NODE_OVERVIEW_DATA: NodeOverview = {
+  uri: '',
+  id: '',
+  directorate: '',
+  policyTitle: '',
+  commitmentTitle: '',
+  lead: '',
+  director: '',
+  keyContact: '',
+  keywords: [''],
+}
+
 // Forced graph JSON shape
 export interface ForcedGraph {
   nodes: ForcedNode[];
@@ -75,10 +103,16 @@ export const DEF_DOC_FORCED_GRAPH: ForcedGraph = {
 export const useAllDocsStore = defineStore('alldocs', {
   state: () => ({
     allDocsForcedGraphData: {} as any,
+    nodeOverviewList: [] as NodeOverview[],
   }),
   actions:{
+    updateNodeOverviewList(newData: NodeOverview[]) {
+      this.nodeOverviewList = newData;
+    },
     // Forced graph
     async fetchAllDocsForcedGraph(searchDirs: string, searchString: string) {
+      const pfgStore = usePfgStore();
+      const bpStore = useBpStore()
       const response = await api.get<any>(
         `/api/alldocs/forcedgraph/list`, {
           params: {
@@ -87,9 +121,19 @@ export const useAllDocsStore = defineStore('alldocs', {
           }
         }
       );
-      return response.data;
+
+      const data = response.data;
+      pfgStore.pfgDocs = data.pfgDocs
+      pfgStore.pfgAuxs = data.pfgAuxs
+      bpStore.bpDocs = data.bpDocs
+      bpStore.bpComs = data.bpComs
+      const graph = JSON.parse(data.graph) as ForcedGraph;
+
+      return graph;
     },
     async fetchDocsForcedNpfList(outcomes: string[], searchDirs: string, searchString: string) {
+      const pfgStore = usePfgStore();
+      const bpStore = useBpStore()
       try {
         const response = await api.post('/api/alldocs/forcedgraph-npf/list', 
         outcomes, {
@@ -99,7 +143,15 @@ export const useAllDocsStore = defineStore('alldocs', {
           }
         }
         );
-        return response.data;
+        // return response.data;
+        const data = response.data;
+        pfgStore.pfgDocs = data.pfgDocs
+        pfgStore.pfgAuxs = data.pfgAuxs
+        bpStore.bpDocs = data.bpDocs
+        bpStore.bpComs = data.bpComs
+        const graph = JSON.parse(data.graph) as ForcedGraph;
+        
+        return graph;
       } catch (error) {
         console.error('Error:', error);
       }
@@ -128,11 +180,6 @@ export const useAllDocsStore = defineStore('alldocs', {
         default:
           break;
       }
-
-      const response = await api.get<any>(
-        `/api/alldocs/sankey/list`
-      );
-      return response.data;
     },
   }
 })

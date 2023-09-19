@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { useAllDocsStore } from '@/stores/alldocs';
+import { type NodeOverview, useAllDocsStore } from '@/stores/alldocs';
+import NodeOverviewComponent from '@/views/pages/nodeOverviewComponent.vue';
+import { PfgAux, PfgDoc, usePfgStore } from '@/stores/pfg';
+import { BPCom, BpDoc, useBpStore } from '@/stores/bp';
 import { ref, onMounted, Ref, watch, } from "vue";
 import { GridComponent, LegendComponent, TitleComponent, TooltipComponent, } from "echarts/components";
 import { use } from "echarts/core";
@@ -21,6 +24,8 @@ interface GraphNode {
 }
 
 const allDocsStore = useAllDocsStore()
+const pfgStore = usePfgStore()
+const bpStore = useBpStore()
 const router = useRouter();
 
 const tags = ref<string[]>([]);
@@ -172,28 +177,125 @@ watch(tags, () => {
   fetchData();
 });
 
+const inferDate = (inputString: string): number[] => {
+  const years: number[] = [];
+
+  // try to match years in various formats
+  const yearMatches = inputString.match(/\b\d{4}\b|\b\d{2}\b|\d{4}(?![\d-])/g);
+
+  if (yearMatches) {
+    yearMatches.forEach((yearMatch) => {
+      const parsedYear = parseInt(yearMatch, 10);
+      if (!isNaN(parsedYear)) {
+        years.push(parsedYear);
+      }
+    });
+  }
+  return years;
+}
+
+const updateNodeOverviewList = (uriList: string[]) => {
+  let nodeOverviewList: NodeOverview[] = []
+
+  uriList.forEach((uri: string) =>{
+      const [docType, docId] = uri.split("SG/")[1].split("/")
+
+      if(docType === "BPCom"){
+        const nodeDocInfo = bpStore.bpComs.find((doc: BPCom) => { return doc.uri.split("/").pop() === docId })
+        const directorateName = bpStore.bpDocs.find((doc: BpDoc) => { return doc.filename.toLowerCase() === nodeDocInfo?.filename.toLowerCase() })?.directorate[0]
+        
+        //Push BPCom overview
+        nodeOverviewList.push({
+          uri: nodeDocInfo?.uri || "",
+          id: "BP Commitment|" + docId || "<No id available>",
+          directorate: directorateName || "<No directorate available>",
+          commitmentTitle: nodeDocInfo?.commitment || "<No commitment title available>",
+          date: inferDate(nodeDocInfo?.filename || "").join("-") || "<No date available>",
+          priority: nodeDocInfo?.priority || "<No priority available>",
+          lead: nodeDocInfo?.commitmentLead || "<No lead available>",
+          keywords: nodeDocInfo?.keywords || ["<No keywords available>"],
+        })
+      } else if(docType === "BPDoc"){
+        const nodeDocInfo = bpStore.bpDocs.find((doc: BpDoc) => { return doc.uri.split("/").pop() === docId })
+        
+        // Prepare id
+        const id = docId.replace(".xlsx", "")
+        let shortId = ""
+        if(id && id.length > 20)
+          shortId = id?.substring(id.length-20, id.length)
+        else if(id && id.length <= 20)
+          shortId = id
+
+        //Push BPDoc overview
+        nodeOverviewList.push({
+          uri: nodeDocInfo?.uri || "",
+          id: "BP Document|..." + shortId || "<No id available>",
+          directorate: nodeDocInfo?.directorate[0] || "<No directorate available>",
+          date: inferDate(nodeDocInfo?.filename || "").join("-") || "<No date available>",
+          director: nodeDocInfo?.director[0] || "<No director available>",
+          keyContact: nodeDocInfo?.keyContact[0] || "<No keyContact available>",
+          keywords: nodeDocInfo?.keywords || ["<No keywords available>"],
+        })
+      } else if(docType === "PFGDoc"){
+        const nodeDocInfo = pfgStore.pfgDocs.find((doc: PfgDoc) => { return doc.uri.split("/").pop() === docId })
+        
+        // Prepare id
+        const id = docId.replace(".docx", "")
+        let shortId = ""
+        if(id && id.length > 20)
+          shortId = id?.substring(id.length-20, id.length)
+        else if(id && id.length <= 20)
+          shortId = id
+
+        //Push PFGDoc overview
+        nodeOverviewList.push({
+          uri: nodeDocInfo?.uri || "",
+          id: "PFG Document|..." + shortId || "<No id available>",
+          directorate: nodeDocInfo?.directorate[0] || "<No directorate available>",
+          date: inferDate(nodeDocInfo?.filename || "").join("-") || "<No date available>",
+          policyTitle: nodeDocInfo?.policyTitle[0] || "<No policy title available>",
+          lead: nodeDocInfo?.leadOfficial[0] || "<No lead available>",
+          keywords: nodeDocInfo?.keywords || ["<No keywords available>"],
+        })
+      } else if(docType === "PFGAux"){
+        const nodeDocInfo = pfgStore.pfgAuxs.find((doc: PfgAux) => { return doc.uri.split("/").pop() === docId })
+        
+        //Push PFGAux overview
+        nodeOverviewList.push({
+          uri: nodeDocInfo?.uri || "",
+          id: "PFG Spreadsheet|" + docId || "<No id available>",
+          directorate: nodeDocInfo?.directorate[0] || "<No directorate available>",
+          date: nodeDocInfo?.period || "<No date available>",
+          policyTitle: nodeDocInfo?.policyTitle[0] || "<No policy title available>",
+          lead: nodeDocInfo?.leadOfficial[0] || "<No lead available>",
+          accessURL: nodeDocInfo?.accessURL || "<No URL available>",
+          keywords: nodeDocInfo?.keywords || ["<No keywords available>"],
+        })
+      }
+    })
+    allDocsStore.updateNodeOverviewList(nodeOverviewList)
+};
+
 const handleNodeClick = (params: any) => {
   if (params.dataType === 'node') {
     const nodeData = params.data;
     const nodeId = nodeData.id;
 
-    chartOptions.value.series[0].data.forEach((node: any) => {
+    (chartOptions.value.series as any)[0].data.forEach((node: any) => {
       if (node.id === nodeId) {
         if(!node.itemStyle){
           node.itemStyle = { color: HL_COLOUR };
-          // console.log("node data: ", node)
+          updateNodeOverviewList(node.uriList)
         } else if(node.itemStyle.color === HL_COLOUR){
-          // console.log("no data shown because node was green")
           if(nodeColors.value[nodeId]) {
             node.itemStyle = { color: nodeColors.value[nodeId] };
-          }
-          else {
+          } else {
             node.itemStyle.color = null;
           }
         } else if(node.itemStyle.color !== HL_COLOUR){
-          // console.log("node data: ", node)
           nodeColors.value[nodeId] = node.itemStyle.color;
           node.itemStyle = { color: HL_COLOUR };
+          updateNodeOverviewList(node.uriList)
         }
       }
     });
@@ -204,7 +306,6 @@ const handleNodeClick = (params: any) => {
 
 const handleLegendSelectChange = (eventData: any) => {
   const selected = eventData.selected;
-  // console.log("selected: ", selected)
   // Update the `legend` object with the new selected state
   for (const itemName in selected) {
     if (selected.hasOwnProperty(itemName)) {
@@ -242,6 +343,11 @@ onMounted(() => {
             <!-- <Chart id="echarts-graph" class="chart" :option="chartOptions" @click="handleNodeClick" :autoresize="true" ></Chart> -->
             <Chart class="chart" ref="myChart" @legendselectchanged="handleLegendSelectChange" @click="handleNodeClick" :autoresize="true" ></Chart>
           </Suspense>
+          <Suspense>
+            <div class="NodeOverview-container">
+              <NodeOverviewComponent />
+            </div>
+          </Suspense>
       </v-table>
     </VCol>
   </VRow>
@@ -272,6 +378,6 @@ onMounted(() => {
 
 }
 .chart {
-  height: 770px;
+  height: 500px;
 }
 </style>

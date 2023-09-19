@@ -53,7 +53,7 @@ class AllGraphController {
     // Forced graph, all docs
     @GetMapping("/api/alldocs/forcedgraph/list")
     @ResponseBody
-    suspend fun getDocsForcedList(@RequestParam searchDirs: String? = "", @RequestParam searchString: String? = ""): String = coroutineScope {
+    suspend fun getDocsForcedList(@RequestParam searchDirs: String? = "", @RequestParam searchString: String? = ""): AllGraphData = coroutineScope {
         val findDirs = searchDirs
             ?.split('|')
             ?.map { it.trim() }
@@ -92,7 +92,6 @@ class AllGraphController {
                         )
                     }.await()
                 ).apply {
-//                    nodes?.filter { it.name?.isNotEmpty() == true }?.distinctBy { it.name to it.id }
                     nodes = nodes?.filter { it.name?.isNotEmpty() == true }
                         ?.groupBy { it.name to it.id }
                         ?.map { (_, nodesWithSameNameAndId) ->
@@ -108,14 +107,14 @@ class AllGraphController {
                     categories?.distinct()
                 }
             )
-            graph
-        } else ""
+            AllGraphData(bpDocs, pfgDocs, pfgAuxs, bpComs, graph)
+        } else AllGraphData()
 
     }
 
     // Forced graph, docs with NPF relationships
     @PostMapping("/api/alldocs/forcedgraph-npf/list")
-    suspend fun getDocsForcedNpfList(@RequestBody outcomes: List<String>, @RequestParam searchDirs: String? = "", @RequestParam searchString: String? = ""): String = coroutineScope {
+    suspend fun getDocsForcedNpfList(@RequestBody outcomes: List<String>, @RequestParam searchDirs: String? = "", @RequestParam searchString: String? = ""): AllGraphData = coroutineScope {
         val findDirs = searchDirs
             ?.split('|')
             ?.map { it.trim() }
@@ -146,11 +145,11 @@ class AllGraphController {
                 async { PFGAux.toForcedGraphJSONAll(pfgAuxs.filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
                 }, findDirs, searchTerms) }.await(),
+                async { BPDoc.toForcedGraphJSONAll(bpDocs, findDirs, searchTerms) }.await(),
                 async { BPCom.toForcedGraphJSONAll(bpComs.filter { myDoc ->
                     myDoc.primaryOutcomes.any { it in outcomes } || myDoc.secondaryOutcomes.any { it in outcomes }
                 }, findDirs, searchTerms, bpDocsFilenamesDirectorates = bpDocsFilenamesDirectorates) }.await()
             ).apply {
-//                    nodes?.filter { it.name?.isNotEmpty() == true }?.distinctBy { it.name to it.id }
                 nodes = nodes?.filter { it.name?.isNotEmpty() == true }
                     ?.groupBy { it.name to it.id }
                     ?.map { (_, nodesWithSameNameAndId) ->
@@ -166,6 +165,6 @@ class AllGraphController {
                 categories?.distinct()
             }
         )
-        graph
+        AllGraphData(bpDocs, pfgDocs, pfgAuxs, bpComs, graph)
     }
 }

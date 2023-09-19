@@ -74,6 +74,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, watch, toRef, onMounted } from "vue";
+import { useAllDocsStore } from '@/stores/alldocs';
 import SearchBar from "@/layouts/components/SearchBar.vue";
 import Typeahead from "vue3-simple-typeahead";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
@@ -95,6 +96,7 @@ export default defineComponent({
   setup() {
     const pfgStore = usePfgStore();
     const bpStore = useBpStore();
+    const allDocsStore = useAllDocsStore()
     const search = ref('');
     const debouncedSearchTerm = refDebounced(search, 500);
 
@@ -166,6 +168,7 @@ export default defineComponent({
 
     // Mounted
     async function mounted() {
+      allDocsStore.updateNodeOverviewList([])
       await pfgStore.fetchPfgAuxOverviews();
       await bpStore.fetchBpComOverviews();
     }

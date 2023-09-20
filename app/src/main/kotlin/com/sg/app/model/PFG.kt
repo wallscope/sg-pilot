@@ -438,7 +438,7 @@ data class PFGAux(
         override fun fromModel(uri: URI, model: Model): PFGAux {
             val id = model.getOneObjectOrNull(uri, RDF.DCAT.identifier)?.asLiteral()?.string?.trim()?.lowercase()
             val period = model.getOneObjectOrNull(uri, RDF.DCTERMS.Period)?.asLiteral()?.string?.trim()?.lowercase()
-            val accessURL = model.getOneObjectOrNull(uri, RDF.DCAT.accessURL)?.asLiteral()?.string?.trim()?.lowercase()
+            val accessURL = model.getOneObjectOrNull(uri, RDF.DCAT.accessURL)?.asLiteral()?.string?.trim()
             val strategicPriority = model.getOneObjectOrNull(uri, RDF.ITSMO.Priority)?.asLiteral()?.string?.trim()?.lowercase()
             val legislativeProposal = model.getOneObjectOrNull(uri, RDF.DCTERMS.Standard)?.asLiteral()?.string?.trim()?.lowercase()
             val buteHouseAgreementLink = model.getOneObjectOrNull(uri, RDF.DCTERMS.policy)?.asLiteral()?.string?.trim()?.lowercase()

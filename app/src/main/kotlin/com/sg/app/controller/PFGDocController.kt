@@ -45,7 +45,7 @@ class PFGDocController {
     @GetMapping("/api/pfgdoc/sankey/list")
     @ResponseBody
     fun getPFGDocsSankeyList(): String {
-        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(toSankeyGraphJSONAll(PFGDocDAO.getAll(), 15))
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(toSankeyGraphJSONAll(PFGDocDAO.getAll()))
     }
 
     // PFGDocs - sankey chart, one doc

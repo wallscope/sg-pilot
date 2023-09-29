@@ -169,7 +169,7 @@ data class BPDoc(
                 name = bpDoc.dG.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::dG.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
 //            val directorate = ForcedNode(
@@ -186,7 +186,7 @@ data class BPDoc(
                 symbolSize = 20,
                 value = "Lead",
 //                value = BPDoc::director.name,
-                category = 1,
+                category = 16,
                 uriList = listOf(docUri)
             )
             val keyContact = ForcedNode(
@@ -196,7 +196,7 @@ data class BPDoc(
                 symbolSize = 20,
                 value = "Lead",
 //                value = BPDoc::keyContact.name,
-                category = 1,
+                category = 16,
                 uriList = listOf(docUri)
             )
             val contactEmail = ForcedNode(
@@ -204,7 +204,7 @@ data class BPDoc(
                 name = bpDoc.contactEmail.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::contactEmail.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val resProgramme = ForcedNode(
@@ -212,7 +212,7 @@ data class BPDoc(
                 name = bpDoc.resProgramme?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resProgramme.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val resTotalOperatingCosts = ForcedNode(
@@ -220,7 +220,7 @@ data class BPDoc(
                 name = bpDoc.resTotalOperatingCosts?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resTotalOperatingCosts.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val resCorporateRunningCosts = ForcedNode(
@@ -228,7 +228,7 @@ data class BPDoc(
                 name = bpDoc.resCorporateRunningCosts?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resCorporateRunningCosts.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val resTotal = ForcedNode(
@@ -236,7 +236,7 @@ data class BPDoc(
                 name = bpDoc.resTotal?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resTotal.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val resCapital = ForcedNode(
@@ -244,7 +244,7 @@ data class BPDoc(
                 name = bpDoc.resCapital?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resCapital.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val resFinancialTransactions = ForcedNode(
@@ -252,7 +252,7 @@ data class BPDoc(
                 name = bpDoc.resFinancialTransactions?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPDoc::resFinancialTransactions.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
 
@@ -262,7 +262,7 @@ data class BPDoc(
                     name = division.split("|")[1].trim().lowercase(),
                     symbolSize = 30,
                     value = "Division",
-                    category = 1,
+                    category = 16,
                     itemStyle = ItemStyle(color = "blue"),
                     uriList = listOf(docUri)
                 )
@@ -275,7 +275,7 @@ data class BPDoc(
                     symbolSize = 20,
                     value = "Lead",
 //                    value = "Division Lead",
-                    category = 1,
+                    category = 16,
                     uriList = listOf(docUri)
                 )
             }
@@ -288,7 +288,7 @@ data class BPDoc(
 //                        name = commitment.commitment,
 //                        symbolSize = 20,
 //                        value = "Commitment",
-//                        category = 0
+//                        category = 18
 //                    )
 //            }
             val keywordsNodes = bpDoc.keywords.map { keyword ->
@@ -297,7 +297,7 @@ data class BPDoc(
                     name = keyword.trim().lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 2,
+                    category = 17,
                     uriList = listOf(docUri)
                 )
             }
@@ -528,14 +528,14 @@ data class BPDoc(
 //                name = bpCom.commitment,
 //                symbolSize = 20,
 //                value = BPCom::commitment.name,
-//                category = 0
+//                category = 18
 //            )
             val priority = ForcedNode(
                 id = "${BPCom::priority.name}|${bpCom.priority}",
                 name = bpCom.priority?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPCom::priority.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val commitmentLead = ForcedNode(
@@ -545,7 +545,7 @@ data class BPDoc(
                 symbolSize = 20,
                 value = "Lead",
 //                value = BPCom::commitmentLead.name,
-                category = 1,
+                category = 16,
                 uriList = listOf(docUri)
             )
             val projectBudget = ForcedNode(
@@ -553,7 +553,7 @@ data class BPDoc(
                 name = bpCom.projectBudget?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPCom::projectBudget.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val budgetSufficient = ForcedNode(
@@ -561,7 +561,7 @@ data class BPDoc(
                 name = bpCom.budgetSufficient?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = BPCom::budgetSufficient.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
 
@@ -570,7 +570,7 @@ data class BPDoc(
 //                    id = "${BPCom::primaryOutcomes.name}|${primaryOutcome}",
                     id = "Outcome|${primaryOutcome}",
                     name = primaryOutcome.trim()?.lowercase(),
-                    symbolSize = 36,
+                    symbolSize = 97,
                     value = "Outcome",
                     category = getOutcomeCategory(primaryOutcome.trim().lowercase()),
                     uriList = listOf(docUri)
@@ -581,7 +581,7 @@ data class BPDoc(
 //                    id = "${BPCom::secondaryOutcomes.name}|${secondaryOutcome}",
                     id = "Outcome|${secondaryOutcome}",
                     name = secondaryOutcome.trim()?.lowercase(),
-                    symbolSize = 36,
+                    symbolSize = 97,
                     value = "Outcome",
                     category = getOutcomeCategory(secondaryOutcome.trim().lowercase()),
                     uriList = listOf(docUri)
@@ -594,7 +594,7 @@ data class BPDoc(
                     name = keyword.trim()?.lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 2,
+                    category = 17,
                     uriList = listOf(docUri)
                 )
             }

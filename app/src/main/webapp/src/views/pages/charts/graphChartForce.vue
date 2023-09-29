@@ -30,7 +30,8 @@ const router = useRouter();
 
 const tags = ref<string[]>([]);
 const newTag = ref('');
-const HL_COLOUR = "green";
+const HL_COLOUR = "#00CC00"; // Active node - bright green
+const HL_COLOUR2 = "teal"; // Inactive node - part of the path
 
 const addTag = () => {
   if (newTag.value.trim() !== '' && !tags.value.includes(newTag.value)) {
@@ -67,7 +68,6 @@ const removeDirectorate = (dir: string) => {
   }
 };
 
-const nodeColors = ref<{ [key: string]: string }>({});
 const myChart = ref<echarts.ECharts | null>(null);
 const chartOptions: Ref<ECBasicOption> = ref({});
 
@@ -126,9 +126,44 @@ const fetchData = async () => {
             borderColor: 'rgb(106, 168, 201)',
             borderWidth: 2,
             borderRadius: 5,
-            data: graph.categories.map(function (a: { name: string }) {
-              return a.name;
-            }),
+            data: [
+              ...graph.categories.slice(0, 16).map(function (a: { name: string }) {
+                return { 
+                  name: a.name,
+                  icon: 'path://M 50 10 A 40 40 0 1 0 50 90 A 40 40 0 1 0 50 10 Z M 50 30 A 20 20 0 1 1 50 70 A 20 20 0 1 1 50 30 Z',
+                  textStyle: {
+                    color: 'green',
+                  }
+                };
+              }), // Outcomes
+              ...graph.categories.slice(16, 17).map(function (a: { name: string }) {
+                return { 
+                  name: a.name,
+                  icon: 'path://M16 15.503A5.041 5.041 0 1 0 16 5.42a5.041 5.041 0 0 0 0 10.083zm0 2.215c-6.703 0-11 3.699-11 5.5v3.363h22v-3.363c0-2.178-4.068-5.5-11-5.5z',
+                  // textStyle: {
+                  //   color: 'blue',
+                  // }
+                };
+              }), // Leads
+              ...graph.categories.slice(17, 18).map(function (a: { name: string }) {
+                return { 
+                  name: a.name,
+                  icon: 'path://M454.134,81.511l-47.295-47.289c-45.618-45.618-119.863-45.64-165.502,0c-41.624,41.618-45.281,107.041-10.983,152.844 L28.541,388.885c-6.53,6.525-6.53,17.111,0,23.642l47.284,47.289c6.527,6.527,17.115,6.527,23.642,0l11.826-11.826l59.111,59.114 c6.527,6.527,17.115,6.527,23.642,0l35.467-35.467l-35.467-35.459c-6.53-6.53-6.53-17.116,0-23.647 c6.53-6.532,17.111-6.525,23.642-0.006l35.472,35.464l35.464-35.464c6.527-6.527,6.527-17.115,0-23.642l-59.114-59.111 L301.282,258c45.825,34.293,111.243,30.646,152.855-10.983C499.763,201.39,499.763,127.139,454.134,81.511z M406.84,199.735 c-17.452,17.452-44.104,19.106-63.275,6.283c-6.401-4.289-49.496-48.128-54.944-53.577c-19.549-19.555-19.549-51.371-0.011-70.925 c0.011-0.006,0.011-0.006,0.011-0.006c19.538-19.555,51.376-19.566,70.936-0.006c6.012,6.014,49.304,48.561,53.574,54.944 C426.018,155.7,424.236,182.35,406.84,199.735z',
+                  // textStyle: {
+                  //   color: 'blue',
+                  // }
+                };
+              }), // Keywords
+              ...graph.categories.slice(18, 19).map(function (a: { name: string }) {
+                return { 
+                  name: a.name,
+                  icon: 'circle',
+                  // textStyle: {
+                  //   color: 'blue',
+                  // }
+                };
+              }), // More
+            ],
             selected: legend,
           }
         ],
@@ -276,6 +311,7 @@ const updateNodeOverviewList = (uriList: string[]) => {
     allDocsStore.updateNodeOverviewList(nodeOverviewList)
 };
 
+const nodeColors = ref<{ [key: string]: string }>({});
 const handleNodeClick = (params: any) => {
   if (params.dataType === 'node') {
     const nodeData = params.data;
@@ -284,25 +320,34 @@ const handleNodeClick = (params: any) => {
     (chartOptions.value.series as any)[0].data.forEach((node: any) => {
       if (node.id === nodeId) {
         if(!node.itemStyle){
+          // console.log(`Clicked: ORIGINAL -> ${HL_COLOUR}`)
           node.itemStyle = { color: HL_COLOUR };
           updateNodeOverviewList(node.uriList)
         } else if(node.itemStyle.color === HL_COLOUR){
+          // console.log(`Clicked: ${HL_COLOUR} -> ORIGINAL`)
           if(nodeColors.value[nodeId]) {
             node.itemStyle = { color: nodeColors.value[nodeId] };
           } else {
             node.itemStyle.color = null;
           }
         } else if(node.itemStyle.color !== HL_COLOUR){
-          nodeColors.value[nodeId] = node.itemStyle.color;
+          // console.log(`Clicked: NOT ${HL_COLOUR} -> ${HL_COLOUR}`)
+          if (!nodeColors.value[nodeId] && node.itemStyle.color != HL_COLOUR2){
+            nodeColors.value[nodeId] = node.itemStyle.color
+          }
           node.itemStyle = { color: HL_COLOUR };
           updateNodeOverviewList(node.uriList)
         }
+      } else if (node.id !== nodeId){
+        if (node.itemStyle && node.itemStyle.color === HL_COLOUR) {
+          // console.log(`NOT Clicked: ${HL_COLOUR} -> ${HL_COLOUR2}`)
+          node.itemStyle = { color: HL_COLOUR2 };
+        }
       }
-    });
-
+    });}
+    // Finally, update the chart with new values
     myChart.value?.setOption(chartOptions.value);
   }
-};
 
 const handleLegendSelectChange = (eventData: any) => {
   const selected = eventData.selected;
@@ -329,7 +374,7 @@ onMounted(() => {
                 {{ dir }}
                 <v-icon small>mdi-close</v-icon>
               </v-chip>
-              <input v-model="newDirectorate" @keydown.enter="addDirectorate" placeholder="Add a Directorate" class="tag-input" />
+              <input v-model="newDirectorate" @keydown.enter="addDirectorate" placeholder="View a directorate" class="tag-input" />
           </div>
           <!-- Term search -->
           <div class="Tag-container">
@@ -337,7 +382,7 @@ onMounted(() => {
               {{ tag }}
               <v-icon small>mdi-close</v-icon>
             </v-chip>
-            <input v-model="newTag" @keydown.enter="addTag" placeholder="Add a tag" class="tag-input" />
+            <input v-model="newTag" @keydown.enter="addTag" placeholder="Add a search term" class="tag-input" />
           </div>
           <Suspense>
             <!-- <Chart id="echarts-graph" class="chart" :option="chartOptions" @click="handleNodeClick" :autoresize="true" ></Chart> -->

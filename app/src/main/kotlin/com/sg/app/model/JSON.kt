@@ -50,45 +50,45 @@ val mapper: ObjectMapper = ObjectMapper().registerModule(
 
 // Categories
 val categories = listOf(
-    ForcedCategory(name = "More"),                     //  0
-    ForcedCategory(name = "Leads"),                    //  1
-    ForcedCategory(name = "Keywords"),                 //  2
-    ForcedCategory(name = "Child poverty"),            //  3
-    ForcedCategory(name = "Children and young people"),//  4
-    ForcedCategory(name = "Climate change"),           //  5
-    ForcedCategory(name = "Communities"),              //  6
-    ForcedCategory(name = "Constitution"),             //  7
-    ForcedCategory(name = "Cost of living"),           //  8
-    ForcedCategory(name = "Covid recovery"),           //  9
-    ForcedCategory(name = "Culture"),                  // 10
-    ForcedCategory(name = "Economy"),                  // 11
-    ForcedCategory(name = "Education"),                // 12
-    ForcedCategory(name = "Environment"),              // 13
-    ForcedCategory(name = "Fair work and business"),   // 14
-    ForcedCategory(name = "Health"),                   // 15
-    ForcedCategory(name = "Human rights"),             // 16
-    ForcedCategory(name = "International"),            // 17
-    ForcedCategory(name = "Poverty")                   // 18
+    ForcedCategory(name = "Child poverty"),            //  0
+    ForcedCategory(name = "Children and young people"),//  1
+    ForcedCategory(name = "Climate change"),           //  2
+    ForcedCategory(name = "Communities"),              //  3
+    ForcedCategory(name = "Constitution"),             //  4
+    ForcedCategory(name = "Cost of living"),           //  5
+    ForcedCategory(name = "Covid recovery"),           //  6
+    ForcedCategory(name = "Culture"),                  //  7
+    ForcedCategory(name = "Economy"),                  //  8
+    ForcedCategory(name = "Education"),                //  9
+    ForcedCategory(name = "Environment"),              // 10
+    ForcedCategory(name = "Fair work and business"),   // 11
+    ForcedCategory(name = "Health"),                   // 12
+    ForcedCategory(name = "Human rights"),             // 13
+    ForcedCategory(name = "International"),            // 14
+    ForcedCategory(name = "Poverty"),                  // 15
+    ForcedCategory(name = "Leads"),                    // 16
+    ForcedCategory(name = "Keywords"),                 // 17
+    ForcedCategory(name = "More"),                     // 18
 )
 
 fun getOutcomeCategory(outcome: String): Int {
     return when (outcome.lowercase()) {
-        "child poverty" -> 3
-        "children and young people" -> 4
-        "climate change" -> 5
-        "communities" -> 6
-        "constitution" -> 7
-        "cost of living" -> 8
-        "covid recovery" -> 9
-        "culture" -> 10
-        "economy" -> 11
-        "education" -> 12
-        "environment" -> 13
-        "fair work and business" -> 14
-        "health" -> 15
-        "human rights" -> 16
-        "international" -> 17
-        "poverty" -> 18
+        "child poverty" -> 0
+        "children and young people" -> 1
+        "climate change" -> 2
+        "communities" -> 3
+        "constitution" -> 4
+        "cost of living" -> 5
+        "covid recovery" -> 6
+        "culture" -> 7
+        "economy" -> 8
+        "education" -> 9
+        "environment" -> 10
+        "fair work and business" -> 11
+        "health" -> 12
+        "human rights" -> 13
+        "international" -> 14
+        "poverty" -> 15
         else -> -1
     }
 }

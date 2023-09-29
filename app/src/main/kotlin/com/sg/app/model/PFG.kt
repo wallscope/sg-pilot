@@ -204,7 +204,7 @@ data class PFGDoc(
                 name = pfgDoc.ministerialPortfolio.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::ministerialPortfolio.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
 //            val directorate = ForcedNode(
@@ -221,7 +221,7 @@ data class PFGDoc(
                 symbolSize = 20,
                 value = "Lead",
 //                value = PFGDoc::leadOfficial.name,
-                category = 1,
+                category = 16,
                 uriList = listOf(docUri)
             )
             val unitBranch = ForcedNode(
@@ -229,7 +229,7 @@ data class PFGDoc(
                 name = pfgDoc.unitBranch.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::unitBranch.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val policyTitle = ForcedNode(
@@ -237,7 +237,7 @@ data class PFGDoc(
                 name = pfgDoc.policyTitle.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::policyTitle.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val scsClearance = ForcedNode(
@@ -245,7 +245,7 @@ data class PFGDoc(
                 name = pfgDoc.scsClearance.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::scsClearance.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val fbpClearance = ForcedNode(
@@ -253,7 +253,7 @@ data class PFGDoc(
                 name = pfgDoc.fbpClearance.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::fbpClearance.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val dG = ForcedNode(
@@ -261,7 +261,7 @@ data class PFGDoc(
                 name = pfgDoc.dG.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::dG.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val portfolioCoordinator = ForcedNode(
@@ -269,7 +269,7 @@ data class PFGDoc(
                 name = pfgDoc.portfolioCoordinator.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::portfolioCoordinator.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val completionDate = ForcedNode(
@@ -277,7 +277,7 @@ data class PFGDoc(
                 name = pfgDoc.completionDate?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGDoc::completionDate.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
 
@@ -286,7 +286,7 @@ data class PFGDoc(
 //                    id = "${PFGDoc::primaryOutcomes.name}|${primaryOutcome}",
                     id = "Outcome|${primaryOutcome}",
                     name = primaryOutcome.trim().lowercase(),
-                    symbolSize = 36,
+                    symbolSize = 97,
                     value = "Outcome",
                     category = getOutcomeCategory(primaryOutcome.trim().lowercase()),
                     uriList = listOf(docUri)
@@ -297,7 +297,7 @@ data class PFGDoc(
 //                    id = "${PFGDoc::secondaryOutcomes.name}|${secondaryOutcome}",
                     id = "Outcome|${secondaryOutcome}",
                     name = secondaryOutcome.trim().lowercase(),
-                    symbolSize = 36,
+                    symbolSize = 97,
                     value = "Outcome",
                     category = getOutcomeCategory(secondaryOutcome.trim().lowercase()),
                     uriList = listOf(docUri)
@@ -309,7 +309,7 @@ data class PFGDoc(
                     name = keyword.trim().lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 2,
+                    category = 17,
                     uriList = listOf(docUri)
                 )
             }
@@ -537,7 +537,7 @@ data class PFGAux(
                 name = pfgAux.ministerialPortfolio.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::ministerialPortfolio.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
 //            val directorate = ForcedNode(
@@ -554,7 +554,7 @@ data class PFGAux(
                 symbolSize = 20,
                 value = "Lead",
 //                value = PFGAux::leadOfficial.name,
-                category = 1,
+                category = 16,
                 uriList = listOf(docUri)
             )
             val period = ForcedNode(
@@ -562,7 +562,7 @@ data class PFGAux(
                 name = pfgAux.period?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::period.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val policyTitle = ForcedNode(
@@ -570,7 +570,7 @@ data class PFGAux(
                 name = pfgAux.policyTitle.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::policyTitle.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val strategicPriority = ForcedNode(
@@ -578,7 +578,7 @@ data class PFGAux(
                 name = pfgAux.strategicPriority?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::strategicPriority.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val legislativeProposal = ForcedNode(
@@ -586,7 +586,7 @@ data class PFGAux(
                 name = pfgAux.legislativeProposal?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::legislativeProposal.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val dG = ForcedNode(
@@ -594,7 +594,7 @@ data class PFGAux(
                 name = pfgAux.dG.firstOrNull()?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::dG.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val buteHouseAgreementLink = ForcedNode(
@@ -602,7 +602,7 @@ data class PFGAux(
                 name = pfgAux.buteHouseAgreementLink?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::buteHouseAgreementLink.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
             val completionDate = ForcedNode(
@@ -610,7 +610,7 @@ data class PFGAux(
                 name = pfgAux.completionDate?.trim()?.lowercase(),
                 symbolSize = 20,
                 value = PFGAux::completionDate.name,
-                category = 0,
+                category = 18,
                 uriList = listOf(docUri)
             )
 
@@ -619,7 +619,7 @@ data class PFGAux(
 //                    id = "${PFGAux::primaryOutcomes.name}|${primaryOutcome}",
                     id = "Outcome|${primaryOutcome}",
                     name = primaryOutcome.trim().lowercase(),
-                    symbolSize = 36,
+                    symbolSize = 97,
                     value = "Outcome",
                     category = getOutcomeCategory(primaryOutcome.trim().lowercase()),
                     uriList = listOf(docUri)
@@ -630,7 +630,7 @@ data class PFGAux(
 //                    id = "${PFGAux::secondaryOutcomes.name}|${secondaryOutcome}",
                     id = "Outcome|${secondaryOutcome}",
                     name = secondaryOutcome.trim().lowercase(),
-                    symbolSize = 36,
+                    symbolSize = 97,
                     value = "Outcome",
                     category = getOutcomeCategory(secondaryOutcome.trim().lowercase()),
                     uriList = listOf(docUri)
@@ -642,7 +642,7 @@ data class PFGAux(
                     name = keyword.trim().lowercase(),
                     symbolSize = 31,
                     value = "keyword",
-                    category = 2,
+                    category = 17,
                     uriList = listOf(docUri)
                 )
             }

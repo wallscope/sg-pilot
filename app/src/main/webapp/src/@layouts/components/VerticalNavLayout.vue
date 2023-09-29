@@ -2,7 +2,7 @@
 import { useDisplay } from 'vuetify'
 const { lgAndUp, mdAndDown } = useDisplay()
 
-const drawer = ref(lgAndUp.value)
+const drawer = ref(false)
 </script>
 
 <template>
@@ -17,23 +17,14 @@ const drawer = ref(lgAndUp.value)
   >
     <slot name="navigation-drawer-content" />
   </VNavigationDrawer>
-  <VAppBar
-    app
-    flat
-    class="px-6 layout-navbar"
-    style="background: transparent"
-  >
-    <template
-      v-if="mdAndDown"
-      #prepend
-    >
-      <VAppBarNavIcon
-        class="d-block d-lg-none me-2 ms-n3"
+  <VAppBar @click="drawer = !drawer">
+    <VAppBarNavIcon
+        style="padding-left: 10px;"
+        class="d-block me-2 ms-n3"
         color="inherit"
         @click="drawer = true"
       />
-    </template>
-    <slot name="navbar" />
+    <VAppNavbarTitle><h3>{{ drawer ? 'Close' : 'Open' }} Menu</h3></VAppNavbarTitle>
   </VAppBar>
   <VMain class="w-100">
     <div class="pa-6">

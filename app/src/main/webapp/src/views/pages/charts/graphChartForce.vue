@@ -176,9 +176,9 @@ const fetchData = async () => {
               repulsion: 700,
               edgeLength: 300,
               // gravity:  0.1,
-              friction: 0.1,
-              maxIterations: 1000,
-              layoutAnimation: false,
+              // friction: 0.1,
+              // maxIterations: 1000,
+              // layoutAnimation: false,
             },
             data: graph.nodes,
             links: graph.links,
@@ -206,7 +206,15 @@ const fetchData = async () => {
       } as ECBasicOption;
     }
 
-    myChart.value?.setOption(chartOptions.value)
+    myChart.value?.setOption(chartOptions.value);
+
+    setTimeout(function () {
+      (chartOptions.value.series as any)[0].data.forEach((node: any) => {
+        node.fixed = true
+      });
+      myChart.value?.setOption(chartOptions.value)
+    }, 2000);
+
   } catch (error) {
     console.error(error);
   }
@@ -361,6 +369,18 @@ const handleLegendSelectChange = (eventData: any) => {
       legend.value[itemName] = selected[itemName];
     }
   }
+
+  (chartOptions.value.series as any)[0].data.forEach((node: any) => {
+    node.fixed = false
+  });
+  myChart.value?.setOption(chartOptions.value)
+
+  setTimeout(function () {
+    (chartOptions.value.series as any)[0].data.forEach((node: any) => {
+      node.fixed = true
+    });
+    myChart.value?.setOption(chartOptions.value)
+  }, 1);
 };
 
 onMounted(() => {

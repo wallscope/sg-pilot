@@ -175,6 +175,10 @@ const fetchData = async () => {
             force: {
               repulsion: 700,
               edgeLength: 300,
+              // gravity:  0.1,
+              friction: 0.1,
+              maxIterations: 1000,
+              layoutAnimation: false,
             },
             data: graph.nodes,
             links: graph.links,

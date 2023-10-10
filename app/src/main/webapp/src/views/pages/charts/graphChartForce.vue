@@ -208,12 +208,14 @@ const fetchData = async () => {
 
     myChart.value?.setOption(chartOptions.value);
 
-    setTimeout(function () {
-      (chartOptions.value.series as any)[0].data.forEach((node: any) => {
-        node.fixed = true
-      });
-      myChart.value?.setOption(chartOptions.value)
-    }, 2000);
+    if(chartOptions.value?.series){
+      setTimeout(function () {
+        (chartOptions.value.series as any)[0].data.forEach((node: any) => {
+          node.fixed = true
+        });
+        myChart.value?.setOption(chartOptions.value);
+      }, 2000);
+    }
 
   } catch (error) {
     console.error(error);

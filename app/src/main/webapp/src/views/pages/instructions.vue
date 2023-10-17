@@ -51,15 +51,6 @@ On the right hand side in the ‘Actions’ column, there are two prompts which 
   <p>This presents the details of the document in a Tree Structure and reports a range of references.
 
 The header indicates the document title. The tree displays information such as the time period, strategic priorities and policy title.</p>
-<h3>Data References</h3>
-  <p>In the search bar additional terms can be added to narrow the references down and therefore narrow down the inquiry. You might use the original search term, or you may wish to further explore the relationships which exist and why.
-
-  At the top of the page there are several filters. These can be toggled to show what references are present.
-
-  More (markers from the fields filled within the document sources eg Lead Official, Policy Title or Related Year)
-  Primary outcomes (Performance indicators)
-  Secondary outcomes (Performance indicators)
-  Keywords extracted from ‘free text’ within the documents.</p>
 
   <h3>Graph Overview</h3>
   <p>This provides an overview and exposes contextual links between structure, activities and outcomes in the data provided. The purpose is to allow users to observe the relationships which exist within and between a range of documents based on several terms of reference which are contained within the Graph Database. These are derived from both structural data (e.g. contained within a single cell in a spreadsheet), as well as from analysing texts contained within written descriptions.
@@ -70,10 +61,12 @@ This view allows a user to explore and discover many different associations acro
 <h3>Graph Circle View</h3>
 
   <p>
-    This has the same functionality as the Graph Overview but offers an alternative circular) way of displaying the results. It is best used once greater insight on the key terms and references has already been gained using the main Graph Overview. It visualises the information with a narrower frame which can assist observing the relationships which are present.
+    This has the same functionality as the Graph Overview but offers an alternative circular way of displaying the results. It is best used once greater insight on the key terms and references has already been gained using the main Graph Overview. It visualises the information with a narrower frame which can assist observing the relationships which are present.
   </p>
+  
+  <hr>
 
-  <h3>Example - Sankey</h3>
+  <h2>Example - Sankey</h2>
   <p>A Sankey diagram has been provided as an example of the kind of visualisation that can be produced using the data. It is a more ‘static’ visualisation and as such is not as well suited as the Graph Overview for exploring the references. It is included to demonstrate other types of visualisations possible for future development.</p>
 
   <p>Reading from left to right, we can observe the connections between an operational unit and how it supports specific outcomes through a range of activities. It can also be read right to left to observe the relationship between activities, outcomes, and how these are related within the organisational structure.</p>

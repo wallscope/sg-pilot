@@ -130,23 +130,35 @@ data class PFGDoc(
             // Links
             val primaryOutcomesLinks = pfgDoc.primaryOutcomes.flatMap { primaryOutcome ->
                 listOf(
-                    SankeyLink(source = pfgDoc.policyTitle[0], target = primaryOutcome, value = 1, label = "Primary")
+                    SankeyLink(target = pfgDoc.policyTitle[0], source = primaryOutcome, value = 1, label = "Primary")
                 )
             }
 
             val secondaryOutcomesLinks = pfgDoc.secondaryOutcomes.flatMap { secondaryOutcome ->
                 listOf(
-                    SankeyLink(source = pfgDoc.policyTitle[0], target = secondaryOutcome, value = 1, label = "Secondary")
+                    SankeyLink(target = pfgDoc.policyTitle[0], source = secondaryOutcome, value = 1, label = "Secondary")
                 )
             }
 
-            val dir2policyLink = listOf(
-                SankeyLink(source = pfgDoc.directorate[0], target = pfgDoc.policyTitle[0], value = primaryOutcomesLinks.size + secondaryOutcomesLinks.size, label = pfgDoc.filename)
-            )
+            val dir2primaryOutcomesLinks = pfgDoc.primaryOutcomes.flatMap { primaryOutcome ->
+                listOf(
+                    SankeyLink(source = pfgDoc.directorate[0], target = primaryOutcome, value = 1, label = pfgDoc.filename)
+                )
+            }
+
+            val dir2secondaryOutcomesLinks = pfgDoc.secondaryOutcomes.flatMap { secondaryOutcome ->
+                listOf(
+                    SankeyLink(source = pfgDoc.directorate[0], target = secondaryOutcome, value = 1, label = pfgDoc.filename)
+                )
+            }
+
+//            val dir2policyLink = listOf(
+//                SankeyLink(source = pfgDoc.directorate[0], target = pfgDoc.policyTitle[0], value = primaryOutcomesLinks.size + secondaryOutcomesLinks.size, label = pfgDoc.filename)
+//            )
 
             return SankeyGraph(
                 nodes = primaryOutcomesNodes + secondaryOutcomesNodes + directorateNode + policyTitleNode,
-                links = primaryOutcomesLinks + secondaryOutcomesLinks + dir2policyLink
+                links = primaryOutcomesLinks + secondaryOutcomesLinks + dir2primaryOutcomesLinks + dir2secondaryOutcomesLinks
             )
         }
 

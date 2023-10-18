@@ -36,18 +36,13 @@ onMounted(async () => {
             // Link data (between two nodes)
             let tooltipText = "";
             if (linkData.label) {
-              tooltipText += linkData.label // + "<br>";
+              tooltipText += `${linkData.label}`;
             }
-            // if (typeof linkData.value !== "undefined") {
-            //   tooltipText += "Count: " + linkData.value;
-            // }
             return tooltipText;
-          } 
-          // else {
-          //   // Node data (single node)
-          //   // return linkData.name;
-          //   return linkData.label;
-          // }
+          } else if (linkData.name) {
+            // Node data (single node)
+            return `${linkData.name}`;
+          }
         },
       },
       series: [
@@ -140,7 +135,7 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .chart-container {
-  width: 1200px; /* Set the container width larger than the visible area */
+  width: 90%; /* Set the container width larger than the visible area */
   // overflow-x: auto; /* Enable horizontal scrolling */
 }
 

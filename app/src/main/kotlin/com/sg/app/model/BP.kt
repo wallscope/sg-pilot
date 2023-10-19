@@ -371,7 +371,8 @@ data class BPDoc(
             val links = doc2propertyLinks + divisionsLinks + /*commitmentsLinks +*/ keywordsLinks
 
             if (!searchTerms.isNullOrEmpty()) {
-                val containsSearchTerms = searchTerms.all { searchTerm ->
+                // returns true if at least 1 search term matches. For all terms to match, use .all instead of .any
+                val containsSearchTerms = searchTerms.any { searchTerm ->
                     nodes.any { node ->
                         node.name?.contains(searchTerm, ignoreCase = true) == true
                     } || links.any { link ->
@@ -640,7 +641,8 @@ data class BPDoc(
             val links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks
 
             if (!searchTerms.isNullOrEmpty()) {
-                val containsSearchTerms = searchTerms.all { searchTerm ->
+                // returns true if at least 1 search term matches. For all terms to match, use .all instead of .any
+                val containsSearchTerms = searchTerms.any { searchTerm ->
                     nodes.any { node ->
                         node.name?.contains(searchTerm, ignoreCase = true) == true
                     } || links.any { link ->

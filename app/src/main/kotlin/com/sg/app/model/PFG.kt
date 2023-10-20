@@ -376,8 +376,8 @@ data class PFGDoc(
             val links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks
 
             if (!searchTerms.isNullOrEmpty()) {
-                // returns true if at least 1 search term matches. For all terms to match, use .all instead of .any
-                val containsSearchTerms = searchTerms.any { searchTerm ->
+                // Returns true if search terms match. All terms matching - use .all. Any of terms matching - use .any
+                val containsSearchTerms = searchTerms.all { searchTerm ->
                     nodes.any { node ->
                         node.name?.contains(searchTerm, ignoreCase = true) == true
                     } || links.any { link ->
@@ -710,8 +710,8 @@ data class PFGAux(
             val links = doc2propertyLinks + primaryOutcomesLinks + secondaryOutcomesLinks + keywordsLinks
 
             if (!searchTerms.isNullOrEmpty()) {
-                // returns true if at least 1 search term matches. For all terms to match, use .all instead of .any
-                val containsSearchTerms = searchTerms.any { searchTerm ->
+                // Returns true if search terms match. All terms matching - use .all. Any of terms matching - use .any
+                val containsSearchTerms = searchTerms.all { searchTerm ->
                     nodes.any { node ->
                         node.name?.contains(searchTerm, ignoreCase = true) == true
                     } || links.any { link ->
